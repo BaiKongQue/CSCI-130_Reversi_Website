@@ -1,11 +1,8 @@
 <?php
 function sec_session_start() {
-	if(session_status() == PHP_SESSION_NONE){
-		$config = json_decode(file_get_contents("C:/Apache24/htdocs/config/login_options.json"), true);
-		$config = $config['Session'];	
-		
+	if(session_status() == PHP_SESSION_NONE){		
 		$session_name = 'sec_session_id';
-		$secure = $config['Secure'];
+		$secure = SESSION_SECURE;
 		$httponly = true;
 		
 		if (ini_set('session.use_only_cookies', 1) === FALSE){
@@ -14,7 +11,7 @@ function sec_session_start() {
 		}
 		
 		$cookieParams = session_get_cookie_params();
-		$lifetime = ($config['LifeTime'] <= FALSE)? $cookieParams['lifetime'] : $config['LifeTime'];
+		$lifetime = (SESSION_LIFE <= FALSE)? $cookieParams['lifetime'] : SESSION_LIFE;
 		session_set_cookie_params($lifetime,
 			$cookieParams['path'],
 			$cookieParams['domain'],
