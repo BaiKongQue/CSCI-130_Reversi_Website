@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" ng-app="combineModule" ng-controller="ctrlA">
+<head>
+    <title>CSCI-130 Project: Reversi</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <!-- <script type="text/javascript" src="script/angular.min.js"></script> -->
+    <!-- <link rel="stylesheet" type="text/css" href="" /> -->
+</head>
+<body>
+    <form action="login.post.php" method="POST" enctype="multipart/form-data">
+        <div><label for="username"><span>Username:</span><input type="text" name="username" placeholder="Username" /></label></div>
+        <div><label for="password"><span>Password:</span><input type="password" name="password" placeholder="Password" /></label></div>
+        <div><label for="confirm-password"><span>Confirm Password:</span><input type="password" name="confirm-password" placeholder="Confirm Password" /></label></div>
+        <div><label for="first-name"><span>First Name:</span><input type="text" name="first-name" placeholder="First Name" /></label></div>
+        <div><label for="last-name"><span>Last Name:</span><input type="text" name="last-name" placeholder="Last Name" /></label></div>
+        <div><label for="age"><span>Age:</span><input type="number" name="age" min="1" /></label></div>
+        <div>
+            <label for="gender">
+                <span>Gender:</span>
+                <select name="gender" id="gender">
+                    <option value="0">Boy</option>
+                    <option value="1">Girl</option>
+                    <option value="2">Other</option>
+                </select>
+            </label>
+        </div>
+        <div><label for="location"><span>Location:</span><input type="text" name="location" placeholder="Location" /></label></div>
+        <div>
+            <label for="icon">
+                <span>Icon:</span>
+                <input type="hidden" name="MAX_FILE_SIZE" value="30000" />
+                <input type="file" name="icon" placeholder="Icon Image" />
+            </label>
+        </div>
+        <div><input type="submit" name="sub" value="Login" /></div>
+    </form>
+</body>
+</html>
