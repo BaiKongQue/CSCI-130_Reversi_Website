@@ -11,21 +11,16 @@ include_once $_SERVER["DOCUMENT_ROOT"] . "/php/classes/login.class.php";
  */
 
 $data = [];
-$data['error'] = '';
-
-$Login = new Login();
 if (isset($_POST['sub'], $_POST['username'], $_POST['password'])) {
-    if (!$Login->login_check()) {
-        if(!$Login->run_login($_POST['username'], $_POST['password'])) {
-            $data['error'] .= $Login->error;
-            $data['result'] = false;
-        } else 
+    $Login = new Login();
+        if(!$Login->login_check() && $Login->run_login($_POST['username'], $_POST['password'])) {
             $data['result'] = true;
         } else {
-            $data['result'] = true;
+            $data['error'] = $Login->error;
+            $data['result'] = false;
         }
 } else {
-    $data['error'] .= "Username or Password was empty!";
+    $data['error'] = "Username or Password was empty!";
     $data['result'] = false;
 }
 echo json_encode($data);

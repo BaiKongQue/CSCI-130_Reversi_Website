@@ -27,6 +27,7 @@ define("REGISTER_PASSWORD_MIN_LENGTH", 6);  // Min length of password
  ******************/
 define("SESSION_LIFE", 0);          // lifetime of the session (hrs)
 define("SESSION_SECURE", false);    // wether the session is secure or not (false for debug)
+define("SESSION_KEYS", ['user_id', 'username', 'first_name', 'last_name', 'age', 'gender', 'location', 'icon', 'login_string']);
 
 /***************
  * Enum String *
