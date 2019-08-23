@@ -6,8 +6,9 @@ include_once "./classes/SecureSession.class.php";
  *  data
  * 
  * Get one or more data from the session.
+ * ex. request: ".../session.get.php?data=user_id"
  * @param GET data: data from session to retrieve (use ',' no spaces for multiple)
- * @return json {}
+ * @return json {"result": [session data], "error"?: string}
  */
 
 $data = [];
