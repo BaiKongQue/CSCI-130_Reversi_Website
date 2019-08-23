@@ -1,63 +1,42 @@
 <?php
 include_once "SecureSession.class.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/config/definitions.php";
 sec_session_start();
 
 class Registration {
-	private $username, $password, $passConfirm, $email, $Mysqli;
-	private $_Option;
-	public $errPass,
-			$errConfirm,
-			$errAdd,
-			$errCaptcha,	// need to add
-			$errEmail,
-			$errUserN;
+// PRIVATE
+	private $Mysqli;
+
+// PUBLIC
+	public $error;
 	
 	public function __construct(){
-		$this->_Option = json_decode(file_get_contents("C:/Apache24/htdocs/config/login_options.json"), true);
+		$this->Mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_SCHEME); // start mysqli connection
 		
-		$db = $this->_Option['Database'];
-		$this->Mysqli = new mysqli($db['Host'], $db['Username'], $db['Password'], $db['Scheme']);
-		
-		$this->errAdd = $this->errCaptcha = $this->errConfirm = $this->errEmail = $this->errPass = $this->errUserN = "";
+		$this->error = "";	// initialize error to empty string
 	}
-	
-	private function email_check(){
-		if(!$this->_Option['Register']['Email']) return false;
-		
-		if(!filter_var($this->email, FILTER_VALIDATE_EMAIL)){
-			$this->errEmail .= "Please use a valid Email.\n";
-			return false;
-		}
-		
-		if($stmt = $this->Mysqli->prepare("SELECT email FROM members WHERE email = ? LIMIT 1")){
-			$stmt->bind_param('s', $this->email);
-			$stmt->execute();
-			$stmt->store_result();
-			if($stmt->num_rows == 1){
-				$this->errEmail .= "This email address already exist! Please try again.\n";
-				return false;
-			} else
-				return true;
-			
-			$stmt->free_result();
-			$stmt->close();
-		}
-	}
-	
-	private function username_check(){
-		if(!$this->_Option['Register']['Username'] && !$this->_Option['Register']['Unique_Username']) return false;
-		
-		if(strlen($this->username) > 30) {
-			$this->errUserN .= "Username must be less than 30 characters.\n";
+
+// PRIVATE
+	/**
+	 * Checks if the username meets the REGISTER_USERNAME_MAX_LENGTH requirement and
+	 * if the username is unique.
+	 * 
+	 * @param string $username: username
+	 * 
+	 * @return boolean wether the username is valid or not.
+	 */
+	private function username_check($username){
+		if(strlen($username) > REGISTER_USERNAME_MAX_LENGTH) {
+			$this->error .= "Username must be less than " . REGISTER_USERNAME_MAX_LENGTH . " characters.\n";
 			return false;
 		}
 		
 		if($stmt = $this->Mysqli->prepare("SELECT username FROM members WHERE username = ? LIMIT 1")){
-			$stmt->bind_param('s', $this->username);
+			$stmt->bind_param('s', $username);
 			$stmt->execute();
-			$stmt->store_result();
-			if($stmt->num_rows == 1 && $this->_Option['Register']['Unique_Username']){
-				$this->errUserN .= "This username already exist! Please try again.\n";
+			// $stmt->store_result();
+			if($stmt->num_rows == 1){
+				$this->error .= "This username already exist! Please try again.\n";
 				return false;
 			} else
 				return true;
@@ -67,70 +46,94 @@ class Registration {
 		}
 	}
 	
-	private function pass_check(){
-		if($this->password != $this->passConfirm)
-			$this->errPass .= "Passwords do not math.\n";
-		else {
-			if(!preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/', $this->password)) {
-				$this->errPass = 'your password need a upper case letter (A-Z), one number (0-9), and one lower case letter (a-z).';
-				return false;
-			} else
-				return true;
+	/**
+	 * Checks if the password and passwordConf match, and if the password is contains
+	 * one upper-case, one lower-case, and one number. Also checks if the password
+	 * meets the REGISTER_PASSWORD_MIN_LENGTH requirement.
+	 * 
+	 * @param string $password: password
+	 * @param string $passwordConfirm: confirmation password
+	 * 
+	 * @return boolean wether the password passes all the requirements or not.
+	 */
+	private function pass_check($password, $passwordConfirm){
+		if (strlen($password) < REGISTER_PASSWORD_MIN_LENGTH) {					// check if password is min len
+			$this->error .= "Password must be a minimum length of " . REGISTER_PASSWORD_MIN_LENGTH . "\n"; // error password is less than min len
+			return false;
 		}
+		
+		if($password != $passwordConfirm) {										// check if passwords match
+			$this->error .= "Passwords do not math.\n";							// error passwords do not match
+			return false;
+		}
+		
+		if(!preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/', $password)) {	// check if password contains one uppercase, one lowercase, and one number
+			$this->error = 'your password need a upper case letter (A-Z), one number (0-9), and one lower case letter (a-z).';	// error does not contain regex
+			return false;
+		}
+		
+		return true;
 	}
 
-/* @name register
- * 
- * @param string user username 
- * @param string pass1 password
- * @param string pass2 confirmation password
- * @param string email users email
- * 
- * @return true if run well, false if there was a error.
- * 
- * @descripion registration function, checks all the user data, cleans it, verifies it, and makes it so only one email/username per user.
- */
-	public function register($user, $email, $pass1, $pass2){
-		if($this->_Option['Register']['Register_Allowed'] && ($this->_Option['Register']['Email'] || $this->_Option['Register']['Username'])){
-			if(isset($user, $email, $pass1, $pass2)){
-				$this->password = filter_var($pass1, FILTER_SANITIZE_STRING);
-				$this->passConfirm = filter_var($pass2, FILTER_SANITIZE_STRING);
-				
-				$this->email = filter_var($email, FILTER_SANITIZE_STRING);
-				$this->username = filter_var($user, FILTER_SANITIZE_STRING);
-				$user = $pass1 = $pass2 = $email = NULL;
-				
+// PUBLIC
+	/**
+	 * registration function, checks all the user data, cleans it, and verifies it.
+	 * 
+	 * @param string $user: username 
+	 * @param string $password: password
+	 * @param string $passwordConfirm: confirmation password
+	 * @param string $firstName: person's first name
+	 * @param string $lastName: person's last name
+	 * @param int	 $age: person's age
+	 * @param int	 $gender: person's gender
+	 * @param string $location: person's location
+	 * @param string $icon: icon file name (no file extension)
+	 * 
+	 * @return boolean true if run well else false if there was a error.
+	 */
+	public function register($username, $password, $passwordConfirm, $firstName, $lastName, $age, $gender, $location, $icon){
+		if (REGISTER_ALLOWED) {	// if registering is allowed
+			if (isset($username, $password, $confPassword, $firstName, $lastName, $age, $gender, $location, $icon)) {	// check if all fields filled
+				// Sanatize all the post data
+				$username = filter_var($username, FILTER_SANITIZE_STRING);
+				$password = filter_var($password, FILTER_SANITIZE_STRING);
+				$passwordConfirm = filter_var($passwordConfirm, FILTER_SANITIZE_STRING);
+				$firstName = filter_var($firstName, FILTER_SANITIZE_STRING);
+				$lastName = filter_var($lastName, FILTER_SANITIZE_STRING);
+				$age = filter_var($age, FILTER_SANITIZE_NUMBER_INT);
+				$gender = filter_var($gender, FILTER_SANITIZE_NUMBER_INT);
+				$location = filter_var($location, FILTER_SANITIZE_STRING);
+				$icon = filter_var($icon, FILTER_SANITIZE_STRING);
 		
-				if($this->email_check() || $this->username_check()){ //&& $this->pass_check()){
-					$pass = hash('sha512', $this->password);
-					$pass = password_hash($pass, PASSWORD_BCRYPT);
-					$this->password = $this->passConfirm = NULL;
+				if($this->username_check($username) && $this->pass_check($password, $passwordConfirm)){	// check if username is valid and unique, and if password is valid
+					$pass = password_hash($pass, PASSWORD_BCRYPT);										// hash password
+					$password = $passwordConfirm = NULL;												// free password and passwordConfirm
 					
-					if($stmt = $this->Mysqli->prepare("INSERT INTO members(username, email, password, last_login, date_created) VALUES(?, ?, ?, NOW(), NOW())")){
-						$stmt->bind_param('sss', $this->username, $this->email, $pass);
-						if(!$stmt->execute()){
-							$this->errAdd .= "Failed to connect to server. Try again.\n";
+					if($stmt = $this->Mysqli->prepare("INSERT INTO players(username, password, first_name, last_name, age, gender, location, icon) VALUES(?, ?, ?, ?, ?, ?, ?, ?)")){ // prepare mysqli insert query
+						$stmt->bind_param('ssssiiss', $username, $pass, $firstName, $lastName, $age, $gender, $location, $icon);	// bind params
+						if(!$stmt->execute()){															// if not execute
+							$this->error .= "Failed to connect to server. Try again.\n";				// error
 							return false;
 						} else
-							return true;
+							return true;																// succesfully registered
 					} else {
-						$this->errAdd .= "There was a error connecting to the server. Try again.\n";
+						$this->error .= "There was a error connecting to the server. Try again.\n";		// error preparing query
 						return false;
 					}
 				}
-			} else{
-				$this->errAdd .= "One or more field is empty\n";
+			} else {
+				$this->error .= "One or more field is empty\n";											// error not all fields filled out
 				return false;
 			}
 		} else {
-			$this->errAdd .= "Registration is not available at this time, please try again later.\n";
+			$this->error .= "Registration is not available at this time, please try again later.\n";
 			return false;
 		}
 	}
 
 	public function __destruct(){
-		$this->Mysqli->close();
-		$this->email = $this->passConfirm = $this->password = $this->username = $this->Mysqli = NULL;
+		$this->Mysqli->close();	// close mysqli connection
+		$this->Mysqli = NULL;	// free Mysqli
 	}
 }
 

@@ -8,12 +8,12 @@ class Login{
 	private $Mysqli;
 	
 // PUBLIC
-	public $err;
+	public $error;
 	
 	public function __construct() {
 		$this->Mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_SCHEME);
 		
-		$this->err = '';
+		$this->error = '';
 	}
 
 // PRIVATE
@@ -84,22 +84,21 @@ class Login{
 	public function run_login($u, $p){
 		if(LOGIN_ALLOWED){		
 			if (isset($u, $p)){
-				$u = filter_var($ue, FILTER_SANITIZE_STRING);
+				$u = filter_var($u, FILTER_SANITIZE_STRING);
 				$p = filter_var($p, FILTER_SANITIZE_STRING);
-				$ue = $p = null;
-				
+				$u = $p = null;
 				if($this->login($u, $p)) {
 					return true;
 				} else {
-					$this->err .= "Username or Password is incorrect.\n";
+					$this->error .= "Username or Password is incorrect.\n";
 					return false;
 				}
 			} else {
-				$this->err .= "Username or Password is empty.\n";
+				$this->error .= "Username or Password is empty.\n";
 				return false;
 			}
 		} else {
-			$this->err .= "Login is not Available at this time please try again later.\n";
+			$this->error .= "Login is not Available at this time please try again later.\n";
 			return false;
 		}
 	}
@@ -114,8 +113,6 @@ class Login{
 		} else	
 			return FALSE;
 	}
-	
-	
 	
 	public function __destruct(){
 		$this->Mysqli->close();
