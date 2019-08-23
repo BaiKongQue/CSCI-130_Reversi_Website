@@ -8,31 +8,31 @@
 </head>
 <body>
     <form action="login.post.php" method="POST" enctype="multipart/form-data">
-        <div><label for="username"><span>Username:</span><input type="text" name="username" placeholder="Username" /></label></div>
-        <div><label for="password"><span>Password:</span><input type="password" name="password" placeholder="Password" /></label></div>
-        <div><label for="confirm-password"><span>Confirm Password:</span><input type="password" name="confirm-password" placeholder="Confirm Password" /></label></div>
-        <div><label for="first-name"><span>First Name:</span><input type="text" name="first-name" placeholder="First Name" /></label></div>
-        <div><label for="last-name"><span>Last Name:</span><input type="text" name="last-name" placeholder="Last Name" /></label></div>
-        <div><label for="age"><span>Age:</span><input type="number" name="age" min="1" /></label></div>
+        <div><label for="username"><span>Username:</span><input type="text" name="username" placeholder="Username" required/></label></div>
+        <div><label for="password"><span>Password:</span><input type="password" name="password" placeholder="Password" required/></label></div>
+        <div><label for="confirm-password"><span>Confirm Password:</span><input type="password" name="confirm-password" placeholder="Confirm Password" required/></label></div>
+        <div><label for="first-name"><span>First Name:</span><input type="text" name="first-name" placeholder="First Name" required/></label></div>
+        <div><label for="last-name"><span>Last Name:</span><input type="text" name="last-name" placeholder="Last Name" required/></label></div>
+        <div><label for="age"><span>Age:</span><input type="number" name="age" min="1" value="1" required/></label></div>
         <div>
             <label for="gender">
                 <span>Gender:</span>
-                <select name="gender" id="gender">
+                <select name="gender" id="gender" required>
                     <option value="0">Boy</option>
                     <option value="1">Girl</option>
                     <option value="2">Other</option>
                 </select>
             </label>
         </div>
-        <div><label for="location"><span>Location:</span><input type="text" name="location" placeholder="Location" /></label></div>
+        <div><label for="location"><span>Location:</span><input type="text" name="location" placeholder="Location" required/></label></div>
         <div>
             <label for="icon">
                 <span>Icon:</span>
                 <input type="hidden" name="MAX_FILE_SIZE" value="30000" />
-                <input type="file" name="icon" placeholder="Icon Image" />
+                <input type="file" name="icon" placeholder="Icon Image" required/>
             </label>
         </div>
-        <div><input type="submit" name="sub" value="Login" /></div>
+        <div><input type="submit" name="sub" value="Register" /></div>
     </form>
 </body>
 </html>
