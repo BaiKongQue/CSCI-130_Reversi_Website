@@ -12,8 +12,15 @@ define("DB_SCHEME", "csci-130_project1");
  * Login Options *
  *****************/
 define("LOGIN_ALLOWED", true);      // if login system is on
-define("LOGIN_BRUTE_HOURS", 2);      // number of hours to wait if brute force
+define("LOGIN_BRUTE_HOURS", 2);     // number of hours to wait if brute force
 define("LOGIN_BRUTE_ATTMEMPT", 5);  // number of tries before account lock (0 for off)
+
+/********************
+ * Register Options *
+ ********************/
+define("REGISTER_ALLOWED", true);           // if registration is allowed
+define("REGISTER_USERNAME_MAX_LENGTH", 45); // Max length of username
+define("REGISTER_PASSWORD_MIN_LENGTH", 6);  // Min length of password
 
 /******************
  * Session Config *
