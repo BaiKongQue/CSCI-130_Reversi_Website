@@ -26,23 +26,23 @@ class Registration {
 	 * @return boolean wether the username is valid or not.
 	 */
 	private function username_check($username){
-		if(strlen($username) > REGISTER_USERNAME_MAX_LENGTH) {
-			$this->error .= "Username must be less than " . REGISTER_USERNAME_MAX_LENGTH . " characters.\n";
+		if(strlen($username) > REGISTER_USERNAME_MAX_LENGTH) {	// check if username is less than max len
+			$this->error .= "Username must be less than " . REGISTER_USERNAME_MAX_LENGTH . " characters.\n"; // error username is >= max len
 			return false;
 		}
 		
-		if($stmt = $this->Mysqli->prepare("SELECT username FROM members WHERE username = ? LIMIT 1")){
-			$stmt->bind_param('s', $username);
-			$stmt->execute();
+		if($stmt = $this->Mysqli->prepare("SELECT username FROM members WHERE username = ? LIMIT 1")){ // prepare select query to check if username exists
+			$stmt->bind_param('s', $username);					// bind params
+			$stmt->execute();									// execute
 			// $stmt->store_result();
-			if($stmt->num_rows == 1){
-				$this->error .= "This username already exist! Please try again.\n";
+			if($stmt->num_rows == 1){							// check if row exists
+				$this->error .= "This username already exist! Please try again.\n"; // error username exists
 				return false;
 			} else
 				return true;
 			
-			$stmt->free_result();
-			$stmt->close();
+			$stmt->free_result();								// free results
+			$stmt->close();										// close connection
 		}
 	}
 	
