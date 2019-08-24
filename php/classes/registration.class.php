@@ -30,19 +30,23 @@ class Registration {
 			$this->error .= "Username must be less than " . REGISTER_USERNAME_MAX_LENGTH . " characters.\n"; // error username is >= max len
 			return false;
 		}
-		
-		if($stmt = $this->Mysqli->prepare("SELECT LOWER(username) FROM members WHERE username = LOWER(?) LIMIT 1")){ // prepare select query to check if username exists
-			$stmt->bind_param('s', $username);					// bind params
-			$stmt->execute();									// execute
-			// $stmt->store_result();
-			if($stmt->num_rows == 1){							// check if row exists
-				$this->error .= "This username already exist! Please try again.\n"; // error username exists
+
+		if($stmt = $this->Mysqli->prepare("SELECT username FROM players WHERE username = ? LIMIT 1")){ // prepare select query to check if username exists
+			$stmt->bind_param('s', $username);						// bind params
+			$stmt->execute();										// execute
+			$stmt->store_result();									// store the results
+
+			if($stmt->num_rows == 1){								// check if row exists
+				$this->error .= "This username already exist!\n"; 	// error username exists
 				return false;
 			} else
-				return true;
+				return true;										// username dne, return true
 			
-			$stmt->free_result();								// free results
-			$stmt->close();										// close connection
+			$stmt->free_result();									// free results
+			$stmt->close();											// close connection
+		} else {
+			$this->error .= "Error reaching servers, please try again later.\n";
+			return false;
 		}
 	}
 	
@@ -68,7 +72,7 @@ class Registration {
 		}
 		
 		if(!preg_match('/(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}/', $password)) {	// check if password contains one uppercase, one lowercase, and one number
-			$this->error = 'your password need a upper case letter (A-Z), one number (0-9), and one lower case letter (a-z).';	// error does not contain regex
+			$this->error .= 'your password need a upper case letter (A-Z), one number (0-9), and one lower case letter (a-z).';	// error does not contain regex
 			return false;
 		}
 		
@@ -85,37 +89,36 @@ class Registration {
 	 * @param string $firstName: person's first name
 	 * @param string $lastName: person's last name
 	 * @param int	 $age: person's age
-	 * @param int	 $gender: person's gender
+	 * @param string $gender: person's gender
 	 * @param string $location: person's location
 	 * @param string $icon: icon file name (no file extension)
 	 * 
 	 * @return boolean true if run well else false if there was a error.
 	 */
-	public function register(string $username, string $password, string $passwordConfirm, string $firstName, string $lastName, int $age, int $gender, string $location, string $icon){
+	public function register(string $username, string $password, string $passwordConfirm, string $firstName, string $lastName, int $age, string $gender, string $location, string $icon){
 		if (REGISTER_ALLOWED) {	// if registering is allowed
-			if (isset($username, $password, $confPassword, $firstName, $lastName, $age, $gender, $location, $icon)) {	// check if all fields filled
+			if (isset($username, $password, $passwordConfirm, $firstName, $lastName, $age, $gender, $location, $icon)) {	// check if all fields filled
 				// Sanatize all the post data
 				$username = filter_var($username, FILTER_SANITIZE_STRING);
 				$password = filter_var($password, FILTER_SANITIZE_STRING);
 				$passwordConfirm = filter_var($passwordConfirm, FILTER_SANITIZE_STRING);
-				$firstName = ucfirst(filter_var($firstName, FILTER_SANITIZE_STRING));
-				$lastName = ucfirst(filter_var($lastName, FILTER_SANITIZE_STRING));
+				$firstName = ucfirst(strtolower(filter_var($firstName, FILTER_SANITIZE_STRING)));
+				$lastName = ucfirst(strtolower(filter_var($lastName, FILTER_SANITIZE_STRING)));
 				$age = filter_var($age, FILTER_SANITIZE_NUMBER_INT);
-				$gender = filter_var($gender, FILTER_SANITIZE_NUMBER_INT);
+				$gender = filter_var($gender, FILTER_SANITIZE_STRING);
 				$location = filter_var($location, FILTER_SANITIZE_STRING);
 				$icon = filter_var($icon, FILTER_SANITIZE_STRING);
-		
+
 				if($this->username_check($username) && $this->pass_check($password, $passwordConfirm)){	// check if username is valid and unique, and if password is valid
-					$pass = password_hash($password, PASSWORD_BCRYPT);										// hash password
+					$pass = password_hash($password, PASSWORD_BCRYPT);									// hash password
 					$password = $passwordConfirm = NULL;												// free password and passwordConfirm
-					
 					if($stmt = $this->Mysqli->prepare("INSERT INTO players(username, password, first_name, last_name, age, gender, location, icon) VALUES(?, ?, ?, ?, ?, ?, ?, ?)")){ // prepare mysqli insert query
-						$stmt->bind_param('ssssiiss', $username, $pass, $firstName, $lastName, $age, $gender, $location, $icon);	// bind params
+						$stmt->bind_param('ssssisss', $username, $pass, $firstName, $lastName, $age, $gender, $location, $icon);	// bind params
 						if(!$stmt->execute()){															// if not execute
 							$this->error .= "Failed to connect to server. Try again.\n";				// error
 							return false;
 						} else
-							return true;																// succesfully registered
+						return true;																	// succesfully registered
 					} else {
 						$this->error .= "There was a error connecting to the server. Try again.\n";		// error preparing query
 						return false;
@@ -126,7 +129,7 @@ class Registration {
 				return false;
 			}
 		} else {
-			$this->error .= "Registration is not available at this time, please try again later.\n";
+			$this->error .= "Registration is not available at this time, please try again later.\n";	// error preping query
 			return false;
 		}
 	}
