@@ -9,7 +9,6 @@ include_once $_SERVER["DOCUMENT_ROOT"] . "/php/classes/login.class.php";
  * processes POST data and attempts to log user in.
  * @return json {"result": booelan, "error"?: string}
  */
-
 $data = [];
 if (isset($_POST['sub'], $_POST['username'], $_POST['password'])) {
     $Login = new Login();
