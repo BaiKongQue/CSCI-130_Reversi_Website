@@ -19,7 +19,8 @@ class Login{
 // PRIVATE
 	
 	private function pass_check($userPassword, $dbPassword){
-		$pass = hash('sha512', $userPassword);
+		// $pass = hash('sha512', $userPassword);
+		$pass = $userPassword;
 		
 		if(password_verify($pass, $dbPassword) == TRUE){
 			if(password_needs_rehash($dbPassword, PASSWORD_BCRYPT)){
@@ -41,11 +42,12 @@ class Login{
 	}
 	
 	
-	private function login($userPassword, $username){		
-		if($stmt = $this->Mysqli->prepare("SELECT user_id, username, password, first_name, last_name, age, gender, location, icon FROM members WHERE username = ? LIMIT 1")){
+	private function login($username, $userPassword){
+		if($stmt = $this->Mysqli->prepare("SELECT user_id, username, password, first_name, last_name, age, gender, location, icon FROM players WHERE username = ? LIMIT 1")){
 			$stmt->bind_param('s', $username);
 			$stmt->execute();
-			if($stmt->num_rows != 1) return false;
+			$stmt->store_result();
+			if ($stmt->num_rows != 1) return false;
 			$stmt->bind_result($dbUserId, $dbUsername, $dbPassword, $dbFirstName, $dbLastName, $dbAge, $dbGender, $dbLocation, $dbIcon);
 			$stmt->fetch();
 			
@@ -67,9 +69,12 @@ class Login{
 			}
 
 			$stmt->free_result();
-			$stmt->close;
-		} else
-			return false;
+			$stmt->close();
+		} else {
+			$this->error .= "Error connecting to server!";
+		}
+		
+		return false;
 	}
 
 	private function update_last_login(){
@@ -86,13 +91,13 @@ class Login{
 			if (isset($u, $p)){
 				$u = filter_var($u, FILTER_SANITIZE_STRING);
 				$p = filter_var($p, FILTER_SANITIZE_STRING);
-				$u = $p = null;
 				if($this->login($u, $p)) {
 					return true;
 				} else {
 					$this->error .= "Username or Password is incorrect.\n";
 					return false;
 				}
+				$u = $p = null;
 			} else {
 				$this->error .= "Username or Password is empty.\n";
 				return false;
