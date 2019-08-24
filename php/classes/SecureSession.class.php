@@ -1,4 +1,6 @@
 <?php
+include_once $_SERVER['DOCUMENT_ROOT'] . "/config/definitions.php";
+
 function sec_session_start() {
 	if(session_status() == PHP_SESSION_NONE){		
 		$session_name = 'sec_session_id';
