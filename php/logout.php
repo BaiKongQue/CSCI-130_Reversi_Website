@@ -13,5 +13,6 @@ setcookie(session_name(),
 		 $params['httponly']);
 session_destroy();
 
-echo json_encode(["result" => true])
+header("LOCATION: ../index.html");
+// echo json_encode(["result" => true])
 ?>

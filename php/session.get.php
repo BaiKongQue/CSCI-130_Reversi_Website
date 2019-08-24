@@ -22,7 +22,7 @@ if (isset($_GET['data'])) {
         }
         $sessionData[$v] = $_SESSION[$v];
     }
-    if ($data['error'] != NULL) {
+    if (empty($data['error'])) {
         $data['result'] = $sessionData;
     }
 } else {
