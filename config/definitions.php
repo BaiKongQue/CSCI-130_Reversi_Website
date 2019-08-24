@@ -3,7 +3,7 @@
 /*******************
  * Database Config *
  *******************/
-define("DB_HOST", "127.0.0.1:3306");
+define("DB_HOST", "localhost:3306");
 define("DB_USERNAME", "root");
 define("DB_PASSWORD", "0Bdragon8712`");
 define("DB_SCHEME", "csci-130_project1");
@@ -33,5 +33,10 @@ define("SESSION_KEYS", ['user_id', 'username', 'first_name', 'last_name', 'age',
  * Enum String *
  ***************/
 define("ENUM_GENDER", ['boy', 'girl', 'other']);    // Gender: enum to string
+
+/***********************
+ * File Handle Options *
+ ***********************/
+define("FILE_UPLOAD_DIR", $_SERVER['DOCUMENT_ROOT'] . "/images/upload/users/");
 
 ?>

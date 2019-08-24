@@ -31,7 +31,7 @@ class Registration {
 			return false;
 		}
 		
-		if($stmt = $this->Mysqli->prepare("SELECT username FROM members WHERE username = ? LIMIT 1")){ // prepare select query to check if username exists
+		if($stmt = $this->Mysqli->prepare("SELECT LOWER(username) FROM members WHERE username = LOWER(?) LIMIT 1")){ // prepare select query to check if username exists
 			$stmt->bind_param('s', $username);					// bind params
 			$stmt->execute();									// execute
 			// $stmt->store_result();
@@ -91,22 +91,22 @@ class Registration {
 	 * 
 	 * @return boolean true if run well else false if there was a error.
 	 */
-	public function register($username, $password, $passwordConfirm, $firstName, $lastName, $age, $gender, $location, $icon){
+	public function register(string $username, string $password, string $passwordConfirm, string $firstName, string $lastName, int $age, int $gender, string $location, string $icon){
 		if (REGISTER_ALLOWED) {	// if registering is allowed
 			if (isset($username, $password, $confPassword, $firstName, $lastName, $age, $gender, $location, $icon)) {	// check if all fields filled
 				// Sanatize all the post data
 				$username = filter_var($username, FILTER_SANITIZE_STRING);
 				$password = filter_var($password, FILTER_SANITIZE_STRING);
 				$passwordConfirm = filter_var($passwordConfirm, FILTER_SANITIZE_STRING);
-				$firstName = filter_var($firstName, FILTER_SANITIZE_STRING);
-				$lastName = filter_var($lastName, FILTER_SANITIZE_STRING);
+				$firstName = ucfirst(filter_var($firstName, FILTER_SANITIZE_STRING));
+				$lastName = ucfirst(filter_var($lastName, FILTER_SANITIZE_STRING));
 				$age = filter_var($age, FILTER_SANITIZE_NUMBER_INT);
 				$gender = filter_var($gender, FILTER_SANITIZE_NUMBER_INT);
 				$location = filter_var($location, FILTER_SANITIZE_STRING);
 				$icon = filter_var($icon, FILTER_SANITIZE_STRING);
 		
 				if($this->username_check($username) && $this->pass_check($password, $passwordConfirm)){	// check if username is valid and unique, and if password is valid
-					$pass = password_hash($pass, PASSWORD_BCRYPT);										// hash password
+					$pass = password_hash($password, PASSWORD_BCRYPT);										// hash password
 					$password = $passwordConfirm = NULL;												// free password and passwordConfirm
 					
 					if($stmt = $this->Mysqli->prepare("INSERT INTO players(username, password, first_name, last_name, age, gender, location, icon) VALUES(?, ?, ?, ?, ?, ?, ?, ?)")){ // prepare mysqli insert query
