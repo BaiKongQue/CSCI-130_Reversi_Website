@@ -41,4 +41,11 @@ define("ENUM_GENDER", ['boy', 'girl', 'other']);    // Gender: enum to string
  ***********************/
 define("FILE_UPLOAD_DIR", $_SERVER['DOCUMENT_ROOT'] . "/images/uploads/users/");
 
+
+/**********************
+ * Game Configuration *
+ **********************/
+define("GAME_TILE_NONE", 0);
+define("GAME_TILE_PLAYER1", 1);
+define("GAME_TILE_PLAYER2", 2);
 ?>

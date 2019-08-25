@@ -17,7 +17,7 @@ class Login{
 	}
 
 // PRIVATE
-	private function pass_check($userPassword, $dbPassword){
+	private function pass_check(string $userPassword, string $dbPassword){
 		// $pass = hash('sha512', $userPassword);
 		$pass = $userPassword;
 		
@@ -71,6 +71,7 @@ class Login{
 			$stmt->close();
 		} else {
 			$this->error .= "Error connecting to server!";
+			$this->error = $this->Mysqli->error;
 		}
 		
 		return false;
