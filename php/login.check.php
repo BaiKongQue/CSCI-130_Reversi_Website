@@ -1,7 +1,12 @@
 <?php
 include_once "./classes/login.class.php";
 
-$Login = new Login();
-echo json_decode(["result" => $Login->login_check()]);
+/**
+ * Sends if the person is currently logged in or not.
+ * 
+ * @return json {"result": boolean}
+ */
+$Login = new Login();                                   // set login
+echo json_encode(["result" => $Login->login_check()]);  // return if logged in
 
 ?>

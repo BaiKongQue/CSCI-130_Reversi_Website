@@ -17,7 +17,6 @@ class Login{
 	}
 
 // PRIVATE
-	
 	private function pass_check($userPassword, $dbPassword){
 		// $pass = hash('sha512', $userPassword);
 		$pass = $userPassword;
@@ -110,7 +109,7 @@ class Login{
 	
 	public function login_check() {
 		if(isset($_SESSION['user_id'], $_SESSION['login_string']) && session_status() == PHP_SESSION_ACTIVE){
-			$login_stringH = hash('sha512', $_SESSION['user_id'] . $_SESSION['username'] . $_SESSION['acc_type'] . $_SERVER['HTTP_USER_AGENT']);
+			$login_stringH = hash('sha512', $_SESSION['user_id'] . $_SESSION['username'] . $_SERVER['HTTP_USER_AGENT']);
 			if($_SESSION['login_string'] == $login_stringH) 
 				return TRUE; 
 			else

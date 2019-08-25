@@ -11,23 +11,23 @@ include_once "./classes/SecureSession.class.php";
  * @return json {"result": [session data], "error"?: string}
  */
 
-$data = [];
-if (isset($_GET['data'])) {
-    sec_session_start();
-    $sessionData = [];
-    foreach (explode(",", $_GET['data']) as $v) {
-        if (!in_array($v, SESSION_KEYS)) {
-            $data['error'] = "Error Processing request";
+$data = [];                                                 // start data array
+if (isset($_GET['data'])) {                                 // if GET data is set
+    sec_session_start();                                    // start session
+    $sessionData = [];                                      // hold session data
+    foreach (explode(",", $_GET['data']) as $v) {           // foreach data
+        if (!in_array($v, $_SESSION)) {                     // if not in session
+            $data['error'] = "Error Processing request";    // error to data
             break;
         }
-        $sessionData[$v] = $_SESSION[$v];
+        $sessionData[$v] = $_SESSION[$v];                   // add to session data
     }
-    if (empty($data['error'])) {
-        $data['result'] = $sessionData;
+    if (empty($data['error'])) {                            // if no errors
+        $data['result'] = $sessionData;                     // add session data to result
     }
 } else {
-    $data['error'] = "Error processing request.";
+    $data['error'] = "Error processing request.";           // error processing
 }
 
-echo json_encode($data)
+echo json_encode($data);                                    // send data
 ?>
