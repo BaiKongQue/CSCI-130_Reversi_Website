@@ -1,27 +1,26 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'] . "/config/definitions.php";
 
+/**
+ * Starts a secure session to use.
+ */
 function sec_session_start() {
-	if(session_status() == PHP_SESSION_NONE){		
-		$session_name = 'sec_session_id';
-		$secure = SESSION_SECURE;
-		$httponly = true;
-		
-		if (ini_set('session.use_only_cookies', 1) === FALSE){
-			header("Location: ./error.php?err=could not initiate a safe session (ini_set)");
-			exit();
+	if(session_status() == PHP_SESSION_NONE){								// if there is no session
+		if (ini_set('session.use_only_cookies', 1) === FALSE){				// if allowed to use cookies
+			header("Location: ./error.php?err=could not initiate a safe session (ini_set)"); // relocate to error page
+			exit();															// exit function
 		}
 		
-		$cookieParams = session_get_cookie_params();
-		$lifetime = (SESSION_LIFE <= FALSE)? $cookieParams['lifetime'] : SESSION_LIFE;
-		session_set_cookie_params($lifetime,
-			$cookieParams['path'],
-			$cookieParams['domain'],
-			$secure,
-			$httponly);
-		session_name($session_name);
-		session_start();
-		session_regenerate_id();
+		$cookieParams = session_get_cookie_params();						// get the cookie params
+		session_set_cookie_params(											// set cookie params
+			(SESSION_LIFE <= 0)? $cookieParams['lifetime'] : SESSION_LIFE,	// session life
+			$cookieParams['path'],											// path
+			$cookieParams['domain'],										// domain
+			SESSION_SECURE,													// if secure
+			SESSION_HTTP_ONLY);												// only http
+		session_name(SESSION_NAME);											// name of session
+		session_start();													// start session
+		session_regenerate_id();											// regenerate id
 	}
 }
 ?>
