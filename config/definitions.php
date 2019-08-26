@@ -29,7 +29,7 @@ define("SESSION_NAME", "sec_session_id");   // session name
 define("SESSION_LIFE", 0);                  // lifetime of the session (hrs)
 define("SESSION_SECURE", false);            // wether the session is secure or not (false for debug)
 define("SESSION_HTTP_ONLY", true);          // only http protocol
-define("SESSION_KEYS", ['user_id', 'username', 'first_name', 'last_name', 'age', 'gender', 'location', 'icon', 'login_string']);
+define("SESSION_KEYS", ['player_id', 'username', 'first_name', 'last_name', 'age', 'gender', 'location', 'icon', 'login_string']);
 
 /***************
  * Enum String *

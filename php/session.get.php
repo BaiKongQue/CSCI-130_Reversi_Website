@@ -16,7 +16,7 @@ if (isset($_GET['data'])) {                                 // if GET data is se
     sec_session_start();                                    // start session
     $sessionData = [];                                      // hold session data
     foreach (explode(",", $_GET['data']) as $v) {           // foreach data
-        if (!in_array($v, $_SESSION)) {                     // if not in session
+        if (!isset($_SESSION[$v])) {                     // if not in session
             $data['error'] = "Error Processing request";    // error to data
             break;
         }
