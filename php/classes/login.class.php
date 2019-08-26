@@ -24,8 +24,8 @@ class Login{
 		if(password_verify($pass, $dbPassword) == TRUE){
 			if(password_needs_rehash($dbPassword, PASSWORD_BCRYPT)){
 				$npass = password_hash($pass, PASSWORD_BCRYPT);
-				if($uu = $this->Mysqli->prepare("UPDATE members SET password = ? WHERE user_id = ? AND username = ?")){
-					$uu->bind_param('sis', $npass, $this->user_id, $this->username);
+				if($uu = $this->Mysqli->prepare("UPDATE members SET password = ? WHERE player_id = ? AND username = ?")){
+					$uu->bind_param('sis', $npass, $this->player_id, $this->username);
 					$uu->execute();
 					
 					// return true;
@@ -42,7 +42,7 @@ class Login{
 	
 	
 	private function login($username, $userPassword){
-		if($stmt = $this->Mysqli->prepare("SELECT user_id, username, password, first_name, last_name, age, gender, location, icon FROM players WHERE username = ? LIMIT 1")){
+		if($stmt = $this->Mysqli->prepare("SELECT player_id, username, password, first_name, last_name, age, gender, location, icon FROM players WHERE username = ? LIMIT 1")){
 			$stmt->bind_param('s', $username);
 			$stmt->execute();
 			$stmt->store_result();
@@ -52,9 +52,9 @@ class Login{
 			
 			if ($this->pass_check($userPassword, $dbPassword)) {
 				// set session
-				$user_id = preg_replace("/[^0-9]+/", "", $dbUserId);
+				$player_id = preg_replace("/[^0-9]+/", "", $dbUserId);
 		
-				$_SESSION['user_id'] = $user_id;
+				$_SESSION['player_id'] = $player_id;
 				$_SESSION['username'] = $dbUsername;
 				$_SESSION['first_name'] = $dbFirstName;
 				$_SESSION['last_name'] = $dbLastName;
@@ -62,7 +62,7 @@ class Login{
 				$_SESSION['gender'] = $dbGender;
 				$_SESSION['location'] = $dbLocation;
 				$_SESSION['icon'] = $dbIcon;
-				$_SESSION['login_string'] = hash('sha512', $user_id . $username . $_SERVER['HTTP_USER_AGENT']);
+				$_SESSION['login_string'] = hash('sha512', $player_id . $username . $_SERVER['HTTP_USER_AGENT']);
 				
 				return true;
 			}
@@ -75,14 +75,6 @@ class Login{
 		}
 		
 		return false;
-	}
-
-	private function update_last_login(){
-		if($stmt = $this->Mysqli->prepare("UPDATE members SET last_login = NOW() WHERE user_id = ?")){
-			$stmt->bind_param('s', $this->user_id);
-			if($stmt->execute())
-				$stmt->close();
-		}
 	}
 
 // PUBLIC
@@ -109,8 +101,8 @@ class Login{
 	}
 	
 	public function login_check() {
-		if(isset($_SESSION['user_id'], $_SESSION['login_string']) && session_status() == PHP_SESSION_ACTIVE){
-			$login_stringH = hash('sha512', $_SESSION['user_id'] . $_SESSION['username'] . $_SERVER['HTTP_USER_AGENT']);
+		if(isset($_SESSION['player_id'], $_SESSION['login_string']) && session_status() == PHP_SESSION_ACTIVE){
+			$login_stringH = hash('sha512', $_SESSION['player_id'] . $_SESSION['username'] . $_SERVER['HTTP_USER_AGENT']);
 			if($_SESSION['login_string'] == $login_stringH) 
 				return TRUE; 
 			else
@@ -121,7 +113,7 @@ class Login{
 	
 	public function __destruct(){
 		$this->Mysqli->close();
-		$this->password = $this->username = $this->user_id = $this->Mysqli = null;
+		$this->password = $this->username = $this->player_id = $this->Mysqli = null;
 	}
 }
 

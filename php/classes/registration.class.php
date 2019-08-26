@@ -106,7 +106,7 @@ class Registration {
 				$lastName = ucfirst(strtolower(filter_var($lastName, FILTER_SANITIZE_STRING)));
 				$age = filter_var($age, FILTER_SANITIZE_NUMBER_INT);
 				$gender = filter_var($gender, FILTER_SANITIZE_STRING);
-				$location = filter_var($location, FILTER_SANITIZE_STRING);
+				$location = ucwords(strtolower(filter_var($location, FILTER_SANITIZE_STRING)));
 				$icon = filter_var($icon, FILTER_SANITIZE_STRING);
 
 				if($this->username_check($username) && $this->pass_check($password, $passwordConfirm)){	// check if username is valid and unique, and if password is valid
