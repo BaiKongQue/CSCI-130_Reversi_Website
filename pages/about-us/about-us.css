@@ -1,0 +1,50 @@
+* {
+    margin:  0;
+    padding: 0;
+}
+
+body {
+    height: 1000px;
+}
+
+.space-even {
+    display: flex;
+    justify-content: space-around;
+}
+
+.image-container {
+    width: 700px;
+    height: 325px;
+    margin: 75px auto 3px auto;
+}
+
+.image-box {
+    width: 250px;
+    height: 250px;
+    border: 1px solid black;
+    border-radius: 20%;
+    margin: auto;
+}
+
+.text-container{
+    width: 700px;
+    height: 25px;
+    margin: auto;
+}
+
+.description-container {
+    width: auto;
+    height: auto;
+}
+
+.nav-button {
+    width: 40px;
+    height: 40px;
+    position: fixed;
+    top: 40px;
+    right: 40px;
+    cursor: pointer;
+    border-radius: 50%;
+    border: none;
+    border: 1px solid #000;
+}
