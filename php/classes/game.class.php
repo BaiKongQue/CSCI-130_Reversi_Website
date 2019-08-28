@@ -52,6 +52,11 @@ class Game {
      * @return int: converted i to Y coordinate
      */
     private function convert_to_y_2D(int $size, int $i): int { return $y % $size; }
+
+    /**
+     * Retrieves what the new score will be.
+     * 
+     */
     private function get_new_score(): int {
         
     }
@@ -63,37 +68,36 @@ class Game {
 // PUBLIC
     /**
      * create a new game and add it to the database
-     * 
      * @param int $size: size of the game grid
      * @return boolean: if the game was successfully created
      */
     public function create_game(int $size): boolean {
-        if ($this->Login->login_check()) {                                              // check if user is logged in
+        $size = filter_var($size, FILTER_SANITIZE_NUMBER_INT);  // sanitize the input
+        if ($this->Login->login_check()) {                      // check if user is logged in
             // create initial grid
-            $grid = array_fill(0, $size * $size, 0);                                    // create game grid array
-            $half = intdiv($size, 2) - 1;                                               // get middle of board
-            $grid[$this->convert_to_1D($size, $half, $half)] = GAME_TILE_PLAYER1;       // player 1 tile
-            $grid[$this->convert_to_1D($size, $half+1, $half+1)] = GAME_TILE_PLAYER1;   // player 1 tile
-            $grid[$this->convert_to_1D($size, $half, $half+1)] = GAME_TILE_PLAYER2;     // player 2 tile
-            $grid[$this->convert_to_1D($size, $half+1, $half)] = GAME_TILE_PLAYER2;     // player 2 tile
+            $grid = array_fill(0, $size * $size, 0);            // create game grid array
+            $half = intdiv($size, 2) - 1;                       // get middle of board
+            $grid[$half] = GAME_TILE_PLAYER1;                   // player 1 tile
+            $grid[$half + 1 + $size] = GAME_TILE_PLAYER1;       // player 1 tile
+            $grid[$half + 1] = GAME_TILE_PLAYER2;               // player 2 tile
+            $grid[$half + $size] = GAME_TILE_PLAYER2;           // player 2 tile
             if ($stmt = $this->Mysqli->prepare("INSERT INTO games(player1_id, player1_score, start_time, data, player_turn) VALUES(?,?,?, NOW(), ?)")) {
                 $stmt->bind_param('iisi', $_SESSION['player_id'], 0, $grid, $_SESSION['player_id']); // bind params
-                if ($stmt->execute()) {                                                 // execute query
-                    return true;                                                        // successfully created game
+                if ($stmt->execute()) {                         // execute query
+                    return true;                                // successfully created game
                 } else {
                     $this->error .= "Failed to create new game, please try again later.\n"; // error failed to connect to db
                     return false;
                 }
             }
         } else {
-            $this->error .= "You are not logged in!\n";                                 //  error user is not logged in
+            $this->error .= "You are not logged in!\n";        //  error user is not logged in
             return false;
         }
     }
 
     /**
      * Retrieve the game data of specified game id.
-     * 
      * @param int $gameId: id of the game
      * @return {
      *      game_id: int,
@@ -113,13 +117,13 @@ class Game {
                     $stmt->bind_result($player1_id, $player2_id, $start_time, $player1_score, $player2_score, $data);
                     $stmt->fetch();                         // fetch row
                     return [                                // return array
-                        'game_id' => $gameId,
-                        'player1_id' => $player1_id,
-                        'player2_id' => $player2_id,
-                        'start_time' => $start_time,
-                        'player1_score' => $player1_score,
-                        'player2_score' => $player2_score,
-                        'data' => $data
+                        'game_id' => $gameId,               // game id
+                        'player1_id' => $player1_id,        // player1 id
+                        'player2_id' => $player2_id,        // player2 id
+                        'start_time' => $start_time,        // start time
+                        'player1_score' => $player1_score,  // player1 score
+                        'player2_score' => $player2_score,  // player2 score
+                        'data' => $data                     // game grid data
                     ];
                 } else {
                     $this->error .= "Error connecting to the server try again later.\n";    // error processing request
@@ -137,7 +141,6 @@ class Game {
     /**
      * Retrieves a query of all the scores and people that have completed a game. Can change Sort,
      * Order and who to search for with limit input.
-     * 
      * @param string $firstName: person's first name to look for, NULL for everyone.
      * @param string $lastName: person's last name to look for, NULL for everyone.
      * @param string $sortBy: attribute to sort by (first_name, last_name, score, duration)

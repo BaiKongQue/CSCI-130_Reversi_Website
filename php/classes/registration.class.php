@@ -20,9 +20,7 @@ class Registration {
 	/**
 	 * Checks if the username meets the REGISTER_USERNAME_MAX_LENGTH requirement and
 	 * if the username is unique.
-	 * 
 	 * @param string $username: username
-	 * 
 	 * @return boolean wether the username is valid or not.
 	 */
 	private function username_check($username){
@@ -54,10 +52,8 @@ class Registration {
 	 * Checks if the password and passwordConf match, and if the password is contains
 	 * one upper-case, one lower-case, and one number. Also checks if the password
 	 * meets the REGISTER_PASSWORD_MIN_LENGTH requirement.
-	 * 
 	 * @param string $password: password
 	 * @param string $passwordConfirm: confirmation password
-	 * 
 	 * @return boolean wether the password passes all the requirements or not.
 	 */
 	private function pass_check($password, $passwordConfirm){
@@ -82,7 +78,6 @@ class Registration {
 // PUBLIC
 	/**
 	 * registration function, checks all the user data, cleans it, and verifies it.
-	 * 
 	 * @param string $user: username 
 	 * @param string $password: password
 	 * @param string $passwordConfirm: confirmation password
@@ -92,7 +87,6 @@ class Registration {
 	 * @param string $gender: person's gender
 	 * @param string $location: person's location
 	 * @param string $icon: icon file name (no file extension)
-	 * 
 	 * @return boolean true if run well else false if there was a error.
 	 */
 	public function register(string $username, string $password, string $passwordConfirm, string $firstName, string $lastName, int $age, string $gender, string $location, string $icon){
