@@ -67,13 +67,26 @@ class Game {
 
 // PUBLIC
     /**
+     * Calculate the size of the game grid from the data.
+     * @param array $grid: game grid data
+     * @return int: size of the grid.
+     */
+    public function get_grid_size(array $grid): int { return sqrt(count($grid)); }
+
+    /**
      * create a new game and add it to the database
      * @param int $size: size of the game grid
+     * @param string $vs: who the player is versing
+     * @param string $difficulty: if vs is computer how difficult the computer is
      * @return boolean: if the game was successfully created
      */
-    public function create_game(int $size): boolean {
-        $size = filter_var($size, FILTER_SANITIZE_NUMBER_INT);  // sanitize the input
+    public function create_game(int $size, string $vs, string $difficulty): boolean {
         if ($this->Login->login_check()) {                      // check if user is logged in
+            // sanitize inputs
+            $size = filter_var($size, FILTER_SANITIZE_NUMBER_INT);  // sanitize the input
+            $vs = filter_var($vs, FILTER_SANITIZE_STRING);
+            $difficulty = filter_var($difficulty, FILTER_SANITIZE_STRING);
+
             // create initial grid
             $grid = array_fill(0, $size * $size, 0);            // create game grid array
             $half = intdiv($size, 2) - 1;                       // get middle of board
@@ -81,6 +94,7 @@ class Game {
             $grid[$half + 1 + $size] = GAME_TILE_PLAYER1;       // player 1 tile
             $grid[$half + 1] = GAME_TILE_PLAYER2;               // player 2 tile
             $grid[$half + $size] = GAME_TILE_PLAYER2;           // player 2 tile
+
             if ($stmt = $this->Mysqli->prepare("INSERT INTO games(player1_id, player1_score, start_time, data, player_turn) VALUES(?,?,?, NOW(), ?)")) {
                 $stmt->bind_param('iisi', $_SESSION['player_id'], 0, $grid, $_SESSION['player_id']); // bind params
                 if ($stmt->execute()) {                         // execute query
