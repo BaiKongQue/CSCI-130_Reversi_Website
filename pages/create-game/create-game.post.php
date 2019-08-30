@@ -12,7 +12,7 @@ $data = [];
 if (isset($_POST['sub'], $_POST['size'], $_POST['vs'])) {
     if ($_POST['vs'] == "player" || ($_POST['vs'] == "computer" && isset($_POST['difficulty']))) {
         $Game = new Game();
-        if ($Game->create_game($_POST['size'], $_POST['vs'], $_POST['difficulty'])) {
+        if ($Game->create_game($_POST['size'], ($_POST['vs'] == 'computer' ? $_POST['difficulty'] : NULL))) {
             $data['result'] = true;
         } else {
             $data['error'] = $Game->error;
