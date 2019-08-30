@@ -21,7 +21,7 @@ class Registration {
 	 * Checks if the username meets the REGISTER_USERNAME_MAX_LENGTH requirement and
 	 * if the username is unique.
 	 * @param string $username: username
-	 * @return boolean wether the username is valid or not.
+	 * @return bool wether the username is valid or not.
 	 */
 	private function username_check($username){
 		if(strlen($username) > REGISTER_USERNAME_MAX_LENGTH) {	// check if username is less than max len
@@ -54,7 +54,7 @@ class Registration {
 	 * meets the REGISTER_PASSWORD_MIN_LENGTH requirement.
 	 * @param string $password: password
 	 * @param string $passwordConfirm: confirmation password
-	 * @return boolean wether the password passes all the requirements or not.
+	 * @return bool wether the password passes all the requirements or not.
 	 */
 	private function pass_check($password, $passwordConfirm){
 		if (strlen($password) < REGISTER_PASSWORD_MIN_LENGTH) {					// check if password is min len
@@ -87,7 +87,7 @@ class Registration {
 	 * @param string $gender: person's gender
 	 * @param string $location: person's location
 	 * @param string $icon: icon file name (no file extension)
-	 * @return boolean true if run well else false if there was a error.
+	 * @return bool true if run well else false if there was a error.
 	 */
 	public function register(string $username, string $password, string $passwordConfirm, string $firstName, string $lastName, int $age, string $gender, string $location, string $icon){
 		if (REGISTER_ALLOWED) {	// if registering is allowed

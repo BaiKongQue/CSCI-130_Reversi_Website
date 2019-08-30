@@ -61,7 +61,7 @@ class Game {
         
     }
 
-    private function can_move(array $data, int $moveX, int $moveY): boolean {
+    private function can_move(array $data, int $moveX, int $moveY): bool {
         return false;
     }
 
@@ -78,34 +78,39 @@ class Game {
      * @param int $size: size of the game grid
      * @param string $vs: who the player is versing
      * @param string $difficulty: if vs is computer how difficult the computer is
-     * @return boolean: if the game was successfully created
+     * @return bool: if the game was successfully created
      */
-    public function create_game(int $size, string $vs, string $difficulty): boolean {
-        if ($this->Login->login_check()) {                      // check if user is logged in
+    public function create_game(int $size, string $difficulty = NULL): bool {
+        if ($this->Login->login_check()) {                          // check if user is logged in
             // sanitize inputs
             $size = filter_var($size, FILTER_SANITIZE_NUMBER_INT);  // sanitize the input
-            $vs = filter_var($vs, FILTER_SANITIZE_STRING);
-            $difficulty = filter_var($difficulty, FILTER_SANITIZE_STRING);
+            // $vs = filter_var($vs, FILTER_SANITIZE_STRING);
+            if ($difficulty != NULL)  $difficulty = filter_var($difficulty, FILTER_SANITIZE_STRING);
 
             // create initial grid
-            $grid = array_fill(0, $size * $size, 0);            // create game grid array
-            $half = intdiv($size, 2) - 1;                       // get middle of board
-            $grid[$half] = GAME_TILE_PLAYER1;                   // player 1 tile
-            $grid[$half + 1 + $size] = GAME_TILE_PLAYER1;       // player 1 tile
-            $grid[$half + 1] = GAME_TILE_PLAYER2;               // player 2 tile
-            $grid[$half + $size] = GAME_TILE_PLAYER2;           // player 2 tile
-
-            if ($stmt = $this->Mysqli->prepare("INSERT INTO games(player1_id, player1_score, start_time, data, player_turn) VALUES(?,?,?, NOW(), ?)")) {
-                $stmt->bind_param('iisi', $_SESSION['player_id'], 0, $grid, $_SESSION['player_id']); // bind params
-                if ($stmt->execute()) {                         // execute query
-                    return true;                                // successfully created game
+            $sizeSqr = $size*$size;
+            $grid = array_fill(0, $sizeSqr, 0);                     // create game grid array
+            $half = intdiv($sizeSqr, 2) - 1;                        // get middle of board
+            $grid[$half] = GAME_TILE_PLAYER1;                       // player 1 tile
+            $grid[$half + 1 + $size] = GAME_TILE_PLAYER1;           // player 1 tile
+            $grid[$half + 1] = GAME_TILE_PLAYER2;                   // player 2 tile
+            $grid[$half + $size] = GAME_TILE_PLAYER2;               // player 2 tile
+            $grid = json_encode($grid);                             // turn array into json string
+            $sizeSqr = NULL;                                        // clear var
+            if ($stmt = $this->Mysqli->prepare("INSERT INTO games(player1_id, player1_score, data, player_turn".($difficulty != NULL ? ", player2_id, player2_score" : "") .", start_time) VALUES('".$_SESSION['player_id']."',0,'$grid','".$_SESSION['player_id']."'".($difficulty != NULL ? ", ".AI_DIFFICULTY_ID[$difficulty].", 0" : "") .",NOW())")) {
+                if ($stmt->execute()) {                             // execute query
+                    return true;                                    // successfully created game
                 } else {
                     $this->error .= "Failed to create new game, please try again later.\n"; // error failed to connect to db
                     return false;
                 }
+            } else {
+                $this->error .= "Error connecting to server, try again later.\n";
+                $this->error = $this->Mysqli->error;
+                return false;
             }
         } else {
-            $this->error .= "You are not logged in!\n";        //  error user is not logged in
+            $this->error .= "You are not logged in!\n";             //  error user is not logged in
             return false;
         }
     }
@@ -161,22 +166,25 @@ class Game {
      * @param string $orderBy: order to sort by (ASC, DESC)
      * @return {first_name: string, last_name: string, score: int, duration: Time}[]: a list of score data.
      */
-    public function get_scores(string $firstName = NULL, string $lastName = NULL, string $sortBy = "score", string $orderBy = "DESC"): array {
+    public function get_scores(string $firstName = NULL, string $lastName = NULL, bool $includeAI = false, string $sortBy = "score", string $orderBy = "DESC"): array {
         $selection = "";                                                            // set selection
         if ($firstName != NULL || $lastName != NULL) {                              // if first name or last name isnt null
             $selection .= "WHERE ";                                                 // add WHERE
             if ($firstName != NULL) {                                               // if first name not null
                 $firstName = filter_var($firstName, FILTER_SANITIZE_STRING);        // sanitize string
                 $selection .= "p.first_name = '$firstName'";                        // add firstname to query
-                if ($lastName != NULL) $selection .= "AND ";                        // if lastname is not null add AND
+                if ($lastName != NULL || $includeAI) $selection .= "AND ";                        // if lastname is not null add AND
             }
             if ($lastName != NULL) {                                                // if last name is not null
                 $lastName = filter_var($lastName, FILTER_SANITIZE_STRING);          // sanitize string
                 $selection .= "p.last_name = '$lastName'";                          // add lastname to query
+                if ($includeAI) $selection .= "AND ";
+            }
+            if ($includeAI) {
+                $selection .= "p.player_id > 0";
             }
         }
-        if ($stmt = $this->Mysqli->prepare("SELECT p.first_name, p.last_name, g.score, TIMEDIFF(g.end_time, g.start_time) duration FROM (SELECT player1_id player_id, player1_score score, start_time, end_time FROM games UNION SELECT player2_id player_id, player2_score score, start_time, end_time FROM games) g LEFT JOIN players p USING(player_id) " . $selection . " ORDER BY ? ?")) {
-            $stmt->bind_param('ss', $sortBy, $orderBy);
+        if ($stmt = $this->Mysqli->prepare("SELECT p.first_name, p.last_name, g.score, TIMEDIFF(g.end_time, g.start_time) duration FROM (SELECT player1_id player_id, player1_score score, start_time, end_time FROM games UNION SELECT player2_id player_id, player2_score score, start_time, end_time FROM games) g LEFT JOIN players p USING(player_id) $selection ORDER BY $sortBy $orderBy")) {
             $stmt->execute();                                                       // run prepared query
             $stmt->bind_result($dbFirstName, $dbLastName, $dbScore, $dbDuration);   // bind results
             $res = [];                                                              // init res array
@@ -192,6 +200,7 @@ class Game {
             $stmt->free_result();                                                   // free results
             $stmt->close();                                                         // close connection
         } else {
+            echo 1;
             $this->error .= "there was an error connecting to the server, try again later.\n"; // error preparing query
             return false;
         }
