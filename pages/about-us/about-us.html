@@ -1,15 +1,30 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="utf-8">
         <title></title>
+        <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="about-us.css">
     </head>
     
     <body>
-        <button class="nav-button"> </button>
-        
+        <div id="nav-container">
+            <button id="nav-button" onclick="popNav()"> </button>
+            <div id="nav-list"> 
+                <ul style="list-style: none"> 
+                    <li class="nav-text"> 
+                        <a href="about-us.html"> Home </a>
+                    </li>
+                    <li class="nav-text"> 
+                        <a href="creating-game.html"> Creating Game </a> 
+                    </li>
+                    <li class="nav-text">
+                        <a href="instruction.html"> How to Play </a> 
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <div class="image-container space-even">
             <div class="image-box"></div>
             <div class="image-box"></div>
@@ -19,6 +34,7 @@
             <div> Lee Perkin </div>
             <div> Khai Pham </div>
         </div>
-    </body>
 
+        <script src="about-us.js"> </script>
+    </body>
 </html>

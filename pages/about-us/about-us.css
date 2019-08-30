@@ -2,9 +2,13 @@
     margin:  0;
     padding: 0;
 }
+a {
+    text-decoration: none;
+}
 
 body {
-    height: 1000px;
+    background-image: url("/images/background.jpg");
+    background-size: cover;
 }
 
 .space-even {
@@ -15,7 +19,7 @@ body {
 .image-container {
     width: 700px;
     height: 325px;
-    margin: 75px auto 3px auto;
+    margin: 0px auto 0px auto;
 }
 
 .image-box {
@@ -32,19 +36,39 @@ body {
     margin: auto;
 }
 
-.description-container {
+/*.description-container {
     width: auto;
     height: auto;
+}*/
+
+#nav-container {
+    height: 100%;
+    position: fixed;
+    right: 0px;
+    display: flex;
 }
 
-.nav-button {
+#nav-button {
     width: 40px;
     height: 40px;
-    position: fixed;
-    top: 40px;
-    right: 40px;
     cursor: pointer;
-    border-radius: 50%;
-    border: none;
-    border: 1px solid #000;
+    border-radius: 20%;
+    border: 1px solid black;
+    margin: 20px 20px 0px 0px;
+    outline: none;
+}
+
+#nav-list {
+    width: 0;
+    height: 100%;
+    background-color: white;
+    transition: 0.5s;
+}
+
+.nav-text {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: clip;
+    text-align: center;
+    margin: 30px 0px 30px 0px;
 }
