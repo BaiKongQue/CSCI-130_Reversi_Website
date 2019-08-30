@@ -48,4 +48,11 @@ define("FILE_UPLOAD_DIR", $_SERVER['DOCUMENT_ROOT'] . "/images/uploads/users/");
 define("GAME_TILE_NONE", 0);
 define("GAME_TILE_PLAYER1", 1);
 define("GAME_TILE_PLAYER2", 2);
+
+/*********************
+ * AI Configurations *
+ *********************/
+define("AI_EASY_ID", -1);
+define("AI_HARD_ID", -2);
+define("AI_DIFFICULTY_ID", ['easy' => AI_EASY_ID, 'hard' => AI_HARD_ID]);
 ?>
