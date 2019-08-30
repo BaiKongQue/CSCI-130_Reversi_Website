@@ -5,6 +5,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/php/classes/game.class.php';
  * GET:
  *  first_name
  *  last_name
+ *  include_ai
  *  sort
  *  order
  * 
@@ -17,12 +18,16 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/php/classes/game.class.php';
  * @param string order: how to order the result (ASC, DESC)
  * @return json {first_name: string, last_name: string, score: int, duration: Time}[] an array of objects holding leaderboard data
  */
-
+$data = [];
 $Game = new Game();                                             // create new Game
-echo json_encode($Game->get_scores(                             // encode into json result
+$data['result'] = $Game->get_scores(                             // encode into json result
     (isset($_GET['first_name'])) ? $_GET['first_name'] : NULL, 
     (isset($_GET['last_name'])) ? $_GET['last_name'] : NULL,
+    (isset($_GET['include_ai'])) ? $_GET['include_ai'] : false,
     (isset($_GET['sort'])) ? $_GET['sort'] : 'score',
     (isset($_GET['order'])) ? $_GET['order'] : 'DESC'
-));
+);
+$data['error'] = $Game->error;
+echo $data;
+echo json_encode($data);
 ?>

@@ -12,12 +12,15 @@ include_once $_SERVER["DOCUMENT_ROOT"] . "/php/classes/login.class.php";
 $data = [];
 if (isset($_POST['sub'], $_POST['username'], $_POST['password'])) {
     $Login = new Login();
-        if(!$Login->login_check() && $Login->run_login($_POST['username'], $_POST['password'])) {
-            $data['result'] = true;
-        } else {
-            $data['error'] = $Login->error;
-            $data['result'] = false;
-        }
+    if(!$Login->login_check() && $Login->run_login($_POST['username'], $_POST['password'])) {
+        $data['result'] = true;
+    } else if ($Login->login_check()) {
+        $data['error'] = "Already Logged in!";
+        $data['result'] = false;
+    } else {
+        $data['error'] = $Login->error;
+        $data['result'] = false;
+    }
 } else {
     $data['error'] = "Username or Password was empty!";
     $data['result'] = false;
