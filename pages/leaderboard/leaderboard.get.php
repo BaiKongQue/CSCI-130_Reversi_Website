@@ -28,6 +28,5 @@ $data['result'] = $Game->get_scores(                             // encode into 
     (isset($_GET['order'])) ? $_GET['order'] : 'DESC'
 );
 $data['error'] = $Game->error;
-echo $data;
 echo json_encode($data);
 ?>
