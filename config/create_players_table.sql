@@ -1,5 +1,5 @@
 CREATE TABLE `players` (
-  `player_id` int(11) NOT NULL,
+  `player_id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(45) NOT NULL,
   `password` char(60) NOT NULL,
   `first_name` varchar(45) NOT NULL,
@@ -11,4 +11,4 @@ CREATE TABLE `players` (
   PRIMARY KEY (`player_id`),
   UNIQUE KEY `player_id_UNIQUE` (`player_id`),
   UNIQUE KEY `username_UNIQUE` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
