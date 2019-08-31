@@ -1,12 +1,13 @@
 <?php
+include_once "./cedentials.php";
 
 /*******************
  * Database Config *
  *******************/
-define("DB_HOST", "localhost:3306");
-define("DB_USERNAME", "root");
-define("DB_PASSWORD", "0Bdragon8712`");
-define("DB_SCHEME", "csci-130_project1");
+define("DB_HOST", DB_HOST);
+define("DB_USERNAME", DB_USERNAME);
+define("DB_PASSWORD", DB_PASSWORD);
+define("DB_SCHEME", DB_SCHEME);
 
 /*****************
  * Login Options *
