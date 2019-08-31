@@ -12,8 +12,5 @@ CREATE TABLE `games` (
   UNIQUE KEY `game_id_UNIQUE` (`game_id`),
   KEY `player_turn_id_idx` (`player_turn`),
   KEY `player1_id_key_idx` (`player1_id`),
-  KEY `player2_id_key_idx` (`player2_id`),
-  CONSTRAINT `player1_id_key` FOREIGN KEY (`player1_id`) REFERENCES `players` (`player_id`),
-  CONSTRAINT `player2_id_key` FOREIGN KEY (`player2_id`) REFERENCES `players` (`player_id`),
-  CONSTRAINT `player_turn_id` FOREIGN KEY (`player_turn`) REFERENCES `players` (`player_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+  KEY `player2_id_key_idx` (`player2_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
