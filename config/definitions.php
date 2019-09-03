@@ -4,10 +4,10 @@ include_once "cred.php";
 /*******************
  * Database Config *
  *******************/
-// define("DB_HOST", DB_HOST);
-// define("DB_USERNAME", DB_USERNAME);
-// define("DB_PASSWORD", DB_PASSWORD);
-// define("DB_SCHEME", DB_SCHEME);
+// define("DB_HOST", "HOST");
+// define("DB_USERNAME", "USERNAME");
+// define("DB_PASSWORD", "PASSWORD");
+// define("DB_SCHEME", "SCHEME");
 
 /*****************
  * Login Options *
