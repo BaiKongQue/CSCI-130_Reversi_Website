@@ -54,18 +54,30 @@ class Game {
     private function convert_to_y_2D(int $size, int $i): int { return $y % $size; }
 
     /**
-     * Retrieves what the new score will be.
-     * 
+     * Retrieves what the current score is.
+     * @param array $grid: array of the game data to process
+     * @param int $player: GAME_TILE of which player to get score for (GAME_TILE_PLAYER1, GAME_TIME_PLAYER2)
+     * @return int: how many of each tile the player has
      */
-    private function get_new_score(): int {
-        
+    private function get_score(array $grid, int $player): int {
+        $n = 0;
+        for ($i = 0; $i < count($grid); $i++) {
+            if ($grid[$i] == $player)
+                $n++;
+        }
+        return $n;
     }
 
-    private function can_move(array $data, int $moveX, int $moveY): bool {
+    
+// PUBLIC
+    /**
+     * Calculates wether the specific move would be valid or not
+     * @param 
+     */
+    public function can_move(array $data, int $moveX, int $moveY): bool {
         return false;
     }
 
-// PUBLIC
     /**
      * Calculate the size of the game grid from the data.
      * @param array $grid: game grid data
@@ -97,7 +109,7 @@ class Game {
             $grid[$half + $size] = GAME_TILE_PLAYER2;               // player 2 tile
             $grid = json_encode($grid);                             // turn array into json string
             $sizeSqr = NULL;                                        // clear var
-            if ($stmt = $this->Mysqli->prepare("INSERT INTO games(player1_id, player1_score, data, player_turn".($difficulty != NULL ? ", player2_id, player2_score" : "") .", start_time) VALUES('".$_SESSION['player_id']."',0,'$grid','".$_SESSION['player_id']."'".($difficulty != NULL ? ", ".AI_DIFFICULTY_ID[$difficulty].", 0" : "") .",NOW())")) {
+            if ($stmt = $this->Mysqli->prepare("INSERT INTO games(player1_id, player1_score, grid, player_turn".($difficulty != NULL ? ", player2_id, player2_score" : "") .", start_time) VALUES('".$_SESSION['player_id']."',0,'$grid','".$_SESSION['player_id']."'".($difficulty != NULL ? ", ".AI_DIFFICULTY_ID[$difficulty].", 0" : "") .",NOW())")) {
                 if ($stmt->execute()) {                             // execute query
                     return true;                                    // successfully created game
                 } else {
@@ -125,7 +137,7 @@ class Game {
      *      start_time: Time,
      *      player1_score: int,
      *      player2_score: int,
-     *      data: array
+     *      grid: array
      * }: an array of all the data needed for the game.
      */
     public function get_game_data(int $gameId): array {
@@ -142,7 +154,7 @@ class Game {
                         'start_time' => $start_time,        // start time
                         'player1_score' => $player1_score,  // player1 score
                         'player2_score' => $player2_score,  // player2 score
-                        'data' => $data                     // game grid data
+                        'grid' => $data                     // game grid data
                     ];
                 } else {
                     $this->error .= "Error connecting to the server try again later.\n";    // error processing request
@@ -200,7 +212,6 @@ class Game {
             $stmt->free_result();                                                   // free results
             $stmt->close();                                                         // close connection
         } else {
-            echo 1;
             $this->error .= "there was an error connecting to the server, try again later.\n"; // error preparing query
             return false;
         }

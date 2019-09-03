@@ -6,11 +6,8 @@ CREATE TABLE `games` (
   `player2_score` int(11) DEFAULT NULL,
   `start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `end_time` datetime DEFAULT NULL,
-  `data` json NOT NULL,
+  `grid` json NOT NULL,
   `player_turn` int(11) NOT NULL,
   PRIMARY KEY (`game_id`),
-  UNIQUE KEY `game_id_UNIQUE` (`game_id`),
-  KEY `player_turn_id_idx` (`player_turn`),
-  KEY `player1_id_key_idx` (`player1_id`),
-  KEY `player2_id_key_idx` (`player2_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  UNIQUE KEY `game_id_UNIQUE` (`game_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
