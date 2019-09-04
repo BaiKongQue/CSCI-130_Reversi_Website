@@ -1,5 +1,7 @@
 <?php
 include_once "./classes/SecureSession.class.php";
+echo 'a';
+echo $_SERVER['DOCUMENT_ROOT'];
 
 /**
  * GET:
@@ -29,5 +31,5 @@ if (isset($_GET['data'])) {                                 // if GET data is se
     $data['error'] = "Error processing request.";           // error processing
 }
 
-echo json_encode($data);                                    // send data
+// echo json_encode($data);                                    // send data
 ?>
