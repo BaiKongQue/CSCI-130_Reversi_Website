@@ -1,40 +1,74 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title></title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="about-us.css">
-    </head>
-    
-    <body>
-        <div id="nav-container">
-            <button id="nav-button" onclick="popNav()"> </button>
-            <div id="nav-list"> 
-                <ul style="list-style: none"> 
-                    <li class="nav-text"> 
-                        <a href="about-us.html"> Home </a>
-                    </li>
-                    <li class="nav-text"> 
-                        <a href="creating-game.html"> Creating Game </a> 
-                    </li>
-                    <li class="nav-text">
-                        <a href="instruction.html"> How to Play </a> 
-                    </li>
-                </ul>
-            </div>
-        </div>
 
-        <div class="image-container space-even">
-            <div class="image-box"></div>
-            <div class="image-box"></div>
-        </div>
+<head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="about-us.css">
+    <link rel="stylesheet" type="text/css" href="../../css/navBar.css">
 
-        <div class="text-container space-even">
-            <div> Lee Perkin </div>
-            <div> Khai Pham </div>
-        </div>
 
-        <script src="about-us.js"> </script>
-    </body>
+
+    <!-- This is the navBar start -->
+    <div id="myNav" class="overlay">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div class="overlay-content">
+            <a href="../about-us/about-us.html">About</a>
+            <a href="../leaderboard/leaderboard.html">Leaderboard</a>
+            <a href="../login/login.html">Login</a>
+            <a href="../registration/registration.html">Register</a>
+            <a href="../create-game/create-game.html">Create Game</a>
+            <a href="../../php/logout.php">Logout</a>
+            <a href="../../xampp/dashboard/index.html">XAMPP Menu</a>
+        </div>
+    </div>
+    <script>
+        function openNav() {
+            document.getElementById("myNav").style.width = "25%";
+        }
+
+        function closeNav() {
+            document.getElementById("myNav").style.width = "0%";
+        }
+    </script>
+    <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Menu</span>
+    <!-- This is the navBar end -->
+
+</head>
+
+<body>
+    <div id="nav-container">
+        <button id="nav-button" onclick="popNav()">Game Menu </button>
+        <div id="nav-list">
+            <ul style="list-style: none">
+                <li class="nav-text">
+                    <a href="about-us.html"> Home </a>
+                </li>
+                <li class="nav-text">
+                    <a href="creating-game.html"> Creating Game </a>
+                </li>
+                <li class="nav-text">
+                    <a href="instruction.html"> How to Play </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="image-container space-even">
+        <div class="image-box"></div>
+        <div class="image-box"></div>
+        <div class="image-box"><img class="image-box" src="./pictures/Tyler.jpg"></div>
+
+    </div>
+
+    <div class="text-container space-even">
+        <div> Lee Perkin </div>
+        <div> Khai Pham </div>
+        <div> Tyler Gillette </div>
+    </div>
+
+    <script src="about-us.js"> </script>
+</body>
+
 </html>
