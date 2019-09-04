@@ -2,5 +2,5 @@
 /images/uploads/users/*.png
 /images/uploads/users/*.gif
 /config/cred.php
-/xampp
-/._xampp
+/xampp                          # ignore xampp folder and files
+/._xampp                        # ignore xamp file
