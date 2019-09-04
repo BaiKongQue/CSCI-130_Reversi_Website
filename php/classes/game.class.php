@@ -125,7 +125,7 @@ class Game {
             // create initial grid
             $sizeSqr = $size*$size;
             $grid = array_fill(0, $sizeSqr, 0);                     // create game grid array
-            $half = intdiv($sizeSqr, 2) - 1;                        // get middle of board
+            $half = intdiv($sizeSqr, 2) - (intdiv($size, 2)) - 1;   // get middle of board
             $grid[$half] = GAME_TILE_PLAYER1;                       // player 1 tile
             $grid[$half + 1 + $size] = GAME_TILE_PLAYER1;           // player 1 tile
             $grid[$half + 1] = GAME_TILE_PLAYER2;                   // player 2 tile
@@ -177,7 +177,7 @@ class Game {
                         'start_time' => $start_time,        // start time
                         'player1_score' => $player1_score,  // player1 score
                         'player2_score' => $player2_score,  // player2 score
-                        'grid' => $grid                     // game grid data
+                        'grid' => json_decode($grid)        // game grid data
                     ];
                 } else {
                     $this->error .= "Error connecting to the server try again later.\n";    // error processing request
@@ -185,10 +185,13 @@ class Game {
                 }
                 $stmt->free_result();                       // free result
                 $stmt->close();                             // close connection
+            } else {
+                $this->error .= "Failed to connect to server, try again later.\n";
+                return ['result' => false];
             }
         } else {
             $this->error .= "You are not logged in!\n";     // error not logged in
-            return false;
+            return ['result' => false];
         }
     }
 
