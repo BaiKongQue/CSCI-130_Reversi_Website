@@ -30,6 +30,8 @@ class Game {
     }
 
 // PRIVATE
+
+// PUBLIC
     /**
      * Convert 2D coordinates into 1D index
      * @param int $size: size of the game grid
@@ -37,29 +39,29 @@ class Game {
      * @param int $y: y coordinate
      * @return int: index of x and y coordinate 
      */
-    private function convert_to_1D(int $size, int $x, int $y): int { return ($y * $size) + $x; }
+    public function convert_to_1D(int $size, int $x, int $y): int { return ($y * $size) + $x; }
     /**
      * Convert 1D index to 2D coordinate X
      * @param int $size: size of the game grid
      * @param int $i: index to convert to 2D X
      * @return int: converted i to X coordinate
      */
-    private function convert_to_x_2D(int $size, int $i): int { return intdiv($i, $size); }
+    public function convert_to_x_2D(int $size, int $i): int { return intdiv($i, $size); }
     /**
      * Convert 1D index to 2D coordinate Y
      * @param int $size: size of the game grid
      * @param int $i: index to convert to 2D Y
      * @return int: converted i to Y coordinate
      */
-    private function convert_to_y_2D(int $size, int $i): int { return $y % $size; }
+    public function convert_to_y_2D(int $size, int $i): int { return $y % $size; }
 
     /**
      * Retrieves what the current score is.
-     * @param array $grid: array of the game data to process
+     * @param array $grid: array of the game grid data to process
      * @param int $player: GAME_TILE of which player to get score for (GAME_TILE_PLAYER1, GAME_TIME_PLAYER2)
      * @return int: how many of each tile the player has
      */
-    private function get_score(array $grid, int $player): int {
+    public function get_score(array $grid, int $player): int {
         $n = 0;
         for ($i = 0; $i < count($grid); $i++) {
             if ($grid[$i] == $player)
@@ -69,12 +71,33 @@ class Game {
     }
 
     
-// PUBLIC
     /**
      * Calculates wether the specific move would be valid or not
-     * @param 
+     * @param array data: all the game data
+     * @param int $index: index of the spot in grid array trying to move to
+     * 
      */
-    public function can_move(array $data, int $moveX, int $moveY): bool {
+    public function can_move(array $data, int $index): bool {
+        $size = $data['size'] - 1;
+        $grid &= $data['grid'];
+        $player &= $data['grid'][$index];
+        $res = [];
+        foreach ([-1, 0 , 1] as $v) {
+            $direction = ($spot * ($v < 0 ? -1 : 1));
+            $spot = $index + $direction + $v;
+            $count = 1;
+            while ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE) {
+                $spot += $direction + $v;
+                if ($grid[$spot] == $player) {
+                    if (!key_exists($index, $res)) {
+                        $res[$index] = $count;
+                    } else {
+                        $res[$index] += $count;
+                    }
+                }
+                $count++;
+            }
+        }
         return false;
     }
 
@@ -140,12 +163,12 @@ class Game {
      *      grid: array
      * }: an array of all the data needed for the game.
      */
-    public function get_game_data(int $gameId): array {
+    public function get_game_data(int $gameId) {
         if ($this->Login->login_check()) {                  // check if user is logged in
-            if ($stmt = $this->Mysqli->prepare("SELECT player1_id, player2_id, TIMEDIFF(start_time, NOW()), player1_score, player2_score, data FROM games WHERE game_id = ? LIMIT 1")) {
+            if ($stmt = $this->Mysqli->prepare("SELECT player1_id, player2_id, TIMEDIFF(NOW(), start_time), player1_score, player2_score, grid FROM games WHERE game_id = ? LIMIT 1")) {
                 $stmt->bind_param('i', $gameId);            // bind game id
                 if ($stmt->execute()) {                     // execute
-                    $stmt->bind_result($player1_id, $player2_id, $start_time, $player1_score, $player2_score, $data);
+                    $stmt->bind_result($player1_id, $player2_id, $start_time, $player1_score, $player2_score, $grid);
                     $stmt->fetch();                         // fetch row
                     return [                                // return array
                         'game_id' => $gameId,               // game id
@@ -154,7 +177,7 @@ class Game {
                         'start_time' => $start_time,        // start time
                         'player1_score' => $player1_score,  // player1 score
                         'player2_score' => $player2_score,  // player2 score
-                        'grid' => $data                     // game grid data
+                        'grid' => $grid                     // game grid data
                     ];
                 } else {
                     $this->error .= "Error connecting to the server try again later.\n";    // error processing request
