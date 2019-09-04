@@ -110,6 +110,7 @@ class Registration {
 						$stmt->bind_param('ssssisss', $username, $pass, $firstName, $lastName, $age, $gender, $location, $icon);	// bind params
 						if(!$stmt->execute()){															// if not execute
 							$this->error .= "Failed to connect to server. Try again.\n";				// error
+							$this->error = $this->Mysqli->error;										// error damn
 							return false;
 						} else
 						return true;																	// succesfully registered
