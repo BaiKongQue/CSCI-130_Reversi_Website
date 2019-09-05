@@ -1,81 +1,107 @@
 <!DOCTYPE html>
 <html>
+	<head>
+		<title>CSCI-130 Project: Reversi</title>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1"
+		/>
+		<link rel="stylesheet" type="text/css" href="../../css/navBar.css" />
 
-<head>
-    <title>CSCI-130 Project: Reversi</title>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <link rel="stylesheet" type="text/css" href="../../css/navBar.css">
+		<!-- <script type="text/javascript" src="script/angular.min.js"></script> -->
+		<!-- <link rel="stylesheet" type="text/css" href="" /> -->
 
-    <!-- <script type="text/javascript" src="script/angular.min.js"></script> -->
-    <!-- <link rel="stylesheet" type="text/css" href="" /> -->
+		<!-- This is the navBar start -->
+		<div id="myNav" class="overlay">
+			<a href="javascript:void(0)" class="closebtn" onclick="closeNav()"
+				>&times;</a
+			>
+			<div class="overlay-content">
+				<a href="../../index.html">Home</a>
+				<a href="../about-us/about-us.html">About</a>
+				<a href="../leaderboard/leaderboard.html">Leaderboard</a>
+				<a href="../login/login.html">Login</a>
+				<a href="../registration/registration.html">Register</a>
+				<a href="../create-game/create-game.html">Create Game</a>
+				<a href="../../php/logout.php">Logout</a>
+				<a href="../../xampp/dashboard/index.html">XAMPP Menu</a>
+			</div>
+		</div>
+		<script>
+			function openNav() {
+				document.getElementById("myNav").style.width = "25%";
+			}
 
-    <!-- This is the navBar start -->
-    <div id="myNav" class="overlay">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-        <div class="overlay-content">
-            <a href="../about-us/about-us.html">About</a>
-            <a href="../leaderboard/leaderboard.html">Leaderboard</a>
-            <a href="../login/login.html">Login</a>
-            <a href="../registration/registration.html">Register</a>
-            <a href="../create-game/create-game.html">Create Game</a>
-            <a href="../../php/logout.php">Logout</a>
-            <a href="../../xampp/dashboard/index.html">XAMPP Menu</a>
-        </div>
-    </div>
-    <script>
-        function openNav() {
-            document.getElementById("myNav").style.width = "25%";
-        }
+			function closeNav() {
+				document.getElementById("myNav").style.width = "0%";
+			}
+		</script>
+		<span style="font-size:30px;cursor:pointer" onclick="openNav()"
+			>&#9776;
+		</span>
+		<!-- This is the navBar end -->
+	</head>
 
-        function closeNav() {
-            document.getElementById("myNav").style.width = "0%";
-        }
-    </script>
-    <span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; Menu</span>
-    <!-- This is the navBar end -->
-</head>
-
-<body>
-    <form action="create-game.post.php" method="POST" align="center">
-        <div id="size-select">
-            <span>Game Grid Size:</span>
-            <div>
-                <div><label><input type="radio" name="size" value="4">4x4</label></div>
-                <div><label><input type="radio" name="size" value="6">6x6</label></div>
-                <div><label><input type="radio" name="size" value="8">8x8</label></div>
-            </div>
-        </div>
-        <div id="game-mode">
-            <span>Game mode:</span>
-            <div id="game-mode-select">
-                <div><label><input type="radio" name="vs" value="player">PvP</label></div>
-                <div><label><input type="radio" name="vs" value="computer">PvC</label></div>
-            </div>
-            <div id="difficulty-select" class="hide">
-                <span>Difficulty Select:</span>
-                <div><label><input type="radio" name="difficulty" value="easy">Easy</label></div>
-                <div><label><input type="radio" name="difficulty" value="hard">Hard</label></div>
-            </div>
-        </div>
-        <div id="board-color-select">
-            <label>
-                <span>Board color:</span> <!-- can change to color wheel select-->
-                <select name="board-color">
-                    <option value="green">green</option>
-                </select>
-            </label>
-        </div>
-        <div id="piece-color-select">
-            <label>
-                <span>Piece color:</span> <!-- can change to color wheel select-->
-                <select name="piece-color">
-                    <option value="green">Black+White</option>
-                </select>
-            </label>
-        </div>
-        <div><input type="submit" name="sub" value="Create New Game" /></div>
-    </form>
-</body>
-
+	<body>
+		<form action="create-game.post.php" method="POST" align="center">
+			<div id="size-select">
+				<span>Game Grid Size:</span>
+				<div>
+					<div>
+						<label><input type="radio" name="size" value="4" />4x4</label>
+					</div>
+					<div>
+						<label><input type="radio" name="size" value="6" />6x6</label>
+					</div>
+					<div>
+						<label><input type="radio" name="size" value="8" />8x8</label>
+					</div>
+				</div>
+			</div>
+			<div id="game-mode">
+				<span>Game mode:</span>
+				<div id="game-mode-select">
+					<div>
+						<label><input type="radio" name="vs" value="player" />PvP</label>
+					</div>
+					<div>
+						<label><input type="radio" name="vs" value="computer" />PvC</label>
+					</div>
+				</div>
+				<div id="difficulty-select" class="hide">
+					<span>Difficulty Select:</span>
+					<div>
+						<label
+							><input type="radio" name="difficulty" value="easy" />Easy</label
+						>
+					</div>
+					<div>
+						<label
+							><input type="radio" name="difficulty" value="hard" />Hard</label
+						>
+					</div>
+				</div>
+			</div>
+			<div id="board-color-select">
+				<label>
+					<span>Board color:</span>
+					<!-- can change to color wheel select-->
+					<select name="board-color">
+						<option value="green">green</option>
+					</select>
+				</label>
+			</div>
+			<div id="piece-color-select">
+				<label>
+					<span>Piece color:</span>
+					<!-- can change to color wheel select-->
+					<select name="piece-color">
+						<option value="green">Black+White</option>
+					</select>
+				</label>
+			</div>
+			<div><input type="submit" name="sub" value="Create New Game" /></div>
+		</form>
+	</body>
 </html>
