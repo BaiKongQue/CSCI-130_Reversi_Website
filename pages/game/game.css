@@ -1,0 +1,7 @@
+body {
+    margin: 0;
+}
+
+#board {
+    border: 1px solid black;
+}
