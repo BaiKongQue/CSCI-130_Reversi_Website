@@ -12,6 +12,16 @@ for ($i = 0; $i < count($data['grid']); $i++) {
     echo $data['grid'][$i] . " ";
 }
 echo "<br/>------------<br/>";
-print_r($Game->can_move($data, 1));
+for ($i = 0; $i < count($data['grid']); $i++){
+    if ($i % sqrt(count($data['grid'])) == 0)
+        echo "\n";
+    if ($data['grid'][$i] != 0) {
+        echo ($data['grid'][$i] == 1 ? 'a ' : 'b ');
+        continue;
+    }
+    echo $Game->can_move($data, $i-1) . " ";
+
+}
+// print_r($Game->can_move($data, 11-1));
 ?>
 </pre>
