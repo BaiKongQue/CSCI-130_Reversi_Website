@@ -30,6 +30,19 @@ class Game {
     }
 
 // PRIVATE
+    private function count_tiles() {
+        while ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE) {
+            $spot += $direction + $v;
+            if ($grid[$spot] == $player) {
+                if (!key_exists($index, $res)) {
+                    $res[$index] = $count;
+                } else {
+                    $res[$index] += $count;
+                }
+            }
+            $count++;
+        }
+    }
 
 // PUBLIC
     /**
@@ -77,17 +90,30 @@ class Game {
      * @param int $index: index of the spot in grid array trying to move to
      * 
      */
-    public function can_move(array $data, int $index): bool {
-        $size = $data['size'] - 1;
-        $grid &= $data['grid'];
-        $player &= $data['grid'][$index];
+    public function can_move(array &$data, int $index): array {
+        $grid = $data['grid'];
+        $size = sqrt(count($grid));
+        $player = ($data['player_turn'] == $data['player1_id']) ? GAME_TILE_PLAYER1 : GAME_TILE_PLAYER2;
         $res = [];
-        foreach ([-1, 0 , 1] as $v) {
-            $direction = ($spot * ($v < 0 ? -1 : 1));
-            $spot = $index + $direction + $v;
-            $count = 1;
-            while ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE) {
-                $spot += $direction + $v;
+        // echo "player: $player\n";
+        foreach ([-$size, 0, $size] as $y) {
+            foreach ([-1, 0 , 1] as $x) {
+                // echo "(".$x.",".$y.")";
+                if (($x == 0 && $y == 0)){
+                    // echo "p-";
+                    continue;
+                }
+                $spot = $index + $x + $y;
+                if(!(($spot % $size == 0) <= ($x != -1) ? "t" : "f") || !(($spot % $size == $size - 1) <= ($x != 1))) {
+                    // echo "w-";
+                    continue;
+                }
+                // echo $grid[$spot] . "-";
+                $count = 0;
+                while ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE) {
+                    $spot += $x + $y;
+                    $count++;
+                }
                 if ($grid[$spot] == $player) {
                     if (!key_exists($index, $res)) {
                         $res[$index] = $count;
@@ -95,10 +121,9 @@ class Game {
                         $res[$index] += $count;
                     }
                 }
-                $count++;
             }
         }
-        return false;
+        return $res;//['result' => 'false'];
     }
 
     /**
@@ -165,10 +190,10 @@ class Game {
      */
     public function get_game_data(int $gameId) {
         if ($this->Login->login_check()) {                  // check if user is logged in
-            if ($stmt = $this->Mysqli->prepare("SELECT player1_id, player2_id, TIMEDIFF(NOW(), start_time), player1_score, player2_score, grid FROM games WHERE game_id = ? LIMIT 1")) {
+            if ($stmt = $this->Mysqli->prepare("SELECT player1_id, player2_id, TIMEDIFF(NOW(), start_time), player1_score, player2_score, player_turn, grid FROM games WHERE game_id = ? LIMIT 1")) {
                 $stmt->bind_param('i', $gameId);            // bind game id
                 if ($stmt->execute()) {                     // execute
-                    $stmt->bind_result($player1_id, $player2_id, $start_time, $player1_score, $player2_score, $grid);
+                    $stmt->bind_result($player1_id, $player2_id, $start_time, $player1_score, $player2_score, $player_turn, $grid);
                     $stmt->fetch();                         // fetch row
                     return [                                // return array
                         'game_id' => $gameId,               // game id
@@ -177,6 +202,7 @@ class Game {
                         'start_time' => $start_time,        // start time
                         'player1_score' => $player1_score,  // player1 score
                         'player2_score' => $player2_score,  // player2 score
+                        'player_turn' => $player_turn,      // player turn
                         'grid' => json_decode($grid)        // game grid data
                     ];
                 } else {
