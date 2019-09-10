@@ -44,6 +44,20 @@ class Game {
         }
     }
 
+    private function is_horizontal_wall($index, $size): bool {
+        return (intdiv($index, $size) == 0)
+        || (intdiv($index, $size) == $size-1);
+    }
+
+    private function is_vertical_wall($index, $size): bool {
+        return ($index % $size == 0)
+        || ($index % $size == $size - 1);
+    }
+
+    private function is_wall($index, $isze): bool {
+        return $this->is_horizontal_wall($index, $size) || $this->is_vertical_wall($index, $size);
+    }
+
 // PUBLIC
     /**
      * Convert 2D coordinates into 1D index
@@ -90,40 +104,44 @@ class Game {
      * @param int $index: index of the spot in grid array trying to move to
      * 
      */
-    public function can_move(array &$data, int $index): array {
+    public function moves_array(array &$data): array {
+        if ($data['grid'][$index] != GAME_TILE_NONE)
+            return 0;
+            
         $grid = $data['grid'];
         $size = sqrt(count($grid));
         $player = ($data['player_turn'] == $data['player1_id']) ? GAME_TILE_PLAYER1 : GAME_TILE_PLAYER2;
         $res = [];
-        // echo "player: $player\n";
-        foreach ([-$size, 0, $size] as $y) {
-            foreach ([-1, 0 , 1] as $x) {
-                // echo "(".$x.",".$y.")";
-                if (($x == 0 && $y == 0)){
-                    // echo "p-";
-                    continue;
-                }
-                $spot = $index + $x + $y;
-                if(!(($spot % $size == 0) <= ($x != -1) ? "t" : "f") || !(($spot % $size == $size - 1) <= ($x != 1))) {
-                    // echo "w-";
-                    continue;
-                }
-                // echo $grid[$spot] . "-";
-                $count = 0;
-                while ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE) {
-                    $spot += $x + $y;
-                    $count++;
-                }
-                if ($grid[$spot] == $player) {
-                    if (!key_exists($index, $res)) {
-                        $res[$index] = $count;
-                    } else {
-                        $res[$index] += $count;
+        for ($index = 0; $index < count($grid); $index++) {
+            if ($grid[$index] != GAME_TILE_NONE)
+                continue;
+            foreach ([-$size, 0, $size] as $y) {
+                foreach ([-1, 0 , 1] as $x) {
+                    if (($x == 0 && $y == 0))
+                        continue;
+                        
+                    $spot = $index + $x + $y;
+                    $count = 0;
+                    while ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE
+                        && (!(($y != 0 && $this->is_horizontal_wall($spot, $size)))
+                            || !(($x != 0 && $this->is_vertical_wall($spot, $size))))
+                    ) {
+                        $spot += $x + $y;
+                        
+                        $count++;
+                    }
+
+                    if ($spot!=$index && $count != 0 && $grid[$spot] == $player) {
+                        if (!key_exists($index, $res)) {
+                            $res[$index] = $count;
+                        } else {
+                            $res[$index] += $count;
+                        }
                     }
                 }
             }
         }
-        return $res;//['result' => 'false'];
+        return $res;
     }
 
     /**
@@ -185,6 +203,7 @@ class Game {
      *      start_time: Time,
      *      player1_score: int,
      *      player2_score: int,
+     *      player_turn: int,
      *      grid: array
      * }: an array of all the data needed for the game.
      */

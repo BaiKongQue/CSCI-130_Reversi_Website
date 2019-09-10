@@ -1,27 +1,12 @@
-<pre>
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/classes/game.class.php";
 
+$res = [];
 $Game = new Game();
 $data = $Game->get_game_data($_GET['id']);
-// print_r($data);
-echo "<br/>";
-for ($i = 0; $i < count($data['grid']); $i++) {
-    if ($i % sqrt(count($data['grid'])) == 0)
-        echo "<br/>";
-    echo $data['grid'][$i] . " ";
-}
-echo "<br/>------------<br/>";
-for ($i = 0; $i < count($data['grid']); $i++){
-    if ($i % sqrt(count($data['grid'])) == 0)
-        echo "\n";
-    if ($data['grid'][$i] != 0) {
-        echo ($data['grid'][$i] == 1 ? 'a ' : 'b ');
-        continue;
-    }
-    echo $Game->can_move($data, $i-1) . " ";
 
-}
-// print_r($Game->can_move($data, 11-1));
+$res['result'] = $Game->moves_array($data);
+if (!empty($Game->error))
+    $res['error'] = $Game->error;
+echo json_encode($res)
 ?>
-</pre>
