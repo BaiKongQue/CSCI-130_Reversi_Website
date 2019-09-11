@@ -102,47 +102,42 @@ class Game {
     /**
      * Calculates wether the specific move would be valid or not
      * @param array data: all the game data
-     * @param int $index: index of the spot in grid array trying to move to
-     * 
+     * @return array {[key: int]: int}: where the key is the index and value is the number of tiles
+     *  you will get in that spot
      */
     public function moves_array(array &$data): array {
-        if ($data['grid'][$index] != GAME_TILE_NONE)
-            return 0;
-            
-        $grid = $data['grid'];
-        $size = sqrt(count($grid));
-        $player = ($data['player_turn'] == $data['player1_id']) ? GAME_TILE_PLAYER1 : GAME_TILE_PLAYER2;
-        $res = [];
-        for ($index = 0; $index < count($grid); $index++) {
-            if ($grid[$index] != GAME_TILE_NONE)
-                continue;
-            foreach ([-$size, 0, $size] as $y) {
-                foreach ([-1, 0 , 1] as $x) {
-                    if (($x == 0 && $y == 0))
-                        continue;
-                        
-                    $spot = $index + $x + $y;
-                    $count = 0;
-                    while ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE
-                        && (!(($y != 0 && $this->is_horizontal_wall($spot, $size)))
-                            || !(($x != 0 && $this->is_vertical_wall($spot, $size))))
+        $grid = $data['grid'];                                                          // reference grid in data
+        $size = sqrt(count($grid));                                                     // hold size
+        $player = ($data['player_turn'] == $data['player1_id']) ? GAME_TILE_PLAYER1 : GAME_TILE_PLAYER2; // get if player is 1 or 2 tile
+        $res = [];                                                                      // init result array
+        for ($index = 0; $index < count($grid); $index++) {                             // iterate through each spot
+            if ($grid[$index] != GAME_TILE_NONE)                                        // if none
+                continue;                                                               // skip
+            foreach ([-$size, 0, $size] as $y) {                                        // for each y around the index
+                foreach ([-1, 0 , 1] as $x) {                                           // for each x around the index
+                    if (($x == 0 && $y == 0))                                           // if x and y are 0
+                        continue;                                                       // skip
+                    $spot = $index + $x + $y;                                           // calculate spot
+                    $count = 0;                                                         // hold count
+                    while ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE    // while spot is not player
+                        && (!(($y != 0 && $this->is_horizontal_wall($spot, $size)))     // moving in y direction and is not wall
+                            || !(($x != 0 && $this->is_vertical_wall($spot, $size))))   // moving in x direction and is not wall
                     ) {
-                        $spot += $x + $y;
-                        
-                        $count++;
+                        $spot += $x + $y;                                               // step to next spot
+                        $count++;                                                       // increment count
                     }
 
-                    if ($spot!=$index && $count != 0 && $grid[$spot] == $player) {
-                        if (!key_exists($index, $res)) {
-                            $res[$index] = $count;
+                    if ($spot!=$index && $count != 0 && $grid[$spot] == $player) {      // if not start and end spot is this player
+                        if (!key_exists($index, $res)) {                                // if index not already in res
+                            $res[$index] = $count;                                      // add it to res
                         } else {
-                            $res[$index] += $count;
+                            $res[$index] += $count;                                     // add to res
                         }
                     }
                 }
             }
         }
-        return $res;
+        return $res;                                                                    // return result
     }
 
     /**
