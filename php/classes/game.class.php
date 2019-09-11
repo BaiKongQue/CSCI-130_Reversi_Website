@@ -205,7 +205,7 @@ class Game {
      */
     public function get_game_data(int $gameId) {
         if ($this->Login->login_check()) {                  // check if user is logged in
-            if ($stmt = $this->Mysqli->prepare("SELECT player1_id, player2_id, TIMEDIFF(NOW(), duration), player1_score, player2_score, player_turn, grid FROM games WHERE game_id = ? LIMIT 1")) {
+            if ($stmt = $this->Mysqli->prepare("SELECT player1_id, player2_id, TIMEDIFF(NOW(), start_time), player1_score, player2_score, player_turn, grid FROM games WHERE game_id = ? LIMIT 1")) {
                 $stmt->bind_param('i', $gameId);            // bind game id
                 if ($stmt->execute()) {                     // execute
                     $stmt->bind_result($player1_id, $player2_id, $duration, $player1_score, $player2_score, $player_turn, $grid);
@@ -228,6 +228,7 @@ class Game {
                 $stmt->close();                             // close connection
             } else {
                 $this->error .= "Failed to connect to server, try again later.\n";
+                $this->error = $this->Mysqli->error;
                 return ['result' => false];
             }
         } else {

@@ -37,7 +37,13 @@
 			>&#9776;
 		</span> 
 		This is the navBar end -->
-
+		<script type="text/javascript" src="game.js"> </script>
+		<script type="text/javascript">
+			window.onload = function() {
+				board = new Board();
+				board.onInit();
+			}
+		</script>
 	</head>
 
 	<body>
@@ -45,6 +51,5 @@
 
 		</canvas>
 
-		<script src="game.js"> </script>
 	</body>
 </html>
