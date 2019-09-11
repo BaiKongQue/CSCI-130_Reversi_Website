@@ -11,8 +11,9 @@ sec_session_start();
  *  player2_id: int
  *  player1_score: int
  *  player2_score: int
- *  start_time: time
- *  data: array(int)
+ *  player_turn: int
+ *  duration: time
+ *  grid: array(int)
  */
 
 class Game {
@@ -175,7 +176,7 @@ class Game {
             $grid[$half + $size] = GAME_TILE_PLAYER2;               // player 2 tile
             $grid = json_encode($grid);                             // turn array into json string
             $sizeSqr = NULL;                                        // clear var
-            if ($stmt = $this->Mysqli->prepare("INSERT INTO games(player1_id, player1_score, grid, player_turn".($difficulty != NULL ? ", player2_id, player2_score" : "") .", start_time) VALUES('".$_SESSION['player_id']."',0,'$grid','".$_SESSION['player_id']."'".($difficulty != NULL ? ", ".AI_DIFFICULTY_ID[$difficulty].", 0" : "") .",NOW())")) {
+            if ($stmt = $this->Mysqli->prepare("INSERT INTO games(player1_id, player1_score, grid, player_turn".($difficulty != NULL ? ", player2_id, player2_score" : "") .", duration) VALUES('".$_SESSION['player_id']."',0,'$grid','".$_SESSION['player_id']."'".($difficulty != NULL ? ", ".AI_DIFFICULTY_ID[$difficulty].", 0" : "") .",NOW())")) {
                 if ($stmt->execute()) {                             // execute query
                     return true;                                    // successfully created game
                 } else {
@@ -200,7 +201,7 @@ class Game {
      *      game_id: int,
      *      player1_id: int,
      *      player2_id: int,
-     *      start_time: Time,
+     *      duration: Time,
      *      player1_score: int,
      *      player2_score: int,
      *      player_turn: int,
@@ -209,16 +210,16 @@ class Game {
      */
     public function get_game_data(int $gameId) {
         if ($this->Login->login_check()) {                  // check if user is logged in
-            if ($stmt = $this->Mysqli->prepare("SELECT player1_id, player2_id, TIMEDIFF(NOW(), start_time), player1_score, player2_score, player_turn, grid FROM games WHERE game_id = ? LIMIT 1")) {
+            if ($stmt = $this->Mysqli->prepare("SELECT player1_id, player2_id, TIMEDIFF(NOW(), duration), player1_score, player2_score, player_turn, grid FROM games WHERE game_id = ? LIMIT 1")) {
                 $stmt->bind_param('i', $gameId);            // bind game id
                 if ($stmt->execute()) {                     // execute
-                    $stmt->bind_result($player1_id, $player2_id, $start_time, $player1_score, $player2_score, $player_turn, $grid);
+                    $stmt->bind_result($player1_id, $player2_id, $duration, $player1_score, $player2_score, $player_turn, $grid);
                     $stmt->fetch();                         // fetch row
                     return [                                // return array
                         'game_id' => $gameId,               // game id
                         'player1_id' => $player1_id,        // player1 id
                         'player2_id' => $player2_id,        // player2 id
-                        'start_time' => $start_time,        // start time
+                        'duration' => $duration,            // duration
                         'player1_score' => $player1_score,  // player1 score
                         'player2_score' => $player2_score,  // player2 score
                         'player_turn' => $player_turn,      // player turn
@@ -267,7 +268,7 @@ class Game {
                 $selection .= "p.player_id > 0";
             }
         }
-        if ($stmt = $this->Mysqli->prepare("SELECT p.first_name, p.last_name, g.score, TIMEDIFF(g.end_time, g.start_time) duration FROM (SELECT player1_id player_id, player1_score score, start_time, end_time FROM games UNION SELECT player2_id player_id, player2_score score, start_time, end_time FROM games) g LEFT JOIN players p USING(player_id) $selection ORDER BY $sortBy $orderBy")) {
+        if ($stmt = $this->Mysqli->prepare("SELECT p.first_name, p.last_name, g.score, TIMEDIFF(g.end_time, g.duration) duration FROM (SELECT player1_id player_id, player1_score score, duration, end_time FROM games UNION SELECT player2_id player_id, player2_score score, duration, end_time FROM games) g LEFT JOIN players p USING(player_id) $selection ORDER BY $sortBy $orderBy")) {
             $stmt->execute();                                                       // run prepared query
             $stmt->bind_result($dbFirstName, $dbLastName, $dbScore, $dbDuration);   // bind results
             $res = [];                                                              // init res array
