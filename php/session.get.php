@@ -1,8 +1,6 @@
 <?php
 include_once "./classes/SecureSession.class.php";
-echo 'a';
-echo $_SERVER['DOCUMENT_ROOT'];
-
+include_once "./classes/Login.class.php";
 /**
  * GET:
  *  data
@@ -14,11 +12,13 @@ echo $_SERVER['DOCUMENT_ROOT'];
  */
 
 $data = [];                                                 // start data array
-if (isset($_GET['data'])) {                                 // if GET data is set
+$Login = new Login();
+$logged_in = $Login->login_check();
+if (isset($_GET['data']) && $logged_in) {                   // if GET data is set
     sec_session_start();                                    // start session
     $sessionData = [];                                      // hold session data
     foreach (explode(",", $_GET['data']) as $v) {           // foreach data
-        if (!isset($_SESSION[$v])) {                     // if not in session
+        if (!isset($_SESSION[$v])) {                        // if not in session
             $data['error'] = "Error Processing request";    // error to data
             break;
         }
@@ -27,9 +27,11 @@ if (isset($_GET['data'])) {                                 // if GET data is se
     if (empty($data['error'])) {                            // if no errors
         $data['result'] = $sessionData;                     // add session data to result
     }
+} else if (!$logged_in) {
+    $data['error'] = "Not logged in!";
 } else {
     $data['error'] = "Error processing request.";           // error processing
 }
 
-// echo json_encode($data);                                    // send data
+echo json_encode($data);                                    // send data
 ?>
