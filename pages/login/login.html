@@ -18,7 +18,7 @@
 </head>
 
 <body>
-	<form id="login-form" method="POST" onsubmit="submit_login()">
+	<form id="login-form" method="POST" onsubmit="event.preventDefault()">
 		<div id="error-msg"></div>
 		<div>
 			<label>
@@ -33,7 +33,7 @@
 			</label>
 		</div>
 		<div>
-			<input type="submit" name="sub" value="Login" />
+			<input type="submit" name="sub" value="Login" onclick="submit_login()"/>
 			<div><a href="../registration/registration.html">Register</a></div>
 		</div>
 	</form>

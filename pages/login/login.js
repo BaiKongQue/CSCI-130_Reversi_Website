@@ -9,8 +9,7 @@ function submit_login() {
             if (res.result) {
                 document.location = "../../index.html";
             } else {
-                console.log(res.error);
-                // document.getElementById("error-msg").innerHTML(res.error);
+                document.getElementById("error-msg").innerText = res.error;
             }
         }
     }
