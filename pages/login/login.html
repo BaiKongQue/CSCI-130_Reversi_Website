@@ -14,10 +14,12 @@
 				document.location = "http://" + location.hostname;
 		});
 	</script>
+	<script type="text/javascript" src="./login.js"></script>
 </head>
 
 <body>
-	<form action="login.post.php" method="POST">
+	<form id="login-form" method="POST" onsubmit="submit_login()">
+		<div id="error-msg"></div>
 		<div>
 			<label>
 				<span>Username:</span>
