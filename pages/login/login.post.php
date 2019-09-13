@@ -10,7 +10,7 @@ include_once $_SERVER["DOCUMENT_ROOT"] . "/php/classes/login.class.php";
  * @return json {"result": booelan, "error"?: string}
  */
 $data = [];
-if (isset($_POST['username'], $_POST['password'])) {
+if (isset($_POST['username'], $_POST['password']) && !empty($_POST['username']) && !empty($_POST['password'])) {
     $Login = new Login();
     if(!$Login->login_check() && $Login->run_login($_POST['username'], $_POST['password'])) {
         $data['result'] = true;
