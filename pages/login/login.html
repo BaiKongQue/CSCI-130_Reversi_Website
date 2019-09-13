@@ -9,8 +9,12 @@
 		/>
 		<!-- <script type="text/javascript" src="script/angular.min.js"></script> -->
 		<!-- <link rel="stylesheet" type="text/css" href="" /> -->
-		<script type="text/javascript" src="../../script.js">
-			is_logged_in();
+		<script type="text/javascript" src="../../script.js"></script>
+		<script type="text/javascript">
+			is_logged_in(function(logged_in) {
+				if (logged_in)
+					document.location = "http://" + location.hostname;
+			})
 		</script>
 	</head>
 	<body>
