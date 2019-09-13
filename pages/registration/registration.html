@@ -6,6 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <!-- <script type="text/javascript" src="script/angular.min.js"></script> -->
     <!-- <link rel="stylesheet" type="text/css" href="" /> -->
+    <script type="text/javascript" src="../../script.js"></script>
+	<script type="text/javascript">
+		is_logged_in(function(logged_in) {
+			if (logged_in)
+				document.location = "http://" + location.hostname;
+		});
+	</script>
 </head>
 <body>
     <form action="registration.post.php" method="POST" enctype="multipart/form-data">
@@ -33,7 +40,10 @@
                 <input type="file" name="icon" placeholder="Icon Image" required/>
             </label>
         </div>
-        <div><input type="submit" name="sub" value="Register" /></div>
+        <div>
+            <input type="submit" name="sub" value="Register" />
+            <div>Already have an account: <a href="../login/login.html">Login</a></div>
+        </div>
     </form>
 </body>
 </html>

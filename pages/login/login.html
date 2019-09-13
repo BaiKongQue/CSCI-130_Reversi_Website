@@ -1,37 +1,40 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>CSCI-130 Project: Reversi</title>
-		<meta charset="utf-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1, maximum-scale=1"
-		/>
-		<!-- <script type="text/javascript" src="script/angular.min.js"></script> -->
-		<!-- <link rel="stylesheet" type="text/css" href="" /> -->
-		<script type="text/javascript" src="../../script.js"></script>
-		<script type="text/javascript">
-			is_logged_in(function(logged_in) {
-				if (logged_in)
-					document.location = "http://" + location.hostname;
-			})
-		</script>
-	</head>
-	<body>
-		<form action="login.post.php" method="POST">
-			<div>
-				<label
-					><span>Username:</span
-					><input type="text" name="username" placeholder="Username"
-				/></label>
-			</div>
-			<div>
-				<label
-					><span>Password:</span
-					><input type="password" name="password" placeholder="Password"
-				/></label>
-			</div>
-			<div><input type="submit" name="sub" value="Login" /></div>
-		</form>
-	</body>
+
+<head>
+	<title>CSCI-130 Project: Reversi</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+	<!-- <script type="text/javascript" src="script/angular.min.js"></script> -->
+	<!-- <link rel="stylesheet" type="text/css" href="" /> -->
+	<script type="text/javascript" src="../../script.js"></script>
+	<script type="text/javascript">
+		is_logged_in(function (logged_in) {
+			if (logged_in)
+				document.location = "http://" + location.hostname;
+		});
+	</script>
+</head>
+
+<body>
+	<form action="login.post.php" method="POST">
+		<div>
+			<label>
+				<span>Username:</span>
+				<input type="text" name="username" placeholder="Username" />
+			</label>
+		</div>
+		<div>
+			<label>
+				<span>Password:</span>
+				<input type="password" name="password" placeholder="Password" />
+			</label>
+		</div>
+		<div>
+			<input type="submit" name="sub" value="Login" />
+			<div><a href="../registration/registration.html">Register</a></div>
+		</div>
+	</form>
+</body>
+
 </html>
