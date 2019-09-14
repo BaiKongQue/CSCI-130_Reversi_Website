@@ -285,6 +285,24 @@ class Game {
         }
     }
 
+    public function get_player_icon(array $playerIds): array {
+        $playerIds = array_filter($playerIds, "is_numeric");
+        if (!empty($playerIds)) {
+            $playerIds = implode(",", $playerIds);
+            if ($stmt = $this->Mysqli->prepare("SELECT player_id, icon FROM players WHERE player_id in ($playerIds)")) {
+                $stmt->execute();
+                $stmt->bind_result($playerId, $iconName);
+                $res = [];
+                while($stmt->fetch()) {
+                    $res[$playerId] = $iconName;
+                }
+                return $res;
+            } else {
+                $this->error .= "Failed to connect to server, try again later.\n";
+            }
+        }
+    }
+
     public function __deconstruct() {
         $this->Mysqli->close();     // close mysql connection
         $this->Mysqli = NULL;       // set null
