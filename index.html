@@ -3,53 +3,41 @@
 <!-- home, about us, leaderboard, [if logged_in ? "play, logout" : "login, (maybe) register"] -->
 
 <head>
-	<title>CSCI-130 Project: Reversi</title>
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-	<link rel="stylesheet" type="text/css" href="./css/navBar.css" />
+	<title>CSCI-130 Project: Reversi</title>
+	
+	<link rel="stylesheet" href="./styles.css" />
+	<link rel="stylesheet" href="./index.css" />
 
-	<!-- <script type="text/javascript" src="script/angular.min.js"></script> -->
-	<!-- <link rel="stylesheet" type="text/css" href="" /> -->
-
-	<!-- This is the navBar start -->
-	<div id="myNav" class="overlay">
-		<a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-		<div class="overlay-content">
-			<a href="./index.html">Home</a>
-			<a href="./pages/about-us/about-us.html">About</a>
-			<a href="./pages/leaderboard/leaderboard.html">Leaderboard</a>
-			<a href="./pages/login/login.html">Login</a>
-			<a href="./pages/registration/registration.html">Register</a>
-			<a href="./pages/create-game/create-game.html">Create Game</a>
-			<a href="./php/logout.php">Logout</a>
-			<a href="./xampp/dashboard/index.html">XAMPP Menu</a>
-		</div>
-	</div>
-	<script>
-		function openNav() {
-			document.getElementById("myNav").style.width = "25%";
-		}
-
-		function closeNav() {
-			document.getElementById("myNav").style.width = "0%";
-		}
-	</script>
-	<span style="font-size:30px; cursor:pointer; color:orange" onclick="openNav()">&#9776;
-	</span>
-	<!-- This is the navBar end -->
+	<script type="text/javascript" src="./script.js"></script>
+	<script type="text/javascript" src="./index.js"></script>
 </head>
 
-<body background="./images/siteIMG/nature.jpg" style="background: url(./images/siteIMG/nature.jpg) no-repeat center center
-		fixed; -webkit-background-size: cover; -moz-background-size: cover;
-		-o-background-size: cover; background-size: cover; border:5px purple solid;">
-	<h1 style="border:5px orange solid; text-align: center; font-size: 40px; ">
-		Reversi
-	</h1>
-	<div style="border:5px red solid;">div 1</div>
-	<div style="border:5px red solid;">div 2</div>
-	<div style="border:5px red solid;">div 3</div>
-	<div style="border:5px red solid;">div 4</div>
-	<div style="border:5px red solid;">div 5</div>
+<body>
+	<nav>
+		<div id="nav-button-open" onclick="popNav()">&#9776;</div>
+		<div id="nav-container">
+			<div id="nav-button-close">
+				<a href="javascript:void(0)" onclick="popNav()">&times;</a>
+			</div>
+			<div id="nav-content">
+				<a href="./index.html">Home</a>
+				<a href="./pages/about-us/about-us.html">About</a>
+				<a href="./pages/leaderboard/leaderboard.html">Leaderboard</a>
+				<a href="./pages/login/login.html">Login</a>
+				<a href="./pages/registration/registration.html">Register</a>
+				<a href="./pages/create-game/create-game.html">Create Game</a>
+				<a href="./php/logout.php">Logout</a>
+				<a href="./xampp/dashboard/index.html">XAMPP Menu</a>
+			</div>
+		</div>
+	</nav>
+	<div id="container">
+		<div id="title-container">
+			<div id="title">Reversi</div>
+		</div>
+	</div>
 </body>
 
 </html>

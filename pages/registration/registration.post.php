@@ -20,7 +20,15 @@ include_once $_SERVER['DOCUMENT_ROOT'] . "/php/classes/registration.class.php";
  */
 
 $data = [];
-if (isset($_POST['sub'], $_POST['username'], $_POST['password'], $_POST['confirm-password'], $_POST['first-name'], $_POST['last-name'], $_POST['age'], $_POST['gender'], $_POST['location'], $_FILES['icon'])) { // if all post data is set
+$allValid = true;
+$empties = '';
+foreach (['username','password','confirm-password','first-name','last-name','age','gender','location'] as $p) {
+    if (!isset($_POST[$p]) || empty($_POST[$p])) {
+        $allValid = false;
+        break;
+    }
+}
+if ($allValid && isset($_FILES['icon'])) {              // if all post data is set
     if ($_FILES['icon']['error'] == 2) {                // if icon is too large
         $data['error'] = "File size is too large!";     // error
         $data['result'] = false;                        // result false
