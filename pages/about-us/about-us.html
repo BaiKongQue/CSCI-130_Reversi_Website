@@ -1,58 +1,50 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title></title>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="stylesheet" href="about-us.css" />
-		<link rel="stylesheet" type="text/css" href="../../css/navBar.css" />
 
-		<!-- This is the navBar start -->
-		<div id="myNav" class="overlay">
-			<a href="javascript:void(0)" class="closebtn" onclick="closeNav()"
-				>&times;</a
-			>
-			<div class="overlay-content">
-				<a href="../../index.html">Home</a>
-				<a href="../about-us/about-us.html">About</a>
-				<a href="../leaderboard/leaderboard.html">Leaderboard</a>
-				<a href="../login/login.html">Login</a>
-				<a href="../registration/registration.html">Register</a>
-				<a href="../create-game/create-game.html">Create Game</a>
-				<a href="../../php/logout.php">Logout</a>
-				<a href="../../xampp/dashboard/index.html">XAMPP Menu</a>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Reversi: About Us</title>
+	<link rel="stylesheet" href="../../styles.css">
+	<link rel="stylesheet" href="about-us.css" />
+
+	<script type="text/javascript" src="../../script.js"></script>
+	<script type="text/javascript" src="./about-us.js"></script>
+</head>
+
+<body>
+	<nav>
+		<div id="nav-button-open" onclick="popNav()">&#9776;</div>
+		<div id="nav-container">
+			<div id="nav-button-close">
+				<a href="javascript:void(0)" onclick="popNav()">&times;</a>
+			</div>
+			<div id="nav-content">
+				<a href="./index.html">Home</a>
+				<a href="./pages/about-us/about-us.html">About</a>
+				<a href="./pages/leaderboard/leaderboard.html">Leaderboard</a>
+				<a href="./pages/login/login.html">Login</a>
+				<a href="./pages/registration/registration.html">Register</a>
+				<a href="./pages/create-game/create-game.html">Create Game</a>
+				<a href="./php/logout.php">Logout</a>
+				<a href="./xampp/dashboard/index.html">XAMPP Menu</a>
 			</div>
 		</div>
-		<script>
-			function openNav() {
-				document.getElementById("myNav").style.width = "25%";
-			}
+	</nav>
 
-			function closeNav() {
-				document.getElementById("myNav").style.width = "0%";
-			}
-		</script>
-		<span style="font-size:30px;cursor:pointer" onclick="openNav()"
-			>&#9776;
-		</span>
-		<!-- This is the navBar end -->
-	</head>
-
-	<body>
-		<div class="image-container space-even">
-			<div class="image-box"></div>
-			<div class="image-box"></div>
-			<div class="image-box">
-				<img class="image-box" src="./pictures/Tyler.jpg" />
-			</div>
+	<div class="image-container space-even">
+		<div class="image-box"></div>
+		<div class="image-box"></div>
+		<div class="image-box">
+			<img class="image-box" src="./pictures/Tyler.jpg" />
 		</div>
+	</div>
 
-		<div class="text-container space-even">
-			<div>Lee Perkin</div>
-			<div>Khai Pham</div>
-			<div>Tyler Gillette</div>
-		</div>
+	<div class="text-container space-even">
+		<div>Lee Perkin</div>
+		<div>Khai Pham</div>
+		<div>Tyler Gillette</div>
+	</div>
+</body>
 
-		<script src="about-us.js"></script>
-	</body>
 </html>

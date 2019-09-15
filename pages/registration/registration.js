@@ -1,5 +1,5 @@
-function submit_login() {
-    let form = document.getElementById('login-form');
+function submit_registration() {
+    let form = document.getElementById('register-form');
     let formData = new FormData(form);
     for (let input of formData.values()) {
         if (!input) return;
@@ -10,13 +10,13 @@ function submit_login() {
         if (this.readyState == 4 && this.status == 200) {
             let res = JSON.parse(this.responseText);
             if (res.result) {
-                document.location = "../../index.html";
+                document.location = "../login/login.html";
             } else {
                 document.getElementById("error-msg").innerText = res.error;
             }
         }
     }
 
-    xhttp.open('POST', './login.post.php', true);
+    xhttp.open('POST', './registration.post.php', true);
     xhttp.send(formData);
 }
