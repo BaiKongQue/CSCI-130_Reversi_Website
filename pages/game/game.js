@@ -4,6 +4,8 @@ class Board {
         this.context = this.canvas.getContext("2d");
         this.data = {};
         this.start = null;
+        this.grid_size = 0;
+        this.bit_size = 0;
     }
 
     getRouteParams() {
@@ -22,6 +24,11 @@ class Board {
         dataHttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 this.data = JSON.parse(this.responseText)['result'];
+
+                //Find the grid size and bit_size
+                let length = this.data['grid'].length;
+                this.grid_size = Math.sqrt(length);
+                this.bit_size = length / grid_size;
             }
         }
 
@@ -38,8 +45,14 @@ class Board {
             this.start = timestamp;
         }
         let progress = timestamp - this.start;
-        this.context.fillStyle = 'green';
-        this.context.fillRect(0, 0, 10, 10);
+
+        for(var i = 0; i < this.grid_size; ++i) {
+            for(var j = 0; j < this.grid_size; ++j) {
+                this.context.fillStyle = 'green';
+                this.context.fillRect((i*this.bit_size)+1, (j*this.bit_size)+1, this.bit_size-2, this.bit_size-2);
+            }
+        }
+
         if(progress < 2000) {
             window.requestAnimationFrame((timestamp) => this.onRender(timestamp));
         }
