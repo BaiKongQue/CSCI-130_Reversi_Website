@@ -20,5 +20,6 @@ if (isset($_POST['data']) && !empty($_POST['data'])) {
     $res['result'] = false;
     $res['error'] = "Game data is missing!";
 }
+
 echo json_encode($res)                          // return json encoded res
 ?>
