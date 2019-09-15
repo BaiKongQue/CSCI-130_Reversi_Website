@@ -7,6 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<title>Reversi</title>
 
+	<link rel="stylesheet" href="../../styles.css" />
 	<link rel="stylesheet" href="game.css" />
 
 	<script type="text/javascript" src="../../script.js"></script>
@@ -16,17 +17,15 @@
 				document.location = "http://" + location.hostname + "/pages/login/login.html";
 		});
 	</script>
-
-	<script type="text/javascript" src="game.js"> </script>
 </head>
 
 <body>
 	<canvas id="board"></canvas>
 </body>
 
+<script type="text/javascript" src="game.js"> </script>
 <script type="text/javascript">
-	board = new Board();
-	board.onInit();
+	OnInit();
 </script>
 
 </html>
