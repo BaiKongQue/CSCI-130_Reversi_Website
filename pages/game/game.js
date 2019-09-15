@@ -20,12 +20,19 @@ class Board {
         var dataHttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
         dataHttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                this.data = JSON.parse(this.responseText);
+                this.data = JSON.parse(this.responseText)['result'].game_id;
             }
         }
-        dataHttp.open("GET", "game.get.php?id=" + this.getRouteParams()["id"], true);
-        dataHttp.send();
+
+        const game_id = this.getRouteParams()["id"];
+        if(game_id != undefined) {
+            dataHttp.open("GET", "game.get.php?id=" + game_id, true);
+            dataHttp.send();
+        }
+        
     }
+
+    
 }
 
 
