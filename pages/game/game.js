@@ -3,6 +3,7 @@ class Board {
         this.canvas = document.getElementById("board");
         this.context = this.canvas.getContext("2d");
         this.data = {};
+        this.start = null;
     }
 
     getRouteParams() {
@@ -14,13 +15,13 @@ class Board {
     }
 
     onInit() {
-        this.canvas.style.width = "600px";
-        this.canvas.style.height = "600px";
+        this.canvas.width = "600";
+        this.canvas.height = "600";
 
         var dataHttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
         dataHttp.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                this.data = JSON.parse(this.responseText)['result'].game_id;
+                this.data = JSON.parse(this.responseText)['result'];
             }
         }
 
@@ -28,10 +29,21 @@ class Board {
         if(game_id != undefined) {
             dataHttp.open("GET", "game.get.php?id=" + game_id, true);
             dataHttp.send();
-        }
-        
+        }  
+        window.requestAnimationFrame((timestamp) => this.onRender(timestamp));
     }
 
+    onRender(timestamp) {
+        if(!this.start) {
+            this.start = timestamp;
+        }
+        let progress = timestamp - this.start;
+        this.context.fillStyle = 'green';
+        this.context.fillRect(0, 0, 10, 10);
+        if(progress < 2000) {
+            window.requestAnimationFrame((timestamp) => this.onRender(timestamp));
+        }
+    }
     
 }
 
