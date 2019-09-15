@@ -9,10 +9,15 @@ include_once $_SERVER['DOCUMENT_ROOT'] . "/php/classes/game.class.php";
  * game data array.
  */
  
-$res = [];                                              // init res
-$Game = new Game();                                     // new Game object
-$res['result'] = $Game->get_game_data($_GET['id']);     // get game data
-if (!empty($Game->error))                               // if error
-    $res['error'] = $Game->error;                       // record error
-echo json_encode($res)                                  // return json encoded res
+$res = [];                                                  // init res
+if (isset($_GET['id']) && !empty($_GET['id'])) {
+    $Game = new Game();                                     // new Game object
+    $res['result'] = $Game->get_game_data($_GET['id']);     // get game data
+    if (!empty($Game->error))                               // if error
+        $res['error'] = $Game->error;                       // record error
+} else {
+    $res['result'] = false;                                 // result false
+    $res['error'] = "game id is missing!";                  // game id missing
+}
+echo json_encode($res)                                      // return json encoded res
 ?>
