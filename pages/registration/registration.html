@@ -12,10 +12,12 @@
 			if (logged_in)
 				document.location = "http://" + location.hostname;
 		});
-	</script>
+    </script>
+    <script type="text/javascript" src="./registration.js"></script>    
 </head>
 <body>
-    <form action="registration.post.php" method="POST" enctype="multipart/form-data">
+    <form id="register-form" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault()">
+        <div id="error-msg"></div>
         <div><label><span>Username:</span><input type="text" name="username" placeholder="Username" required/></label></div>
         <div><label><span>Password:</span><input type="password" name="password" placeholder="Password" required/></label></div>
         <div><label><span>Confirm Password:</span><input type="password" name="confirm-password" placeholder="Confirm Password" required/></label></div>
@@ -41,7 +43,7 @@
             </label>
         </div>
         <div>
-            <input type="submit" name="sub" value="Register" />
+            <input type="submit" name="sub" value="Register" onclick="submit_registration()"/>
             <div>Already have an account: <a href="../login/login.html">Login</a></div>
         </div>
     </form>

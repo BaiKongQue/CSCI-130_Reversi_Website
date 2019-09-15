@@ -1,3 +1,29 @@
 /*******************
  * Home Stylesheet *
  *******************/
+html, body {
+    height: 100%;
+}
+
+
+#container {
+    width: 100%;
+    height: 100%;
+    background: url(./images/siteIMG/nature.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+#title-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+}
+
+#title {
+    font-size: 100px;;
+    font-weight: bold;
+}

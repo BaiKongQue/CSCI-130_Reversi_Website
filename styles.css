@@ -1,5 +1,71 @@
 /*********************
  * Global Stylesheet *
  *********************/
+html, body {
+    width: 100%;
+    margin: 0;
+}
 
- 
+body {
+    font-family: 'Lato', sans-serif;
+}
+
+h1 {
+    margin: 0;
+}
+
+/**************
+ * Navigation *
+ **************/
+#nav-button-open {
+    font-size:30px;
+    cursor:pointer;
+    color:orange;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+}
+
+#nav-button-close {
+    display: flex;
+    justify-content: flex-end;
+    margin-right: 10px;
+}
+
+#nav-container #nav-button-close a {
+    font-size: 60px;
+}
+
+#nav-container {
+    height: 100%;
+    width: 300px;
+    position: fixed;
+    top: 0;
+    left: -300px;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.9);
+    transition: 0.2s linear;
+    /* overflow-y: scroll; */
+    z-index: 1;
+}
+
+#nav-content {
+    position: relative;
+    width: 100%;
+    text-align: center;
+    margin-top: 5px;
+}
+
+#nav-container a {
+    padding: 5px;
+    text-decoration: none;
+    font-size: 36px;
+    color: #818181;
+    display: block;
+    user-select: none;
+}
+
+#nav-content a:hover,
+#nav-content a:active {
+    color: #f1f1f1;
+}
