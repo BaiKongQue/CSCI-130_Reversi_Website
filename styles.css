@@ -46,6 +46,7 @@ h1 {
 }
 
 #nav-container #nav-button-close a {
+    cursor:pointer;
     font-size: 60px;
 }
 
