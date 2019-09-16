@@ -21,7 +21,7 @@ function _GetGameData() {
             data = JSON.parse(this.responseText)['result'];
 
             //Find the grid size and bit_size
-            let length = data['grid'].length;
+            let length = data.grid.length;
             grid_size = Math.sqrt(length);
             bit_size = 600 / grid_size;
             _OnRender();
@@ -35,17 +35,41 @@ function _GetGameData() {
     }
 }
 
+function _DrawCircle(color, i, j) {
+    let radius = bit_size / 2;
+    let x_center = (i * bit_size) + radius;
+    let y_center = (j * bit_size) + radius;
+
+    context.beginPath();
+    context.arc(x_center,  y_center, radius - 2, 0, 2 * Math.PI, false);
+    context.fillStyle = color;
+    context.fill();
+    context.lineWidth = 5;
+    context.closePath();
+}
+
 function _OnRender() {
+    let current_index = 0;
     context.fillStyle = "black";
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     for (var i = 0; i < grid_size; ++i) {
         for (var j = 0; j < grid_size; ++j) {
+            context.beginPath()
             context.fillStyle = 'green';
             context.fillRect((i * bit_size) + 1, (j * bit_size) + 1, bit_size - 2, bit_size - 2);
+            context.closePath();
+            
+            if (data.grid[current_index] == 1) {
+                _DrawCircle('white', i, j); 
+            } else if (data.grid[current_index] == 2) {
+                _DrawCircle('black', i, j);
+            }
+            current_index++;
         }
     }
 }
+
 
 // PUBLIC
 function OnInit() {
