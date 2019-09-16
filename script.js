@@ -1,7 +1,6 @@
 /*********************
  * Global Javascript *
  *********************/
-
 /**
  * Runs when the window finishes loading.
  */
@@ -49,7 +48,6 @@ function load_login_elements() {
 /**************
  * Navigation *
  **************/
-
 window.addEventListener("click", closeNavFromOutside, false);               // add event listener if the user clicks
 
 /**
