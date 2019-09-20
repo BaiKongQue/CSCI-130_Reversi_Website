@@ -154,7 +154,7 @@ class Game {
      * @param string $difficulty: if vs is computer how difficult the computer is
      * @return bool: if the game was successfully created
      */
-    public function create_game(int $size, string $difficulty = NULL): bool {
+    public function create_game(int $size, string $difficulty = NULL): array {
         if ($this->Login->login_check()) {                          // check if user is logged in
             // sanitize inputs
             $size = filter_var($size, FILTER_SANITIZE_NUMBER_INT);  // sanitize the input
@@ -173,19 +173,18 @@ class Game {
             $sizeSqr = NULL;                                        // clear var
             if ($stmt = $this->Mysqli->prepare("INSERT INTO games(player1_id, player1_score, grid, player_turn".($difficulty != NULL ? ", player2_id, player2_score" : "") .", start_time) VALUES('".$_SESSION['player_id']."',0,'$grid','".$_SESSION['player_id']."'".($difficulty != NULL ? ", ".AI_DIFFICULTY_ID[$difficulty].", 0" : "") .",NOW())")) {
                 if ($stmt->execute()) {                             // execute query
-                    return true;                                    // successfully created game
+                    return ['result' => true, "id" => $stmt->insert_id];                                    // successfully created game
                 } else {
                     $this->error .= "Failed to create new game, please try again later.\n"; // error failed to connect to db
-                    return false;
+                    return ['result' => false];
                 }
             } else {
                 $this->error .= "Error connecting to server, try again later.\n";
-                $this->error = $this->Mysqli->error;
-                return false;
+                return ['result' => false];
             }
         } else {
             $this->error .= "You are not logged in!\n";             //  error user is not logged in
-            return false;
+            return ['result' => false];
         }
     }
 
