@@ -68,6 +68,10 @@ input[type="submit"] {
     display:initial;
 }
 
+#error-msg {
+    color: red;
+}
+
 /**************
  * Navigation *
  **************/
