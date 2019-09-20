@@ -20,7 +20,27 @@
 </head>
 
 <body>
-	<canvas id="board"></canvas>
+	<nav>
+		<a id="nav-button-open" class="no-select" onclick="popNav()">&#9776;</a>
+		<div id="nav-container">
+			<div id="nav-button-close">
+				<a class="no-select" onclick="popNav()">&times;</a>
+			</div>
+			<div id="nav-content">
+				<a href="../../index.html">Home</a>
+				<a href="../about-us/about-us.html">About</a>
+				<a href="../leaderboard/leaderboard.html">Leaderboard</a>
+				<a class="logged-out" href="../login/login.html">Login</a>
+				<a class="logged-out" href="../registration/registration.html">Register</a>
+				<a class="logged-in" href="../create-game/create-game.html">Create Game</a>
+				<a class="logged-in" href="../lobbies/lobbies.html">Play</a>
+				<a class="logged-in" href="../../php/logout.php">Logout</a>
+			</div>
+		</div>
+	</nav>
+	<div id="body-container">
+		<canvas id="board"></canvas>
+	</div>
 </body>
 
 <script type="text/javascript" src="game.js"> </script>
