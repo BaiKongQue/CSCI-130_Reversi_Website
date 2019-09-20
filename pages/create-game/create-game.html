@@ -10,6 +10,12 @@
 	<link rel="stylesheet" href="./create-game.css" />
 
 	<script src="../../script.js"></script>
+	<script type="text/javascript">
+		is_logged_in(function (logged_in) {
+			if (!logged_in)
+				document.location = "http://" + location.hostname + "/pages/login/login.html";
+		});
+	</script>
 	<script src="./create-game.js"></script>
 </head>
 
@@ -33,18 +39,19 @@
 		</div>
 	</nav>
 	<div id="body-container">
-		<form action="create-game.post.php" method="POST">
+		<form id="create-game-form" method="POST" onsubmit="event.preventDefault()">
+			<div id="error-msg"></div>
 			<div id="size-select">
 				<span>Game Grid Size:</span>
 				<div class="radio-select">
 					<div>
-						<label><input type="radio" name="size" value="4" />4x4</label>
+						<label><input type="radio" name="size" value="4" required/>4x4</label>
 					</div>
 					<div>
-						<label><input type="radio" name="size" value="6" />6x6</label>
+						<label><input type="radio" name="size" value="6" required/>6x6</label>
 					</div>
 					<div>
-						<label><input type="radio" name="size" value="8" />8x8</label>
+						<label><input type="radio" name="size" value="8" required/>8x8</label>
 					</div>
 				</div>
 			</div>
@@ -52,10 +59,10 @@
 				<span>Game mode:</span>
 				<div id="game-mode-select" class="radio-select">
 					<div>
-						<label><input type="radio" name="vs" value="player" />PvP</label>
+						<label><input type="radio" name="vs" value="player" required/>PvP</label>
 					</div>
 					<div>
-						<label><input type="radio" name="vs" value="computer" />PvC</label>
+						<label><input type="radio" name="vs" value="computer" required/>PvC</label>
 					</div>
 				</div>
 				<div id="difficulty-select" class="radio-select">
@@ -86,7 +93,7 @@
 					</select>
 				</label>
 			</div>
-			<div><input type="submit" name="sub" value="Create New Game" /></div>
+			<div><input type="submit" name="sub" value="Create New Game" onclick="submit_create_game()" /></div>
 		</form>
 	</div>
 </body>
