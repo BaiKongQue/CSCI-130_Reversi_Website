@@ -5,6 +5,7 @@
 	<meta charset="utf-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	<title>Reversi: About Us</title>
+
 	<link rel="stylesheet" href="../../styles.css">
 	<link rel="stylesheet" href="about-us.css" />
 
@@ -14,36 +15,39 @@
 
 <body>
 	<nav>
-		<div id="nav-button-open" onclick="popNav()">&#9776;</div>
+		<a id="nav-button-open" class="no-select" onclick="popNav()">&#9776;</a>
 		<div id="nav-container">
 			<div id="nav-button-close">
-				<a href="javascript:void(0)" onclick="popNav()">&times;</a>
+				<a class="no-select" onclick="popNav()">&times;</a>
 			</div>
 			<div id="nav-content">
 				<a href="../../index.html">Home</a>
-				<a href="./pages/about-us/about-us.html">About</a>
-				<a href="./pages/leaderboard/leaderboard.html">Leaderboard</a>
-				<a href="./pages/login/login.html">Login</a>
-				<a href="./pages/registration/registration.html">Register</a>
-				<a href="./pages/create-game/create-game.html">Create Game</a>
-				<a href="./php/logout.php">Logout</a>
-				<a href="./xampp/dashboard/index.html">XAMPP Menu</a>
+				<a href="../about-us/about-us.html">About</a>
+				<a href="../leaderboard/leaderboard.html">Leaderboard</a>
+				<a class="logged-out" href="../login/login.html">Login</a>
+				<a class="logged-out" href="../registration/registration.html">Register</a>
+				<a class="logged-in" href="../create-game/create-game.html">Create Game</a>
+				<a class="logged-in" href="../lobbies/lobbies.html">Play</a>
+				<a class="logged-in" href="../../php/logout.php">Logout</a>
 			</div>
 		</div>
 	</nav>
 
-	<div class="image-container space-even">
-		<div class="image-box"></div>
-		<div class="image-box"></div>
-		<div class="image-box">
-			<img class="image-box" src="./pictures/Tyler.jpg" />
-		</div>
-	</div>
+	<div id="body-container">
+		<div id="about-us-container">
+			<div class="image-box">
 
-	<div class="text-container space-even">
-		<div>Lee Perkin</div>
-		<div>Khai Pham</div>
-		<div>Tyler Gillette</div>
+				<div>Lee Perkin</div>
+			</div>
+			<div class="image-box">
+
+				<div>Khai Pham</div>
+			</div>
+			<div class="image-box">
+				<img src="../../images/Tyler.jpg" />
+				<div>Tyler Gillette</div>
+			</div>
+		</div>
 	</div>
 </body>
 
