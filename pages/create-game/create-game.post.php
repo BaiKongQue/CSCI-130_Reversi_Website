@@ -14,14 +14,12 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/php/classes/game.class.php';
  */
 
 $data = [];                                                                 // initialize data to send
-if (isset($_POST['sub'], $_POST['size'], $_POST['vs'])) {                   // check if all posts are set
+if (isset($_POST['size'], $_POST['vs'])) {                   // check if all posts are set
     if ($_POST['vs'] == "player" || ($_POST['vs'] == "computer" && isset($_POST['difficulty']))) { // check if vs is correct and if computer if difficulty is set
         $Game = new Game();                                                 // create new Game object
-        if ($Game->create_game($_POST['size'], ($_POST['vs'] == 'computer' ? $_POST['difficulty'] : NULL))) { // create a new game
-            $data['result'] = true;                                         // successfully created a new game
-        } else {
+        $data = $Game->create_game($_POST['size'], ($_POST['vs'] == 'computer' ? $_POST['difficulty'] : NULL)); // created a new game and get result
+        if (!empty($Game->error)) {
             $data['error'] = $Game->error;                                  // error creating new game
-            $data['result'] = false;                                        // result is false
         }
     } else {
         $data['error'] = "Please select a computer difficulty to face.";    // computer difficulty not set
