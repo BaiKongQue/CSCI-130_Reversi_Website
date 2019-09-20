@@ -303,6 +303,23 @@ class Game {
         }
     }
 
+    public function get_player_lobbies(int $playerId): array {
+        $playerIds = filter_var($playerIds, FILTER_SANITIZE_NUMBER_INT);
+        if (!empty($playerIds)) {
+            if ($stmt = $this->Mysqli->prepare("")) {
+                $stmt->execute();
+                $stmt->bind_result();
+                $res = [];
+                while($stmt->fetch()) {
+                    $res[$playerId] = $iconName;
+                }
+                return $res;
+            } else {
+                $this->error .= "Failed to connect to server, try again later.\n";
+            }
+        }
+    }
+
     public function __deconstruct() {
         $this->Mysqli->close();     // close mysql connection
         $this->Mysqli = NULL;       // set null

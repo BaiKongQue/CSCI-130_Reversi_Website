@@ -3,16 +3,53 @@
  *********************/
 html, body {
     width: 100%;
+    height: 100%;
     margin: 0;
 }
 
 body {
     font-family: 'Lato', sans-serif;
+    background: url(./images/nature.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
 
 h1 {
     margin: 0;
 }
+
+label {
+    display: flex;
+    justify-content: space-between;
+}
+
+form div:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+form div label span {
+    padding: 5px 0;
+    margin-right: 5px;
+}
+
+input:not([type="submit"]) {
+    padding: 5px;
+    border: none;
+}
+
+input[type="radio"] {
+    margin-right: 10px;
+}
+
+input[type="submit"] {
+    padding: 5px;
+    width: 100%;
+    font-size: large;
+}
+
+
 
 .no-select {
     -webkit-touch-callout: none; /* iOS Safari */
@@ -27,16 +64,24 @@ h1 {
 .logged-in { display: none; }
 .logged-out { display: inherit; }
 
+.radio-select label {
+    display:initial;
+}
+
 /**************
  * Navigation *
  **************/
 #nav-button-open {
-    font-size:30px;
+    font-size:50px;
     cursor:pointer;
     color:orange;
     position: absolute;
     top: 20px;
     left: 20px;
+    width: 67px;
+    height: 67px;
+    text-align: center;
+    background-color: #00000085;
 }
 
 #nav-button-close {
@@ -82,3 +127,22 @@ h1 {
 #nav-content a:active {
     color: #f1f1f1;
 }
+
+/******************
+ * Body Container *
+ ******************/
+ #body-container {
+    width: 100%;
+    max-width: 1000px;
+    min-height: 200px;
+    margin: 0 auto 0 auto;
+    box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+    background-color: #ffffff75;
+    padding: 15px  5px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: relative;
+    top: 100px;
+ }
