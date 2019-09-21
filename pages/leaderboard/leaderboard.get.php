@@ -14,7 +14,8 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/php/classes/game.class.php';
  * 
  * @param string first_name: first name of person to find (leave empty or NULL for all)
  * @param string last_name: last name of person to find (leave empty or NULL for all)
- * @param int sort: attribute to sort by (first_name, last_name, score, duration)
+ * @param bool include_ai: wether to include the ai in the leaderboard or not
+ * @param string sort: attribute to sort by (game_id, first_name, last_name, score, duration)
  * @param string order: how to order the result (ASC, DESC)
  * @return json {first_name: string, last_name: string, score: int, duration: Time}[] an array of objects holding leaderboard data
  */

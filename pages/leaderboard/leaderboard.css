@@ -1,0 +1,35 @@
+
+#body-container > div {
+    width: 100%;
+}
+
+#title {
+    text-align: center;
+}
+
+form {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+label {
+    display: initial;
+}
+
+#scores-table {
+    width: 100%;
+    border-spacing: 0;
+}
+
+#scores-table thead {
+    background-color: green;
+}
+
+#scores-table-body tr td {
+    text-align: center;
+    padding: 5px 0;
+}
+
+#scores-table-body tr:nth-child(even) {
+    background-color: lightgreen;
+}
