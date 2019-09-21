@@ -11,7 +11,6 @@
 	<link rel="stylesheet" href="./leaderboard.css" />
 
 	<script type="text/javascript" src="../../script.js"></script>
-	<script type="text/javascript" src="./leaderboard.js"></script>
 </head>
 
 <body>
@@ -34,8 +33,57 @@
 		</div>
 	</nav>
 	<div id="body-container">
-		<h1>Leaderboard</h1>
+		<div>
+			<div id="title">
+				<h1>Leaderboard</h1>
+			</div>
+			<div id="inputs">
+				<div id="error-msg"></div>
+				<form id="leaderboard-form" method="GET" onsubmit="event.preventDefault()">
+					<div><label><span>First Name:</span><input type="text" name="first-name" placeholder="First Name" /></label></div>
+					<div><label><span>Last Name:</span><input type="text" name="last-name" placeholder="Last Name" /></label></div>
+					<div><label><input type="checkbox" name="include-ai" /><span>Include AI</span></label></div>
+					<div>
+						<label>
+							<span>Sort By:</span>
+							<select name="sort-by">
+								<option value="game_id">Game ID</option>
+								<option value="first_name">First Names</option>
+								<option value="last_name">Last Names</option>
+								<option value="score">Score</option>
+								<option value="duration">Duration</option>
+							</select>
+						</label>
+					</div>
+					<div>
+						<label>
+							<span>Order By:</span>
+							<select name="order-by">
+								<option value="DESC">Dessending</option>
+								<option value="ASC">Assending</option>
+							</select>
+						</label>
+					</div>
+				</form>
+			</div>
+			<div id="scores-container">
+				<table id="scores-table">
+					<thead>
+						<tr>
+							<th>Game ID</th>
+							<th>Name</th>
+							<th>Score</th>
+							<th>Duration</th>
+						</tr>
+					</thead>
+					<tbody id="scores-table-body">
+						
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
 </body>
+<script type="text/javascript" src="./leaderboard.js"></script>
 
 </html>
