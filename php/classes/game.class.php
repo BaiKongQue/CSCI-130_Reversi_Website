@@ -252,7 +252,7 @@ class Game {
             if ($firstName != NULL) {                                               // if first name not null
                 $firstName = filter_var($firstName, FILTER_SANITIZE_STRING);        // sanitize string
                 $selection .= "p.first_name = '$firstName'";                        // add firstname to query
-                if ($lastName != NULL || $includeAI) $selection .= "AND ";                        // if lastname is not null add AND
+                if ($lastName != NULL || $includeAI) $selection .= "AND ";          // if lastname is not null add AND
             }
             if ($lastName != NULL) {                                                // if last name is not null
                 $lastName = filter_var($lastName, FILTER_SANITIZE_STRING);          // sanitize string
@@ -263,21 +263,22 @@ class Game {
                 $selection .= "p.player_id > 0";
             }
         }
-        if ($stmt = $this->Mysqli->prepare("SELECT p.first_name, p.last_name, g.score, TIMEDIFF(g.end_time, g.duration) duration FROM (SELECT player1_id player_id, player1_score score, duration, end_time FROM games UNION SELECT player2_id player_id, player2_score score, duration, end_time FROM games) g LEFT JOIN players p USING(player_id) $selection ORDER BY $sortBy $orderBy")) {
-            $stmt->execute();                                                       // run prepared query
-            $stmt->bind_result($dbFirstName, $dbLastName, $dbScore, $dbDuration);   // bind results
-            $res = [];                                                              // init res array
-            while($stmt->fetch()) {                                                 // fetch each row
-                $a = [];                                                            // start new array
-                $a['first_name'] = $dbFirstName;                                    // add first name
-                $a['last_name'] = $dbLastName;                                      // add last name
-                $a['score'] = $dbScore;                                             // add score
-                $a['duration'] = $dbDuration;                                       // duration
-                array_push($res, $a);                                               // push to res array
+        if ($stmt = $this->Mysqli->prepare("SELECT g.game_id, p.first_name, p.last_name, g.score, TIMEDIFF(g.end_time, g.start_time) duration FROM (SELECT game_id, player1_id player_id, player1_score score, start_time, end_time FROM games WHERE end_time IS NOT NULL UNION SELECT game_id, player2_id player_id, player2_score score, start_time, end_time FROM games WHERE end_time IS NOT NULL) g LEFT JOIN players p USING(player_id) $selection ORDER BY $sortBy $orderBy")) {
+            $stmt->execute();                                                                   // run prepared query
+            $stmt->bind_result($dbGameId, $dbFirstName, $dbLastName, $dbScore, $dbDuration);    // bind results
+            $res = [];                                                                          // init res array
+            while($stmt->fetch()) {                                                             // fetch each row
+                $a = [];                                                                        // start new array
+                $a['game_id'] = $dbGameId;
+                $a['first_name'] = $dbFirstName;                                                // add first name
+                $a['last_name'] = $dbLastName;                                                  // add last name
+                $a['score'] = $dbScore;                                                         // add score
+                $a['duration'] = $dbDuration;                                                   // duration
+                array_push($res, $a);                                                           // push to res array
             }
-            return $res;                                                            // return res
-            $stmt->free_result();                                                   // free results
-            $stmt->close();                                                         // close connection
+            return $res;                                                                        // return res
+            $stmt->free_result();                                                               // free results
+            $stmt->close();                                                                     // close connection
         } else {
             $this->error .= "there was an error connecting to the server, try again later.\n"; // error preparing query
             return false;
