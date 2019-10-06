@@ -24,10 +24,10 @@ $Game = new Game();                                                 // create ne
 $data['result'] = $Game->get_scores(                                // encode into json result
     (isset($_GET['first_name'])) ? $_GET['first_name'] : NULL,      // first anme 
     (isset($_GET['last_name'])) ? $_GET['last_name'] : NULL,        // last name
-    (isset($_GET['include_ai'])) ? $_GET['include_ai'] : false,     // if include ai
+    (isset($_GET['include_ai'])) ? ($_GET['include_ai'] == "true") ? true : false : false,// if include ai
     (isset($_GET['sort'])) ? $_GET['sort'] : 'score',               // sort by
     (isset($_GET['order'])) ? $_GET['order'] : 'DESC'               // order by
 );
-if (!empty($Game->error)) $data['error'] = $Game->error;            // set errors if there are any
+if ($Game->error != "") $data['error'] = $Game->error;            // set errors if there are any
 echo json_encode($data);                                            // return result
 ?>

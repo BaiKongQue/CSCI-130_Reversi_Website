@@ -247,19 +247,19 @@ class Game {
      */
     public function get_scores(string $firstName = NULL, string $lastName = NULL, bool $includeAI = false, string $sortBy = "score", string $orderBy = "DESC"): array {
         $selection = "";                                                            // set selection
-        if ($firstName != NULL || $lastName != NULL) {                              // if first name or last name isnt null
+        if ($firstName != NULL || $lastName != NULL || $includeAI || !$includeAI) {                              // if first name or last name isnt null
             $selection .= "WHERE ";                                                 // add WHERE
             if ($firstName != NULL) {                                               // if first name not null
                 $firstName = filter_var($firstName, FILTER_SANITIZE_STRING);        // sanitize string
                 $selection .= "p.first_name = '$firstName'";                        // add firstname to query
-                if ($lastName != NULL || $includeAI) $selection .= "AND ";          // if lastname is not null add AND
+                if ($lastName != NULL || !$includeAI) $selection .= "AND ";          // if lastname is not null add AND
             }
             if ($lastName != NULL) {                                                // if last name is not null
                 $lastName = filter_var($lastName, FILTER_SANITIZE_STRING);          // sanitize string
                 $selection .= "p.last_name = '$lastName'";                          // add lastname to query
-                if ($includeAI) $selection .= "AND ";
+                if (!$includeAI) $selection .= "AND ";
             }
-            if ($includeAI) {
+            if (!$includeAI) {
                 $selection .= "p.player_id > 0";
             }
         }
@@ -281,7 +281,7 @@ class Game {
             $stmt->close();                                                                     // close connection
         } else {
             $this->error .= "there was an error connecting to the server, try again later.\n"; // error preparing query
-            return false;
+            return ['result' => false];
         }
     }
 
