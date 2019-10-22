@@ -11,7 +11,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . "/php/classes/game.class.php";
  
 $res = [];                                      // init res
 if (isset($_POST['data']) && !empty($_POST['data'])) {
-    $data = json_decode($_POST['data']);
+    $data = json_decode($_POST['data'], true);
     $Game = new Game();                             // new Game object
     $res['result'] = $Game->moves_array($data);     // store result of moves
     if (!empty($Game->error))                       // if error

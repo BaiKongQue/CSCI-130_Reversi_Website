@@ -106,7 +106,7 @@ class Game {
      *  you will get in that spot
      */
     public function moves_array(array &$data): array {
-        $grid = $data['grid'];                                                          // reference grid in data
+        $grid = &$data['grid'];                                                          // reference grid in data
         $size = sqrt(count($grid));                                                     // hold size
         $player = ($data['player_turn'] == $data['player1_id']) ? GAME_TILE_PLAYER1 : GAME_TILE_PLAYER2; // get if player is 1 or 2 tile
         $res = [];                                                                      // init result array
@@ -119,9 +119,11 @@ class Game {
                         continue;                                                       // skip
                     $spot = $index + $x + $y;                                           // calculate spot
                     $count = 0;                                                         // hold count
-                    while ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE    // while spot is not player
+                    while (
+                        ($spot > 0 && $spot < count($grid))                             // make sure spot is in bounds
                         && (!(($y != 0 && $this->is_horizontal_wall($spot, $size)))     // moving in y direction and is not wall
                             || !(($x != 0 && $this->is_vertical_wall($spot, $size))))   // moving in x direction and is not wall
+                        && ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE)  // while spot is not player
                     ) {
                         $spot += $x + $y;                                               // step to next spot
                         $count++;                                                       // increment count
