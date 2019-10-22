@@ -20,3 +20,15 @@ function submit_create_game() {
     xhttp.open('POST', './create-game.post.php', true);
     xhttp.send(formData);
 }
+
+let difficultyRadio = document.getElementsByName("difficulty");
+let difficulty = document.getElementById("difficulty-select");
+function Disabled(disabled) {
+    if (disabled)
+        difficulty.classList.add("disable");
+    else
+        difficulty.classList.remove("disable");
+    for (let i = 0; i < difficultyRadio.length; i++) {
+        difficultyRadio[i].disabled = disabled;
+    }
+}

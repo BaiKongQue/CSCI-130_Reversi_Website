@@ -68,6 +68,10 @@ input[type="submit"] {
     display:initial;
 }
 
+.disable {
+    color: darkgrey;
+}
+
 #error-msg {
     color: red;
 }
