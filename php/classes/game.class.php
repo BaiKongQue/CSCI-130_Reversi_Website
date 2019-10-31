@@ -253,12 +253,12 @@ class Game {
             $selection .= "WHERE ";                                                 // add WHERE
             if ($firstName != NULL) {                                               // if first name not null
                 $firstName = filter_var($firstName, FILTER_SANITIZE_STRING);        // sanitize string
-                $selection .= "p.first_name LIKE '$firstName'%";                        // add firstname to query
-                if ($lastName != NULL) $selection .= "AND ";          // if lastname is not null add AND
+                $selection .= "p.first_name LIKE '$firstName%'";                    // add firstname to query
+                if ($lastName != NULL) $selection .= "AND ";                        // if lastname is not null add AND
             }
             if ($lastName != NULL) {                                                // if last name is not null
                 $lastName = filter_var($lastName, FILTER_SANITIZE_STRING);          // sanitize string
-                $selection .= "p.last_name LIKE '$lastName'%";                          // add lastname to query
+                $selection .= "p.last_name LIKE '$lastName%'";                      // add lastname to query
             }
         }
         if ($stmt = $this->Mysqli->prepare("SELECT g.game_id, p.first_name, p.last_name, g.score, TIMEDIFF(g.end_time, g.start_time) duration FROM (SELECT game_id, player1_id player_id, player1_score score, start_time, end_time FROM games WHERE end_time IS NOT NULL UNION SELECT game_id, player2_id player_id, player2_score score, start_time, end_time FROM games WHERE end_time IS NOT NULL) g LEFT JOIN players p USING(player_id) $selection ORDER BY $sortBy $orderBy")) {
