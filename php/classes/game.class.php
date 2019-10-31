@@ -304,7 +304,7 @@ class Game {
     public function get_player_lobbies(): array {
         if ($this->Login->login_check()) {                                              // check if user is logged in
             if ($stmt = $this->Mysqli->prepare("
-                select
+                SELECT
                     games.game_id,
                     games.player1_score,
                     p1.first_name p1_first_name,
@@ -315,12 +315,13 @@ class Game {
                     p2.last_name p2_last_name,
                     p2.icon p2_icon,
                     timediff(now(), games.start_time) duration
-                from
+                FROM
                     {oj games
                         left outer join players p1 on games.player1_id = p1.player_id
                         left outer join players p2 on games.player2_id = p2.player_id}
-                where
-                    games.player1_id = ? or games.player2_id = ?
+                WHERE
+                    (games.player1_id = ? or games.player2_id = ?)
+                    AND games.end_time IS NULL
                 ORDER BY games.game_id
             ")) {
                 $stmt->bind_param('ii', $_SESSION['player_id'], $_SESSION['player_id']);    // bind the params
