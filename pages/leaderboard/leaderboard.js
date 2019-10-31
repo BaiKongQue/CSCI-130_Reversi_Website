@@ -3,7 +3,6 @@ let form = document.getElementById('leaderboard-form');
 let xhttp = new XMLHttpRequest();
 
 form.oninput = function() {
-    console.log(1);
     get_leaderboard();
 }
 
