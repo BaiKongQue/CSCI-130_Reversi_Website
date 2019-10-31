@@ -335,16 +335,16 @@ class Game {
                 while($stmt->fetch()) {                                                     // fetch each row
                     $game = [];                                                             // array for each game
                     $game['game_id'] = $game_id;                                            // set game id
-                    $game['player1_score'] = $p1_score;                                     // set p1 score
-                    $game['player1_first_name'] = $p1_first_name;                           // set p1 first name
-                    $game['player1_last_name'] = $p1_last_name;                             // set p1 last name
-                    $game['player1_icon'] = $p1_icon;                                       // set p1 icon
-                    $game['player2_score'] = $p2_score;                                     // set p2 score
-                    $game['player2_first_name'] = $p2_first_name;                           // set p2 first name
-                    $game['player2_last_name'] = $p2_last_name;                             // set p2 last name
-                    $game['player2_icon'] = $p2_icon;                                       // set p2 icon
+                    $game['player1']['score'] = $p1_score;                                  // set p1 score
+                    $game['player1']['first_name'] = $p1_first_name;                        // set p1 first name
+                    $game['player1']['last_name'] = $p1_last_name;                          // set p1 last name
+                    $game['player1']['icon'] = $p1_icon;                                    // set p1 icon
+                    $game['player2']['score'] = $p2_score;                                  // set p2 score
+                    $game['player2']['first_name'] = $p2_first_name;                        // set p2 first name
+                    $game['player2']['last_name'] = $p2_last_name;                          // set p2 last name
+                    $game['player2']['icon'] = $p2_icon;                                    // set p2 icon
                     $game['duration'] = $duration;                                          // set duration
-                    array_push($res, $duration);                                            // push game to result array
+                    array_push($res, $game);                                                // push game to result array
                 }
                 return $res;                                                                // return result
             } else {
