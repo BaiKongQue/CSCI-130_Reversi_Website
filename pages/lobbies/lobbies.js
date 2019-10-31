@@ -5,6 +5,9 @@ xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
         let res = JSON.parse(this.responseText);
         if (res.result) {
+            if (res.result.length <= 0) {
+                lobbies.innerHTML += "<div style=\"text-align:center; margin-top: 10px;\">You have no current games! Go start one by <a href=\"../create-game/create-game.html\">Creating a game!</a></div>"
+            }
             for (let r of res.result) {
                 lobbies.innerHTML +="<li>" +
                                         "<a href=\"../game/game.html?id="+r.game_id+"\">" +
@@ -13,10 +16,7 @@ xhttp.onreadystatechange = function() {
                                                 "<div><h1>VS</h1></div>" +
                                                 player_block(r.player2) +
                                             "</div>" +
-                                            "<div>" +
-                                                "<div>Duration: "+ r.duration +"</div>" +
-                                                "<div><a href=\""+  +"\"><button>Play</button></a></div>" + 
-                                            "</div>" +
+                                            "<div id=\"game-duration\">Duration: " + r.duration + "</div>" +
                                         "</a>" +
                                     "</li>";
             }
