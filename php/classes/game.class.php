@@ -305,20 +305,61 @@ class Game {
         }
     }
 
-    public function get_player_lobbies(int $playerId): array {
-        $playerIds = filter_var($playerIds, FILTER_SANITIZE_NUMBER_INT);
-        if (!empty($playerIds)) {
-            if ($stmt = $this->Mysqli->prepare("")) {
+    public function get_player_lobbies(): array {
+        if ($this->Login->login_check()) {
+            if ($stmt = $this->Mysqli->prepare("
+                select
+                    games.game_id,
+                    games.player1_id,
+                    games.player1_score,
+                    p1.first_name p1_first_name,
+                    p1.last_name p1_last_name,
+                    p1.icon p1_icon,
+                    games.player2_id,
+                    games.player2_score,
+                    p2.first_name p2_first_name,
+                    p2.last_name p2_last_name,
+                    p2.icon p2_icon,
+                    timediff(now(), games.start_time) duration
+                from
+                    {oj games
+                        left outer join players p1 on games.player1_id = p1.player_id
+                        left outer join players p2 on games.player2_id = p2.player_id}
+                where
+                    games.player1_id = ? or games.player2_id = ?
+                ORDER BY games.game_id
+            ")) {
+                $stmt->bind_param('ii', $_SESSION['player_id'], $_SESSION['player_id']);
                 $stmt->execute();
-                $stmt->bind_result();
+                $stmt->bind_result(
+                    $game_id, 
+                    $p1_id, $p1_score, $p1_first_name, $p1_last_name, $p1_icon,
+                    $p2_id, $p2_score, $p2_first_name, $p2_last_name, $p2_icon,
+                    $duration
+                );
                 $res = [];
                 while($stmt->fetch()) {
-                    $res[$playerId] = $iconName;
+                    $game = [];
+                    $game['game_id'] = $game_id;
+                    $game['player1_id'] = $p1_id;
+                    $game['player1_score'] = $p1_score;
+                    $game['player1_first_name'] = $p1_first_name;
+                    $game['player1_last_name'] = $p1_last_name;
+                    $game['player1_icon'] = $p1_icon;
+                    $game['player2_id'] = $p2_id;
+                    $game['player2_score'] = $p2_score;
+                    $game['player2_first_name'] = $p2_first_name;
+                    $game['player2_last_name'] = $p2_last_name;
+                    $game['player2_icon'] = $p2_icon;
+                    $game['duration'] = $duration;
+                    array_push($res, $duration);
                 }
                 return $res;
             } else {
                 $this->error .= "Failed to connect to server, try again later.\n";
             }
+        } else {
+            $this->error .= "You are not logged in!\n";
         }
     }
 
