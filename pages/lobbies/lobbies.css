@@ -10,3 +10,42 @@
 #title {
     text-align: center;
 }
+
+#lobby-container {
+    width: 100%;
+}
+
+#lobbies-list-ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+
+#lobbies-list-ul li {
+    background-color: white;
+}
+
+#lobbies-list-ul li a {
+    text-decoration: none;
+    color: black;
+}
+
+#player-blocks {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.player-block {
+    width: 200px;
+    text-align: center;
+}
+
+.player-block img {
+    width: 100%;
+}
+
+#lobbies-list-ul li:not(:last-child) {
+    margin-bottom: 10px;
+}
