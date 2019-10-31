@@ -284,19 +284,19 @@ class Game {
     }
 
     public function get_player_icon(array $playerIds): array {
-        $playerIds = array_filter($playerIds, "is_numeric");
-        if (!empty($playerIds)) {
-            $playerIds = implode(",", $playerIds);
-            if ($stmt = $this->Mysqli->prepare("SELECT player_id, icon FROM players WHERE player_id in ($playerIds)")) {
-                $stmt->execute();
-                $stmt->bind_result($playerId, $iconName);
-                $res = [];
-                while($stmt->fetch()) {
-                    $res[$playerId] = $iconName;
+        $playerIds = array_filter($playerIds, "is_numeric");                            // filter the id to be a number
+        if (!empty($playerIds)) {                                                       // check if its still there
+            $playerIds = implode(",", $playerIds);                                      // turn array into string with ','
+            if ($stmt = $this->Mysqli->prepare("SELECT player_id, icon FROM players WHERE player_id in ($playerIds)")) {    // prepare query
+                $stmt->execute();                                                       // execute query
+                $stmt->bind_result($playerId, $iconName);                               // bind results
+                $res = [];                                                              // init result array
+                while($stmt->fetch()) {                                                 // fetch each row
+                    $res[$playerId] = $iconName;                                        // set icon file name to player id
                 }
-                return $res;
+                return $res;                                                            // return result
             } else {
-                $this->error .= "Failed to connect to server, try again later.\n";
+                $this->error .= "Failed to connect to server, try again later.\n";      // error with query
             }
         }
     }
