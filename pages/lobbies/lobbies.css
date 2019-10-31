@@ -49,3 +49,7 @@
 #lobbies-list-ul li:not(:last-child) {
     margin-bottom: 10px;
 }
+
+#game-duration {
+    text-align: center;
+}
