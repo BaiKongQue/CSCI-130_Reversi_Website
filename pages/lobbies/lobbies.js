@@ -30,9 +30,9 @@ xhttp.open('GET', "./lobbies.get.php", true);
 xhttp.send();
 
 function player_block(player) {
-    return "<div class=\"player-block\">" +
+    return (player.first_name != null) ? "<div class=\"player-block\">" +
 				"<div><h2>"+ player.first_name + " "+ player.last_name +"</h2></div>" +
 				"<div><img src=\"../../images/upload/users/" + player.icon + "\" alt=\"player icon\" /></div>" +
 				"<div><strong>Score: "+ player.score +"</strong></div>" +
-			"</div>";
+            "</div>" : "<div class=\"player-block\">Waiting for opponent</div>";
 }
