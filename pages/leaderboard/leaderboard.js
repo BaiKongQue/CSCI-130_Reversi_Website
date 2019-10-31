@@ -37,7 +37,7 @@ function get_leaderboard() {
     s += "order=" + formData.get("order-by");
 
     xhttp.open('GET', s, true);
-    xhttp.send(formData);
+    xhttp.send();
 }
 
 get_leaderboard();
