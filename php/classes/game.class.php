@@ -247,22 +247,18 @@ class Game {
      * @param string $orderBy: order to sort by (ASC, DESC)
      * @return {first_name: string, last_name: string, score: int, duration: Time}[]: a list of score data.
      */
-    public function get_scores(string $firstName = NULL, string $lastName = NULL, bool $includeAI = false, string $sortBy = "score", string $orderBy = "DESC"): array {
+    public function get_scores(string $firstName = NULL, string $lastName = NULL, string $sortBy = "score", string $orderBy = "DESC"): array {
         $selection = "";                                                            // set selection
-        if ($firstName != NULL || $lastName != NULL || $includeAI || !$includeAI) {                              // if first name or last name isnt null
+        if ($firstName != NULL || $lastName != NULL) {                              // if first name or last name isnt null
             $selection .= "WHERE ";                                                 // add WHERE
             if ($firstName != NULL) {                                               // if first name not null
                 $firstName = filter_var($firstName, FILTER_SANITIZE_STRING);        // sanitize string
-                $selection .= "p.first_name = '$firstName'";                        // add firstname to query
-                if ($lastName != NULL || !$includeAI) $selection .= "AND ";          // if lastname is not null add AND
+                $selection .= "p.first_name LIKE '$firstName'%";                        // add firstname to query
+                if ($lastName != NULL) $selection .= "AND ";          // if lastname is not null add AND
             }
             if ($lastName != NULL) {                                                // if last name is not null
                 $lastName = filter_var($lastName, FILTER_SANITIZE_STRING);          // sanitize string
-                $selection .= "p.last_name = '$lastName'";                          // add lastname to query
-                if (!$includeAI) $selection .= "AND ";
-            }
-            if (!$includeAI) {
-                $selection .= "p.player_id > 0";
+                $selection .= "p.last_name LIKE '$lastName'%";                          // add lastname to query
             }
         }
         if ($stmt = $this->Mysqli->prepare("SELECT g.game_id, p.first_name, p.last_name, g.score, TIMEDIFF(g.end_time, g.start_time) duration FROM (SELECT game_id, player1_id player_id, player1_score score, start_time, end_time FROM games WHERE end_time IS NOT NULL UNION SELECT game_id, player2_id player_id, player2_score score, start_time, end_time FROM games WHERE end_time IS NOT NULL) g LEFT JOIN players p USING(player_id) $selection ORDER BY $sortBy $orderBy")) {
@@ -306,7 +302,7 @@ class Game {
     }
 
     public function get_player_lobbies(): array {
-        if ($this->Login->login_check()) {
+        if ($this->Login->login_check()) {                                              // check if user is logged in
             if ($stmt = $this->Mysqli->prepare("
                 select
                     games.game_id,
@@ -329,37 +325,37 @@ class Game {
                     games.player1_id = ? or games.player2_id = ?
                 ORDER BY games.game_id
             ")) {
-                $stmt->bind_param('ii', $_SESSION['player_id'], $_SESSION['player_id']);
-                $stmt->execute();
-                $stmt->bind_result(
+                $stmt->bind_param('ii', $_SESSION['player_id'], $_SESSION['player_id']);    // bind the params
+                $stmt->execute();                                                           // execute query
+                $stmt->bind_result(                                                         // bind the results
                     $game_id, 
                     $p1_id, $p1_score, $p1_first_name, $p1_last_name, $p1_icon,
                     $p2_id, $p2_score, $p2_first_name, $p2_last_name, $p2_icon,
                     $duration
                 );
-                $res = [];
-                while($stmt->fetch()) {
-                    $game = [];
-                    $game['game_id'] = $game_id;
-                    $game['player1_id'] = $p1_id;
-                    $game['player1_score'] = $p1_score;
-                    $game['player1_first_name'] = $p1_first_name;
-                    $game['player1_last_name'] = $p1_last_name;
-                    $game['player1_icon'] = $p1_icon;
-                    $game['player2_id'] = $p2_id;
-                    $game['player2_score'] = $p2_score;
-                    $game['player2_first_name'] = $p2_first_name;
-                    $game['player2_last_name'] = $p2_last_name;
-                    $game['player2_icon'] = $p2_icon;
-                    $game['duration'] = $duration;
-                    array_push($res, $duration);
+                $res = [];                                                                  // init result array
+                while($stmt->fetch()) {                                                     // fetch each row
+                    $game = [];                                                             // array for each game
+                    $game['game_id'] = $game_id;                                            // set game id
+                    $game['player1_id'] = $p1_id;                                           // set p1 id
+                    $game['player1_score'] = $p1_score;                                     // set p1 score
+                    $game['player1_first_name'] = $p1_first_name;                           // set p1 first name
+                    $game['player1_last_name'] = $p1_last_name;                             // set p1 last name
+                    $game['player1_icon'] = $p1_icon;                                       // set p1 icon
+                    $game['player2_id'] = $p2_id;                                           // set p2 id
+                    $game['player2_score'] = $p2_score;                                     // set p2 score
+                    $game['player2_first_name'] = $p2_first_name;                           // set p2 first name
+                    $game['player2_last_name'] = $p2_last_name;                             // set p2 last name
+                    $game['player2_icon'] = $p2_icon;                                       // set p2 icon
+                    $game['duration'] = $duration;                                          // set duration
+                    array_push($res, $duration);                                            // push game to result array
                 }
-                return $res;
+                return $res;                                                                // return result
             } else {
-                $this->error .= "Failed to connect to server, try again later.\n";
+                $this->error .= "Failed to connect to server, try again later.\n";          // error with query
             }
         } else {
-            $this->error .= "You are not logged in!\n";
+            $this->error .= "You are not logged in!\n";                                     // user is not logged in
         }
     }
 
