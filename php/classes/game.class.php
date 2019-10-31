@@ -306,12 +306,10 @@ class Game {
             if ($stmt = $this->Mysqli->prepare("
                 select
                     games.game_id,
-                    games.player1_id,
                     games.player1_score,
                     p1.first_name p1_first_name,
                     p1.last_name p1_last_name,
                     p1.icon p1_icon,
-                    games.player2_id,
                     games.player2_score,
                     p2.first_name p2_first_name,
                     p2.last_name p2_last_name,
@@ -329,20 +327,18 @@ class Game {
                 $stmt->execute();                                                           // execute query
                 $stmt->bind_result(                                                         // bind the results
                     $game_id, 
-                    $p1_id, $p1_score, $p1_first_name, $p1_last_name, $p1_icon,
-                    $p2_id, $p2_score, $p2_first_name, $p2_last_name, $p2_icon,
+                    $p1_score, $p1_first_name, $p1_last_name, $p1_icon,
+                    $p2_score, $p2_first_name, $p2_last_name, $p2_icon,
                     $duration
                 );
                 $res = [];                                                                  // init result array
                 while($stmt->fetch()) {                                                     // fetch each row
                     $game = [];                                                             // array for each game
                     $game['game_id'] = $game_id;                                            // set game id
-                    $game['player1_id'] = $p1_id;                                           // set p1 id
                     $game['player1_score'] = $p1_score;                                     // set p1 score
                     $game['player1_first_name'] = $p1_first_name;                           // set p1 first name
                     $game['player1_last_name'] = $p1_last_name;                             // set p1 last name
                     $game['player1_icon'] = $p1_icon;                                       // set p1 icon
-                    $game['player2_id'] = $p2_id;                                           // set p2 id
                     $game['player2_score'] = $p2_score;                                     // set p2 score
                     $game['player2_first_name'] = $p2_first_name;                           // set p2 first name
                     $game['player2_last_name'] = $p2_last_name;                             // set p2 last name
