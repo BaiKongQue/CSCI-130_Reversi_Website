@@ -20,14 +20,8 @@ include_once $_SERVER['DOCUMENT_ROOT'] . '/php/classes/game.class.php';
  * @return json {first_name: string, last_name: string, score: int, duration: Time}[] an array of objects holding leaderboard data
  */
 $data = [];
-$Game = new Game();                                                 // create new Game
-$data['result'] = $Game->get_scores(                                // encode into json result
-    (isset($_GET['first_name'])) ? $_GET['first_name'] : NULL,      // first anme 
-    (isset($_GET['last_name'])) ? $_GET['last_name'] : NULL,        // last name
-    (isset($_GET['include_ai'])) ? ($_GET['include_ai'] == "true") ? true : false : false,// if include ai
-    (isset($_GET['sort'])) ? $_GET['sort'] : 'score',               // sort by
-    (isset($_GET['order'])) ? $_GET['order'] : 'DESC'               // order by
-);
-if ($Game->error != "") $data['error'] = $Game->error;            // set errors if there are any
-echo json_encode($data);                                            // return result
+$Game = new Game();                                     // create new Game
+$data['result'] = $Game->get_scores();                  // Get leaderboard data
+if ($Game->error != "") $data['error'] = $Game->error;  // set errors if there are any
+echo json_encode($data);                                // return result
 ?>
