@@ -16,17 +16,6 @@ xhttp.onreadystatechange = function() {
 xhttp.open('GET', './leaderboard.get.php', true);
 xhttp.send();
 
-
-function get_leaderboard() {
-    let formData = new FormData(form);
-    let s = './leaderboard.get.php?';
-    s += (formData.get("first-name") != "") ? "first_name=" + formData.get("first-name") + "&" : "";
-    s += (formData.get("last-name") != "") ? "last_name=" + formData.get("last-name") + "&" : "";
-    s += "include_ai=" + (formData.get("include-ai") != null) + "&";
-    s += "sort=" + formData.get("sort-by") + "&";
-    s += "order=" + formData.get("order-by");
-}
-
 function loadData() {
     let matches = (formValue, data) => formValue != "" && !data.toLowerCase().includes(formValue.toLowerCase());
     let formData = new FormData(form);
