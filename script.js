@@ -8,6 +8,10 @@ window.onload = function() {
     load_login_elements();  // load the logged-in logged-out elements
 }
 
+/*********
+ * Login * 
+ *********/
+sessionData = [];
 /**
  * Checks wether the user is logged in or not by sending a request to the server.
  * @param function(bool) callback: function to run when the get request finishes, and gives a parameter if the user is logged in or not
@@ -16,7 +20,11 @@ function is_logged_in(callback) {
     let xhttp = new XMLHttpRequest();                                               // create new xmlhttp request 
     xhttp.onreadystatechange = function() {                                         // if the state changes and finishes
         if (this.readyState == 4 && this.status == 200) {                           // successfully get
-            callback(JSON.parse(this.responseText)['result']);                      // callback function and pass result
+            let res = JSON.parse(this.responseText);                                // get result
+            if (res.result) {
+                sessionData = res.session;                                          // set session data
+                callback(res.result);                                               // callback function and pass result
+            }
         }
     }
     xhttp.open("GET", "http://"+location.hostname+"/php/login.check.php", true);    // prepare get request
