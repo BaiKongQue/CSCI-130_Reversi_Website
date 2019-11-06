@@ -2,3 +2,5 @@
 /images/upload/users/*.png
 /images/uploads/users/*.gif
 /config/cred.php
+/xampp
+/._xampp
