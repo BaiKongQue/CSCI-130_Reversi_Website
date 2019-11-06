@@ -17,8 +17,8 @@ xhttp.open('GET', './leaderboard.get.php', true);
 xhttp.send();
 
 function loadData() {
-    let matches = (key) => formValue.get(key) != "" && !data[key].toLowerCase().includes(formValue.get(key).toLowerCase());
     let formData = new FormData(form);
+    let matches = (key) => formData.get(key) != "" && !data[key].toLowerCase().includes(formData.get(key).toLowerCase());
 
     data.result.sort((a,b) => (a[formData.get('sort-by')] > b[formData.get('sort-by')]) ? formData.get('order-by') : formData.get('order-by') * -1);
 
