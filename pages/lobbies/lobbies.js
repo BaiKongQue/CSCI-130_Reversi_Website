@@ -1,5 +1,11 @@
+let form = document.getElementById('filters-form');
 let lobbies = document.getElementById('lobbies-list-ul');
 let xhttp = new XMLHttpRequest();
+let data = [];
+
+form.oninput(function() {
+    LoadData();
+});
 
 xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -7,18 +13,8 @@ xhttp.onreadystatechange = function() {
         if (res.result) {
             if (res.result.length <= 0) {
                 lobbies.innerHTML += "<div style=\"text-align:center\">You have no current games! Go start one by <a href=\"../create-game/create-game.html\">Creating a game!</a></div>"
-            }
-            for (let r of res.result) {
-                lobbies.innerHTML +="<li>" +
-                                        "<a href=\"../game/game.html?id="+r.game_id+"\">" +
-                                            "<div id=\"player-blocks\">" +
-                                                player_block(r.player1) +
-                                                "<div><h1>VS</h1></div>" +
-                                                player_block(r.player2) +
-                                            "</div>" +
-                                            "<div id=\"game-duration\">Duration: " + r.duration + "</div>" +
-                                        "</a>" +
-                                    "</li>";
+            } else {
+                data = res.result;
             }
         } else {
             document.getElementById("error-msg").innerText = res.error;
@@ -35,4 +31,23 @@ function player_block(player) {
 				"<div><img src=\"../../images/upload/users/" + player.icon + "\" alt=\"player icon\" /></div>" +
 				"<div><strong>Score: "+ player.score +"</strong></div>" +
             "</div>" : "<div class=\"player-block\">Waiting for opponent</div>";
+}
+
+function DisplayData() {
+    for (let r of data) {
+        lobbies.innerHTML +="<li>" +
+                                "<a href=\"../game/game.html?id="+r.game_id+"\">" +
+                                    "<div id=\"player-blocks\">" +
+                                        player_block(r.player1) +
+                                        "<div><h1>VS</h1></div>" +
+                                        player_block(r.player2) +
+                                    "</div>" +
+                                    "<div id=\"game-duration\">Duration: " + r.duration + "</div>" +
+                                "</a>" +
+                            "</li>";
+    }
+}
+
+function LoadData() {
+    
 }

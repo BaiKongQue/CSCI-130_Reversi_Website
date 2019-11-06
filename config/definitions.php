@@ -40,7 +40,7 @@ define("ENUM_GENDER", ['boy', 'girl', 'other']);    // Gender: enum to string
 /***********************
  * File Handle Options *
  ***********************/
-define("FILE_UPLOAD_DIR", $_SERVER['DOCUMENT_ROOT'] . "/images/uploads/users/");
+define("FILE_UPLOAD_DIR", $_SERVER['DOCUMENT_ROOT'] . "/images/upload/users/");
 
 
 /**********************
