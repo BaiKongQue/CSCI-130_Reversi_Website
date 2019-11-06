@@ -17,7 +17,7 @@ xhttp.open('GET', './leaderboard.get.php', true);
 xhttp.send();
 
 function loadData() {
-    let matches = (formValue, data) => formValue != "" && !data.toLowerCase().includes(formValue.toLowerCase());
+    let matches = (key) => formValue.get(key) != "" && !data[key].toLowerCase().includes(formValue.get(key).toLowerCase());
     let formData = new FormData(form);
 
     data.result.sort((a,b) => (a[formData.get('sort-by')] > b[formData.get('sort-by')]) ? formData.get('order-by') : formData.get('order-by') * -1);
@@ -25,8 +25,8 @@ function loadData() {
     if (data.result) {
         scores.innerHTML = "";
         for (let r of data.result) {
-            if (matches(formData.get('first-name'), r.first_name)
-            || matches(formData.get('last-name'), r.last_name)) {
+            if (matches('first_name')
+            || matches('last_name')) {
                 continue;
             }
             scores.innerHTML += "<tr>"
