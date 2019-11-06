@@ -34,6 +34,12 @@
 	<div id="body-container">
 		<div id="lobby-container">
 			<div id="title"><h1>On Going Games</h1></div>
+			<form id="filters-form" method="GET" onsubmit="event.preventDefault()">
+				<label>
+					<input type="checkbox" name="view-all" />
+					<span>View My Games</span>
+				</label>
+			</form>
 			<div id="lobbies-list-container">
 				<ul id="lobbies-list-ul">
 					
