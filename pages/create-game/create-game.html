@@ -28,6 +28,7 @@
 			<div id="nav-content">
 				<a href="../../index.html">Home</a>
 				<a href="../about-us/about-us.html">About</a>
+				<a href="../howTo/howTo.html">How-To</a>
 				<a href="../leaderboard/leaderboard.html">Leaderboard</a>
 				<a class="logged-out" href="../login/login.html">Login</a>
 				<a class="logged-out" href="../registration/registration.html">Register</a>
@@ -44,13 +45,13 @@
 				<span>Game Grid Size:</span>
 				<div class="radio-select">
 					<div>
-						<label><input type="radio" name="size" value="4" required/>4x4</label>
+						<label><input type="radio" name="size" value="4" required />4x4</label>
 					</div>
 					<div>
-						<label><input type="radio" name="size" value="6" required/>6x6</label>
+						<label><input type="radio" name="size" value="6" required />6x6</label>
 					</div>
 					<div>
-						<label><input type="radio" name="size" value="8" required/>8x8</label>
+						<label><input type="radio" name="size" value="8" required />8x8</label>
 					</div>
 				</div>
 			</div>
@@ -58,19 +59,21 @@
 				<span>Game mode:</span>
 				<div id="game-mode-select" class="radio-select">
 					<div>
-						<label><input type="radio" name="vs" value="player" onclick="Disabled(true)" required/>PvP</label>
+						<label><input type="radio" name="vs" value="player" onclick="Disabled(true)"
+								required />PvP</label>
 					</div>
 					<div>
-						<label><input type="radio" name="vs" value="computer" onclick="Disabled(false)" required/>PvC</label>
+						<label><input type="radio" name="vs" value="computer" onclick="Disabled(false)"
+								required />PvC</label>
 					</div>
 				</div>
 				<div id="difficulty-select" class="radio-select disable">
 					<span>Difficulty Select:</span>
 					<div>
-						<label><input type="radio" name="difficulty" value="easy" disabled/>Easy</label>
+						<label><input type="radio" name="difficulty" value="easy" disabled />Easy</label>
 					</div>
 					<div>
-						<label><input type="radio" name="difficulty" value="hard" disabled/>Hard</label>
+						<label><input type="radio" name="difficulty" value="hard" disabled />Hard</label>
 					</div>
 				</div>
 			</div>
@@ -80,4 +83,5 @@
 </body>
 
 <script src="./create-game.js"></script>
+
 </html>
