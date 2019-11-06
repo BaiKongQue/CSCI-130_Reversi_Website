@@ -9,6 +9,31 @@ var grid_size = 0;
 var bit_size = 0;
 var frameRate = 60;
 var available_move = {};
+var ai_heuristic_board = [];
+
+var dataHttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+dataHttp.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+        data = JSON.parse(this.responseText)['result'];
+
+        //Find the grid size and bit_size
+        let length = data.grid.length;
+        grid_size = Math.sqrt(length);
+        bit_size = 600 / grid_size;
+
+        _GetMoveAvialable();
+        _GetAiHeuristic();
+    }
+}
+
+var getMoveHttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+getMoveHttp.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+        available_move = JSON.parse(this.responseText)['result'];
+    }
+}
+
+canvas.addEventListener('mousedown', _ClickOn, false);
 
 // PRIVATE
 function _GetRouteParams() {
@@ -19,31 +44,74 @@ function _GetRouteParams() {
     return vars;
 }
 
-function _GetGameData() {
-    var dataHttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    dataHttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            data = JSON.parse(this.responseText)['result'];
+function _GetAiHeuristic() {
+    switch (data.grid.length) {
+        case 16:
+            ai_heuristic_board = [10, 3, 3, 10,
+                                   3, 0, 0, 3,
+                                   3, 0, 0, 3,
+                                  10, 3, 3, 10];
+            break;
+        case 36: 
+            ai_heuristic_board = [10, -8, 5, 5, -8, 10,
+                                  -8, -5, 3, 3, -5, -8,
+                                   5,  3, 0, 0,  3,  5,
+                                   5,  3, 0, 0,  3,  5,
+                                  -8, -5, 3, 3, -5, -8,
+                                  10, -8, 5, 5, -8, 10];
+            break;
+        case 64:
+            ai_heuristic_board = [10, -8,  5,  5,  5,  5, -8, 10,
+                                  -8, -5, -2, -2, -2, -2, -5, -8,
+                                   5, -2,  1,  1,  1,  1, -2,  5,
+                                   5, -2,  1,  0,  0,  1, -2,  5,
+                                   5, -2,  1,  0,  0,  1, -2,  5,
+                                   5, -2,  1,  1,  1,  1, -2,  5,
+                                  -8, -5, -2, -2, -2, -2, -5, -8,
+                                  10, -8,  5,  5,  5,  5, -8, 10];
+            break;
+    }
+}
 
-            //Find the grid size and bit_size
-            let length = data.grid.length;
-            grid_size = Math.sqrt(length);
-            bit_size = 600 / grid_size;
-            _GetMoveAvialable();
+//public function convert_to_1D(int $size, int $x, int $y): int { return ($y * $size) + $x; }
+
+function _ClickOn(event) {
+    var x = Math.floor((event.x-canvas.getBoundingClientRect().left) / bit_size);
+    var y = Math.floor((event.y-canvas.getBoundingClientRect().top) / bit_size);
+    data.grid[(y * grid_size) + x] = 1;
+    _GetMoveAvialable();
+}
+
+//Work?
+function _GetAiMove() {
+    var ai_index = 0;
+    var ai_hueristic = 0;
+    // Loop through the tile
+    for (var i = 0; i < ai_heuristic_board.length; ++i) {
+        if (i in available_move) { //Check if the current tile is in the available tile
+            var current_heuristic = ai_available_move[i] + ai_heuristic_board[i]; //Finding the heuristic value
+            if (current_heuristic > ai_hueristic) { //Check if the current heuristic value is greater than the max value
+                ai_hueristic = current_heuristic; //Reassigned
+                ai_index = i;
+            }
         }
     }
+    var ai = {'Index': ai_index, 'Hueristic': ai_hueristic};
+    return ai; 
+}
 
+function _GetGameData() {
     const game_id = _GetRouteParams()["id"];
     if (game_id != undefined) {
         dataHttp.open("GET", "game.get.php?id=" + game_id, true);
-        dataHttp.send("data=" + JSON.stringify(data));
+        dataHttp.send();
     }
 }
 
 function _DrawCircle(color, i, j) {
-    let radius = bit_size / 2;
-    let x_center = (i * bit_size) + radius;
-    let y_center = (j * bit_size) + radius;
+    var radius = bit_size / 2;
+    var x_center = (i * bit_size) + radius;
+    var y_center = (j * bit_size) + radius;
 
     context.beginPath();
     context.arc(x_center,  y_center, radius - 2, 0, 2 * Math.PI, false);
@@ -54,12 +122,13 @@ function _DrawCircle(color, i, j) {
 }
 
 function _OnRender() {
-    let current_index = 0;
+    // var current_index = 0;
     context.fillStyle = "black";
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     for (var i = 0; i < grid_size; ++i) {
         for (var j = 0; j < grid_size; ++j) {
+            let current_index = (j * grid_size) + i;
             context.beginPath()
             context.fillStyle = boardColor.value;
             context.fillRect((i * bit_size) + 1, (j * bit_size) + 1, bit_size - 2, bit_size - 2);
@@ -83,23 +152,15 @@ function _OnRender() {
                 context.closePath();
 
             }
-            current_index++;
+            // current_index++;
         }
     }
 }
 
 function _GetMoveAvialable() {
-    var dataHttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-    dataHttp.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-            available_move = JSON.parse(this.responseText)['result'];
-            
-        }
-    }
-
-    dataHttp.open("POST", "moves.get.php", true);
-    dataHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    dataHttp.send("data=" + JSON.stringify(data));
+    getMoveHttp.open("POST", "moves.get.php", true);
+    getMoveHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    getMoveHttp.send("data=" + JSON.stringify(data));
 }
 
 // PUBLIC
@@ -111,12 +172,12 @@ function OnInit() {
     context.textAlign = "center";
     context.fillText("Loading...", canvas.width/2, canvas.height/2);
 
-    _GetGameData();
+    _GetGameData();   
+
     setInterval(() => {
-        _GetMoveAvialable();
+        _GetGameData();
     }, 5 * 1000);
-    // set inter (3 * 1000)
-    //      OnLoop
+    
     setInterval(() => {
         _OnRender();
     }, 1000/frameRate);

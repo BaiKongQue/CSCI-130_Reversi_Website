@@ -116,6 +116,7 @@ class Registration {
 						return true;																	// succesfully registered
 					} else {
 						$this->error .= "There was a error connecting to the server. Try again.\n";		// error preparing query
+						echo 1;
 						return false;
 					}
 				}
