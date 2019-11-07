@@ -1,4 +1,4 @@
-/images/uploads/users/*.jpg
+/images/upload/users/*.jpg
 /images/upload/users/*.png
 /images/uploads/users/*.gif
 /config/cred.php
