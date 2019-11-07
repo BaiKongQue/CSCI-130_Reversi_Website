@@ -248,7 +248,20 @@ class Game {
      * @return {first_name: string, last_name: string, score: int, duration: Time}[]: a list of score data.
      */
     public function get_scores(): array {
-        if ($stmt = $this->Mysqli->prepare("SELECT g.game_id, p.first_name, p.last_name, g.score, TIMEDIFF(g.end_time, g.start_time) duration FROM (SELECT game_id, player1_id player_id, player1_score score, start_time, end_time FROM games WHERE end_time IS NOT NULL UNION SELECT game_id, player2_id player_id, player2_score score, start_time, end_time FROM games WHERE end_time IS NOT NULL) g LEFT JOIN players p USING(player_id)")) {
+        if ($stmt = $this->Mysqli->prepare("
+            SELECT
+                g.game_id,
+                p.first_name,
+                p.last_name,
+                g.score,
+                TIMEDIFF(g.end_time, g.start_time) duration
+            FROM
+                (SELECT game_id, player1_id player_id, player1_score score, start_time, end_time FROM games WHERE end_time IS NOT NULL UNION SELECT game_id, player2_id player_id, player2_score score, start_time, end_time FROM games WHERE end_time IS NOT NULL) g
+            LEFT JOIN
+                players p
+            USING(player_id)
+            WHERE p.player_id > 0"
+        )) {
             $stmt->execute();                                                                   // run prepared query
             $stmt->bind_result($dbGameId, $dbFirstName, $dbLastName, $dbScore, $dbDuration);    // bind results
             $res = [];                                                                          // init res array
