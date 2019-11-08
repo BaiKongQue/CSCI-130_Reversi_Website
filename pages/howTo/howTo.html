@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Reversi: About Us</title>
+
+	<link rel="stylesheet" href="../../styles.css">
+	<link rel="stylesheet" href="howTo.css" />
+
+	<script type="text/javascript" src="../../script.js"></script>
+	<script type="text/javascript" src="./howTo.js"></script>
+</head>
+
+<body>
+	<nav>
+		<a id="nav-button-open" class="no-select" onclick="popNav()">&#9776;</a>
+		<div id="nav-container">
+			<div id="nav-button-close">
+				<a class="no-select" onclick="popNav()">&times;</a>
+			</div>
+			<div id="nav-content">
+				<a href="../../index.html">Home</a>
+				<a href="../about-us/about-us.html">About</a>
+				<a href="../howTo/howTo.html">How-To</a>
+				<a href="../leaderboard/leaderboard.html">Leaderboard</a>
+				<a class="logged-out" href="../login/login.html">Login</a>
+				<a class="logged-out" href="../registration/registration.html">Register</a>
+				<a class="logged-in" href="../create-game/create-game.html">Create Game</a>
+				<a class="logged-in" href="../lobbies/lobbies.html">Play</a>
+				<a class="logged-in" href="../../php/logout.php">Logout</a>
+			</div>
+		</div>
+	</nav>
+
+	<div id="body-container">
+		<div id="howTo-container">
+			<h2 align="middle" style="margin: 0 auto; ">Origin</h2>
+			<p>Reversi is an ancient game whose origin is uncertain.
+
+				The oldest references about similar games go back to late in the 19th century; those games had different
+				names and their boards had different size or shape.
+
+				In 1870 appeared a similar game using a cross shape board. Subsequently appeared another game played on
+				a 8x8 square shape board.
+
+				Description
+				Two players take part in this game; they need a board with 64 squares distributed in 8 rows and 8
+				columns, and 64 similar pieces of two colours (normally black and white): the obverse in one colour and
+				the reversi in the other colour.</p>
+
+			<h2 align="middle" style="margin: 0 auto; ">Objective</h2>
+			<p>The objective for each of the players is to finish the game with more pieces on the board in his own
+				colour than the opponent.
+
+				How the game goes on
+				Start of the game
+
+				Before starting players decide which colour will use each of them.
+
+				Next 4 pieces have to be placed in the central squares of the board, so that each pair of pieces of the
+				same colour form a diagonal between them.
+
+				The player with black pieces moves first; one only move is made every turn.</p>
+
+			<h2 align="middle" style="margin: 0 auto; ">Moves</h2>
+
+			<p> A move consists in placing from outside one piece on the board. Placed pieces can never be moved to
+				another square later in the game.
+
+				The incorporation of the pieces must be made according to the following rules:
+
+				The incorported piece must outflank one or more of the opponent placed pieces
+				To outflank means that a single piece or one straight row (vertical, horizontal or diagonal) of pieces
+				of the opponent is in both sides next to own pieces, with no empty squares between all those pieces
+				The player who makes the move turns the outflanked pieces over, becoming all of them in own pieces
+				If there is more than one outflanked row, all the involved pieces in those rows have to be flipped
+				If it´s not possible to make this kind of move, turn is forfeited and the opponent repeats another move
+				Final
+				The game is over when all the squares of the board are taken or none of the players can move.
+
+				In any case the winner is the player who has more pieces on the board.
+
+				The game ends in a draw when both players have the same number of pieces on the board.</p>
+		</div>
+	</div>
+</body>
+
+</html>

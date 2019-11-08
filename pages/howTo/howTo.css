@@ -1,0 +1,23 @@
+#about-us-container {
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+.image-box {
+    width: 250px;
+    min-height: 250px;
+}
+
+.image-box img {
+    /* border: 1px solid black;
+    border-radius: 20%; */
+    display: block;
+    width: 100%;
+    height: auto;
+    box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+}
+
+.image-box div {
+    text-align: center;
+}
