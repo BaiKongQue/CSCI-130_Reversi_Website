@@ -22,7 +22,7 @@ function is_logged_in(callback = () => {}) {
     xhttp.onreadystatechange = function() {                                         // if the state changes and finishes
         if (this.readyState == 4 && this.status == 200) {                           // successfully get
             let res = JSON.parse(this.responseText);                                // get result
-            sessionData = res.result.session;                                       // set session data
+            sessionData = res.session;                                              // set session data
             for (let p of login_pipe) p(res.result);                                // send result to piped functions
             callback(res.result);                                                   // callback function and pass result
         }
@@ -51,6 +51,18 @@ function load_login_elements(loggedIn) {
     }
 }
 login_pipe.push(load_login_elements);
+
+function RedirectIsLoggedIn() {
+    login_pipe.push((loggedIn) => {
+        if (loggedIn) document.location = "http://" + location.hostname;
+    });
+}
+
+function RedirectNotLoggedIn() {
+    login_pipe.push((loggedIn) => {
+        if (!loggedIn) document.location = "http://" + location.hostname + "/pages/login/login.html";
+    });
+}
 
 /**************
  * Navigation *
