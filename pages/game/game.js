@@ -78,9 +78,17 @@ function _GetAiHeuristic() {
 function _ClickOn(event) {
     var x = Math.floor((event.x-canvas.getBoundingClientRect().left) / bit_size);
     var y = Math.floor((event.y-canvas.getBoundingClientRect().top) / bit_size);
-    data.grid[(y * grid_size) + x] = 1;
-    _GetMoveAvialable();
+    // console.log(sessionData);
+    console.log(sessionData);
+    if (sessionData && sessionData.player_id == data.player_turn && (y * grid_size) + x in available_move) {
+        console.log("This is right");
+        data.grid[(y * grid_size) + x] = 1;
+        
+        // _GetMoveAvialable();
+    }
 }
+
+
 
 //Work?
 function _GetAiMove() {
@@ -122,7 +130,6 @@ function _DrawCircle(color, i, j) {
 }
 
 function _OnRender() {
-    // var current_index = 0;
     context.fillStyle = "black";
     context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -152,7 +159,6 @@ function _OnRender() {
                 context.closePath();
 
             }
-            // current_index++;
         }
     }
 }
