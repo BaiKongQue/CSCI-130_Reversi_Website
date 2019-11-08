@@ -51,6 +51,6 @@
     margin-bottom: 10px;
 }
 
-#game-duration {
+#game-duration, #game-id {
     text-align: center;
 }
