@@ -18,15 +18,15 @@ xhttp.send();
 
 function loadData() {
     let formData = new FormData(form);
-    let matches = (key) => formData.get(key) != "" && !data[key].toLowerCase().includes(formData.get(key).toLowerCase());
+    let matches = (name, data) => formData.get(name) != "" && !data.toLowerCase().includes(formData.get(name).toLowerCase());
 
     data.result.sort((a,b) => (a[formData.get('sort-by')] > b[formData.get('sort-by')]) ? formData.get('order-by') : formData.get('order-by') * -1);
 
     if (data.result) {
         scores.innerHTML = "";
         for (let r of data.result) {
-            if (matches('first_name')
-            || matches('last_name')) {
+            if (matches('first-name', r.first_name)
+            || matches('last-name', r.last_name)) {
                 continue;
             }
             scores.innerHTML += "<tr>"
