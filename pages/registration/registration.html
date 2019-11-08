@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -12,8 +13,9 @@
 	<script type="text/javascript">
         RedirectIsLoggedIn()
     </script>
-    <script type="text/javascript" src="./registration.js"></script>    
+    <script type="text/javascript" src="./registration.js"></script>
 </head>
+
 <body>
     <nav>
         <a id="nav-button-open" class="no-select" onclick="popNav()">&#9776;</a>
@@ -24,6 +26,7 @@
             <div id="nav-content">
                 <a href="../../index.html">Home</a>
                 <a href="../about-us/about-us.html">About</a>
+                <a href="../howTo/howTo.html">How-To</a>
                 <a href="../leaderboard/leaderboard.html">Leaderboard</a>
                 <a class="logged-out" href="../login/login.html">Login</a>
                 <a class="logged-out" href="../registration/registration.html">Register</a>
@@ -36,12 +39,17 @@
     <div id="body-container">
         <form id="register-form" method="POST" enctype="multipart/form-data" onsubmit="event.preventDefault()">
             <div id="error-msg"></div>
-            <div><label><span>Username:</span><input type="text" name="username" placeholder="Username" required/></label></div>
-            <div><label><span>Password:</span><input type="password" name="password" placeholder="Password" required/></label></div>
-            <div><label><span>Confirm Password:</span><input type="password" name="confirm-password" placeholder="Confirm Password" required/></label></div>
-            <div><label><span>First Name:</span><input type="text" name="first-name" placeholder="First Name" required/></label></div>
-            <div><label><span>Last Name:</span><input type="text" name="last-name" placeholder="Last Name" required/></label></div>
-            <div><label><span>Age:</span><input type="number" name="age" min="1" value="1" required/></label></div>
+            <div><label><span>Username:</span><input type="text" name="username" placeholder="Username"
+                        required /></label></div>
+            <div><label><span>Password:</span><input type="password" name="password" placeholder="Password"
+                        required /></label></div>
+            <div><label><span>Confirm Password:</span><input type="password" name="confirm-password"
+                        placeholder="Confirm Password" required /></label></div>
+            <div><label><span>First Name:</span><input type="text" name="first-name" placeholder="First Name"
+                        required /></label></div>
+            <div><label><span>Last Name:</span><input type="text" name="last-name" placeholder="Last Name"
+                        required /></label></div>
+            <div><label><span>Age:</span><input type="number" name="age" min="1" value="1" required /></label></div>
             <div>
                 <label>
                     <span>Gender:</span>
@@ -52,19 +60,21 @@
                     </select>
                 </label>
             </div>
-            <div><label><span>Location:</span><input type="text" name="location" placeholder="Location" required/></label></div>
+            <div><label><span>Location:</span><input type="text" name="location" placeholder="Location"
+                        required /></label></div>
             <div>
                 <label>
                     <span>Icon:</span>
                     <input type="hidden" name="MAX_FILE_SIZE" value="100000" />
-                    <input type="file" name="icon" placeholder="Icon Image" required/>
+                    <input type="file" name="icon" placeholder="Icon Image" required />
                 </label>
             </div>
             <div>
-                <input type="submit" name="sub" value="Register" onclick="submit_registration()"/>
+                <input type="submit" name="sub" value="Register" onclick="submit_registration()" />
                 <div>Already have an account: <a href="../login/login.html">Login</a></div>
             </div>
         </form>
     </div>
 </body>
+
 </html>
