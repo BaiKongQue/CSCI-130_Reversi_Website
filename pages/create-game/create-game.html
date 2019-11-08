@@ -11,10 +11,7 @@
 
 	<script src="../../script.js"></script>
 	<script type="text/javascript">
-		login_pipe.push(function (logged_in) {
-			if (!logged_in)
-				document.location = "http://" + location.hostname + "/pages/login/login.html";
-		});
+		RedirectNotLoggedIn();
 	</script>
 </head>
 

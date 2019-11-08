@@ -238,6 +238,10 @@ class Game {
         }
     }
 
+    public function update_game_data(array $newData): bool {
+        
+    }
+
     /**
      * Retrieves a query of all the scores and people that have completed a game. Can change Sort,
      * Order and who to search for with limit input.
@@ -308,10 +312,12 @@ class Game {
             if ($stmt = $this->Mysqli->prepare("
                 SELECT
                     games.game_id,
+                    p1.player_id p1_id,
                     games.player1_score,
                     p1.first_name p1_first_name,
                     p1.last_name p1_last_name,
                     p1.icon p1_icon,
+                    p2.player_id p2_id,
                     games.player2_score,
                     p2.first_name p2_first_name,
                     p2.last_name p2_last_name,
@@ -322,26 +328,27 @@ class Game {
                         left outer join players p1 on games.player1_id = p1.player_id
                         left outer join players p2 on games.player2_id = p2.player_id}
                 WHERE
-                    (games.player1_id = ? or games.player2_id = ?)
-                    AND games.end_time IS NULL
+                    games.end_time IS NULL
                 ORDER BY games.game_id
             ")) {
                 $stmt->bind_param('ii', $_SESSION['player_id'], $_SESSION['player_id']);    // bind the params
                 $stmt->execute();                                                           // execute query
                 $stmt->bind_result(                                                         // bind the results
                     $game_id, 
-                    $p1_score, $p1_first_name, $p1_last_name, $p1_icon,
-                    $p2_score, $p2_first_name, $p2_last_name, $p2_icon,
+                    $p1_id, $p1_score, $p1_first_name, $p1_last_name, $p1_icon,
+                    $p2_id, $p2_score, $p2_first_name, $p2_last_name, $p2_icon,
                     $duration
                 );
                 $res = [];                                                                  // init result array
                 while($stmt->fetch()) {                                                     // fetch each row
                     $game = [];                                                             // array for each game
                     $game['game_id'] = $game_id;                                            // set game id
+                    $game['player1']['id'] = $p1_id;                                        // set p1 score
                     $game['player1']['score'] = $p1_score;                                  // set p1 score
                     $game['player1']['first_name'] = $p1_first_name;                        // set p1 first name
                     $game['player1']['last_name'] = $p1_last_name;                          // set p1 last name
                     $game['player1']['icon'] = $p1_icon;                                    // set p1 icon
+                    $game['player2']['id'] = $p2_id;                                        // set p2 score
                     $game['player2']['score'] = $p2_score;                                  // set p2 score
                     $game['player2']['first_name'] = $p2_first_name;                        // set p2 first name
                     $game['player2']['last_name'] = $p2_last_name;                          // set p2 last name
