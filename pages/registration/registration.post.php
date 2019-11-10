@@ -16,7 +16,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . "/php/classes/registration.class.php";
  * 
  * Processes the user's input and registers them. Takes image name and adds it to
  * user data, and moves image to ./images/uploads/users folder.
- * @return json {"result": booelan, "error"?: string}
+ * @return json {"result": boolean, "error"?: string}
  */
 
 $data = [];
@@ -33,7 +33,6 @@ if ($allValid && isset($_FILES['icon'])) {              // if all post data is s
         $data['error'] = "File size is too large!";     // error
         $data['result'] = false;                        // result false
     } else if (substr($_FILES['icon']['type'], 0, strrpos($_FILES['icon']['type'], "/")) == "image") {  // if file is image
-        $icon = substr($_FILES['icon']['name'], 0, strrpos($_FILES['icon']['name'], "."));              // get file name without extension
         $Register = new Registration();                 // set Register class
         if ($Register->register(                        // if register and successfully move file to images folder
             $_POST['username'],
@@ -44,7 +43,7 @@ if ($allValid && isset($_FILES['icon'])) {              // if all post data is s
             $_POST['age'],
             $_POST['gender'],
             $_POST['location'],
-            $icon
+            $_FILES['icon']['name']
         )
         && move_uploaded_file($_FILES['icon']['tmp_name'], FILE_UPLOAD_DIR . basename($_FILES['icon']['name']))) {
             $data['result'] = true;                     // result true
