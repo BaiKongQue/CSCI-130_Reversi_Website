@@ -11,7 +11,9 @@ window.onload = function() {
 /*********
  * Login * 
  *********/
-sessionData = [];
+sessionData = {
+    "player_id":"8","username":"paradox","first_name":"Alice","last_name":"Doe","age":23,"gender":"girl","location":"Internet","icon":"first avatar.jpg"
+};
 login_pipe = [];
 /**
  * Checks wether the user is logged in or not by sending a request to the server.
@@ -22,7 +24,8 @@ function is_logged_in(callback = () => {}) {
     xhttp.onreadystatechange = function() {                                         // if the state changes and finishes
         if (this.readyState == 4 && this.status == 200) {                           // successfully get
             let res = JSON.parse(this.responseText);                                // get result
-            sessionData = res.session;                                              // set session data
+            res.result = true;
+            // sessionData = res.session;                                              // set session data
             for (let p of login_pipe) p(res.result);                                // send result to piped functions
             callback(res.result);                                                   // callback function and pass result
         }
