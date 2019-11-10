@@ -1,6 +1,4 @@
-/images/upload/users/*.jpg
-/images/upload/users/*.png
-/images/uploads/users/*.gif
+/images/upload/users
 /config/cred.php
 /xampp
 /._xampp

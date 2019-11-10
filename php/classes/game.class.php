@@ -239,7 +239,34 @@ class Game {
     }
 
     public function update_game_data(array $newData): bool {
-        
+        if ($this->Login->login_check()) {
+            $count = array_count_values($newData['grid']);
+            if ($stmt = $this->Mysqli->prepare("
+                UPDATE
+                    games
+                SET
+                    player1_score = ?,
+                    player2_score = ?,
+                    grid = ?,
+                    player_turn = ?
+                WHERE
+                    game_id = ?
+            ")) {
+                $stmt->bind_param('iisii', $count[GAME_TILE_PLAYER1], $count[GAME_TILE_PLAYER2], $grid, $newData['player_turn'], $newData['game_id']);
+                if (!$stmt->execute()) {
+                    $this->error .= "Failed to send data to server!\n";
+                    return false;
+                }
+                return true;
+                $stmt->close();
+            } else {
+                $this->error .= "Failed to communicate with the server!\n";
+                return false;
+            }
+        } else {
+            $this->error .= "You are not logged in!\n";
+            return false;
+        }
     }
 
     /**
@@ -307,6 +334,11 @@ class Game {
         }
     }
 
+    public function update_join_game (int $gameid, int $player2id) //add the user to player 2 id, and games table. 
+    {
+
+    }
+
     public function get_player_lobbies(): array {
         if ($this->Login->login_check()) {                                              // check if user is logged in
             if ($stmt = $this->Mysqli->prepare("
@@ -371,6 +403,7 @@ class Game {
         $this->Mysqli->close();     // close mysql connection
         $this->Mysqli = NULL;       // set null
     }
+
 }
 
 ?>
