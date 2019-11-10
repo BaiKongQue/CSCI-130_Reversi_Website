@@ -33,9 +33,36 @@ getMoveHttp.onreadystatechange = function () {
     }
 }
 
+var sendMoveHttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
+sendMoveHttp.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+
+    }
+}
+
 canvas.addEventListener('mousedown', _ClickOn, false);
 
 // PRIVATE
+function _GetGameData() {
+    const game_id = _GetRouteParams()["id"];
+    if (game_id != undefined) {
+        dataHttp.open("GET", "game.get.php?id=" + game_id, true);
+        dataHttp.send();
+    }
+}
+
+function _GetMoveAvialable() {
+    getMoveHttp.open("POST", "moves.get.php", true);
+    getMoveHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    getMoveHttp.send("data=" + JSON.stringify(data));
+}
+
+function _SendMove() {
+    sendMoveHttp.open("POST", "game.post.php", true);
+    sendMoveHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    sendMoveHttp.send("data=" + JSON.stringify(data));
+}
+
 function _GetRouteParams() {
     var vars = {};
     var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
@@ -73,24 +100,21 @@ function _GetAiHeuristic() {
     }
 }
 
-//public function convert_to_1D(int $size, int $x, int $y): int { return ($y * $size) + $x; }
-
 function _ClickOn(event) {
     var x = Math.floor((event.x-canvas.getBoundingClientRect().left) / bit_size);
     var y = Math.floor((event.y-canvas.getBoundingClientRect().top) / bit_size);
-    // console.log(sessionData);
-    console.log(sessionData);
-    if (sessionData && sessionData.player_id == data.player_turn && (y * grid_size) + x in available_move) {
+     console.log(sessionData);
+    // console.log("This is right");
+    var i = (y * grid_size) + x;
+    if (sessionData && sessionData.player_id == data.player_turn && i in available_move) {
         console.log("This is right");
-        data.grid[(y * grid_size) + x] = 1;
-        
+        data.grid[i] = 1;
         // _GetMoveAvialable();
+        _SendMove();
+        
     }
 }
 
-
-
-//Work?
 function _GetAiMove() {
     var ai_index = 0;
     var ai_hueristic = 0;
@@ -108,13 +132,7 @@ function _GetAiMove() {
     return ai; 
 }
 
-function _GetGameData() {
-    const game_id = _GetRouteParams()["id"];
-    if (game_id != undefined) {
-        dataHttp.open("GET", "game.get.php?id=" + game_id, true);
-        dataHttp.send();
-    }
-}
+
 
 function _DrawCircle(color, i, j) {
     var radius = bit_size / 2;
@@ -161,12 +179,6 @@ function _OnRender() {
             }
         }
     }
-}
-
-function _GetMoveAvialable() {
-    getMoveHttp.open("POST", "moves.get.php", true);
-    getMoveHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    getMoveHttp.send("data=" + JSON.stringify(data));
 }
 
 // PUBLIC

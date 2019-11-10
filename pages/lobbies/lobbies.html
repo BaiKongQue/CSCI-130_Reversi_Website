@@ -37,32 +37,34 @@
 	<div id="body-container">
 		<div id="lobby-container">
 			<div id="title"><h1>On Going Games</h1></div>
-			<form id="filters-form" method="GET" onsubmit="event.preventDefault()">
-				<div>
-					<label>
-						<span>Game Id:</span>
-						<input type="number" min="1" name="game_id" placeholder="Game Id" />
-					</label>
-				</div>
-				<div>
-					<label>
-						<span>First Name:</span>
-						<input type="text" name='first_name' placeholder="First Name" />
-					</label>
-				</div>
-				<div>
-					<label>
-						<span>Last Name:</span>
-						<input type="text" name='last_name' placeholder="Last Name" />
-					</label>
-				</div>
-				<div>
-					<label>
-						<input type="checkbox" name="view-all" />
-						<span>View My Games</span>
-					</label>
-				</div>
-			</form>
+			<div id="filters">
+				<form id="filters-form" method="GET" onsubmit="event.preventDefault()">
+					<div>
+						<label>
+							<span>Game Id:</span>
+							<input type="number" min="1" name="game_id" placeholder="Game Id" />
+						</label>
+					</div>
+					<div>
+						<label>
+							<span>First Name:</span>
+							<input type="text" name='first_name' placeholder="First Name" />
+						</label>
+					</div>
+					<div>
+						<label>
+							<span>Last Name:</span>
+							<input type="text" name='last_name' placeholder="Last Name" />
+						</label>
+					</div>
+					<div>
+						<label>
+							<input type="checkbox" onclick="GetLobbies()" name="view-all" />
+							<span>View All</span>
+						</label>
+					</div>
+				</form>
+			</div>
 			<div id="lobbies-list-container">
 				<ul id="lobbies-list-ul">
 

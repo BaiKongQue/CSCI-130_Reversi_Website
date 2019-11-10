@@ -1,13 +1,13 @@
 let form = document.getElementById('filters-form');
 let lobbies = document.getElementById('lobbies-list-ul');
-let xhttp = new XMLHttpRequest();
+let getLobbies = new XMLHttpRequest();
 let data = [];
 
 form.oninput =function() {
     LoadData();
 };
 
-xhttp.onreadystatechange = function() {
+getLobbies.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
         let res = JSON.parse(this.responseText);
         if (res.result) {
@@ -23,16 +23,33 @@ xhttp.onreadystatechange = function() {
     }
 }
 
-xhttp.open('GET', "./lobbies.get.php", true);
-xhttp.send();
+function GetLobbies() {
+    getLobbies.open('GET', "./lobbies.get.php", true);
+    getLobbies.send();
+}
 
 function player_block(player) {
     return (player.first_name != null) ? "<div class=\"player-block\">" +
 				"<div><h2>"+ player.first_name + " "+ player.last_name +"</h2></div>" +
 				"<div><img src=\"../../images/upload/users/" + player.icon + "\" alt=\"player icon\" /></div>" +
-				"<div><strong>Score: "+ player.score +"</strong></div>" +
-            "</div>" : "<div class=\"player-block\">Waiting for opponent</div>";
+                "<div><strong>Score: "+ player.score +"</strong></div>" +
+                "<button id=\"viewGame\">View</button>" + viewGame()+
+            "</div>"
+        :
+            "<div>" +
+                "<div class=\"player-block\">Waiting for opponent</div>" +
+                "<button id=\"joinGame\">Join</button>" + joinGame(player.player_id)+
+            "</div>";
 }
+
+function viewGame(){
+    console.log("hello world");
+}
+
+function joinGame($playerid){
+    console.log("join the game: ", sessionData.player_id);
+    getLobbies.open('POST', "./join.post.php", true);
+    getLobbies.send($playerid);}
 
 function DisplayData(r) {
     lobbies.innerHTML +="<li>" +
@@ -53,13 +70,17 @@ function LoadData() {
     let matches = (name, data) => formData.get(name) != "" && !data.toLowerCase().includes(formData.get(name).toLowerCase());    
     lobbies.innerHTML = "";
 
+    if (!formData.get('view-all') && data.length == 0) {
+        
+    }
+
     for (let r of data) {
-        let cont = false;
+        let cont = false; 
         if (formData.get('view-all') || (!formData.get('view-all') && (r.player1.id == sessionData.player_id || (r.player2.id && r.player2.id == sessionData.player_id)))) {
             for (let i of ['first_name', 'last_name']) {
                 if (matches(i, r.player1[i]) || (r.player2.id && matches(i, r.player2[i]))) { 
-                    cont = true
-                    break
+                    cont = true;
+                    break;
                 }
             }
             if (cont) continue;
