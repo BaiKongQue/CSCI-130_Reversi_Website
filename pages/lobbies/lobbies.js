@@ -71,7 +71,7 @@ function LoadData() {
     lobbies.innerHTML = "";
 
     if (!formData.get('view-all') && data.length == 0) {
-        
+        lobbies.innerHTML += "<li>You don't have any games yet! Go <a href=\"../create-game/create-game.html\">create one!</a></li>"
     }
 
     for (let r of data) {
@@ -89,3 +89,5 @@ function LoadData() {
         }
     }
 }
+
+GetLobbies();
