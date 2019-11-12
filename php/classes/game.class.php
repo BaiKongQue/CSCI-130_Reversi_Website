@@ -45,18 +45,49 @@ class Game {
         }
     }
 
-    private function is_horizontal_wall($index, $size): bool {
+    private function is_horizontal_wall(int $index, int $size): bool {
         return (intdiv($index, $size) == 0)
         || (intdiv($index, $size) == $size-1);
     }
 
-    private function is_vertical_wall($index, $size): bool {
+    private function is_vertical_wall(int $index, int $size): bool {
         return ($index % $size == 0)
         || ($index % $size == $size - 1);
     }
 
-    private function is_wall($index, $isze): bool {
+    private function is_wall(int $index, int $isze): bool {
         return $this->is_horizontal_wall($index, $size) || $this->is_vertical_wall($index, $size);
+    }
+
+    private function in_bounds(array $grid, int $spot): bool {
+        $size = sqrt(count($grid));
+        return (($spot > 0 && $spot < count($grid))                         // make sure spot is in bounds
+        && (!(($y != 0 && $this->is_horizontal_wall($spot, $size)))         // moving in y direction and is not wall
+            || !(($x != 0 && $this->is_vertical_wall($spot, $size)))));     // moving in x direction and is not wall
+    }
+
+    private function flip_tiles(array $grid, int $start, int $player): array {
+        $aux = $grid;
+        $size = sqrt(count($grid));
+        foreach([-$size, 0, $size] as $y) {
+            foreach([-1, 0, 1] as $x) {
+                if ($x == 0 && $y == 0)
+                    continue;
+                
+                $spot = $start + $x + $y;
+                while($this->in_bounds($aux, $spot)
+                    && $aux[$spot] != GAME_TILE_NONE && $aux[$spot] != $player
+                ) {
+                    $aux[$spot] = $player;
+                    $spot += $x + $y;
+                }
+
+                if ($aux[$spot] == $player) {
+                    $grid = $aux;
+                }
+            }
+        }
+        return $grid;
     }
 
 // PUBLIC
@@ -119,10 +150,7 @@ class Game {
                         continue;                                                       // skip
                     $spot = $index + $x + $y;                                           // calculate spot
                     $count = 0;                                                         // hold count
-                    while (
-                        ($spot > 0 && $spot < count($grid))                             // make sure spot is in bounds
-                        && (!(($y != 0 && $this->is_horizontal_wall($spot, $size)))     // moving in y direction and is not wall
-                            || !(($x != 0 && $this->is_vertical_wall($spot, $size))))   // moving in x direction and is not wall
+                    while ($this->in_bounds($grid, $spot)
                         && ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE)  // while spot is not player
                     ) {
                         $spot += $x + $y;                                               // step to next spot
@@ -238,9 +266,15 @@ class Game {
         }
     }
 
-    public function update_game_data(array $newData): bool {
-        if ($this->Login->login_check()) {
+    public function update_game_data(array $newData, $index): bool {
+        if ($this->Login->login_check() && ($_SESSION['player_id'] == $newData['player_turn'])) {
             $count = array_count_values($newData['grid']);
+            $newData['grid'] = $this->flip_tiles($newData['grid'], $index, $newData['player_turn']);
+            $d = $newData;
+            $d['player_turn'] = ($d['player_turn'] == $d['player1_id'] ? $d['player2_id'] : $d['player1_id']);
+            if (!empty($this->moves_array($d))) {
+                $newData = $d;
+            }
             if ($stmt = $this->Mysqli->prepare("
                 UPDATE
                     games
@@ -252,7 +286,7 @@ class Game {
                 WHERE
                     game_id = ?
             ")) {
-                $stmt->bind_param('iisii', $count[GAME_TILE_PLAYER1], $count[GAME_TILE_PLAYER2], $grid, $newData['player_turn'], $newData['game_id']);
+                $stmt->bind_param('iisii', $count[GAME_TILE_PLAYER1], $count[GAME_TILE_PLAYER2], $newData['grid'], $newData['player_turn'], $newData['game_id']);
                 if (!$stmt->execute()) {
                     $this->error .= "Failed to send data to server!\n";
                     return false;
