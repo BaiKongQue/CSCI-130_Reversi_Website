@@ -59,7 +59,7 @@ class Game {
         return $this->is_horizontal_wall($index, $size) || $this->is_vertical_wall($index, $size);
     }
 
-    private function in_bounds(array $grid, int $spot): bool {
+    private function in_bounds(array $grid, int $x, int $y, int $spot): bool {
         $size = sqrt(count($grid));
         return (($spot > 0 && $spot < count($grid))                         // make sure spot is in bounds
         && (!(($y != 0 && $this->is_horizontal_wall($spot, $size)))         // moving in y direction and is not wall
@@ -75,8 +75,9 @@ class Game {
                     continue;
                 
                 $spot = $start + $x + $y;
-                while($this->in_bounds($aux, $spot)
-                    && $aux[$spot] != GAME_TILE_NONE && $aux[$spot] != $player
+                while($this->in_bounds($aux, $x, $y, $spot)
+                    && $aux[$spot] != GAME_TILE_NONE
+                    && $aux[$spot] != $player
                 ) {
                     $aux[$spot] = $player;
                     $spot += $x + $y;
@@ -150,7 +151,7 @@ class Game {
                         continue;                                                       // skip
                     $spot = $index + $x + $y;                                           // calculate spot
                     $count = 0;                                                         // hold count
-                    while ($this->in_bounds($grid, $spot)
+                    while ($this->in_bounds($grid, $x, $y, $spot)
                         && ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE)  // while spot is not player
                     ) {
                         $spot += $x + $y;                                               // step to next spot
@@ -234,7 +235,21 @@ class Game {
      */
     public function get_game_data(int $gameId) {
         if ($this->Login->login_check()) {                  // check if user is logged in
-            if ($stmt = $this->Mysqli->prepare("SELECT player1_id, player2_id, TIMEDIFF(NOW(), start_time), player1_score, player2_score, player_turn, grid FROM games WHERE game_id = ? LIMIT 1")) {
+            if ($stmt = $this->Mysqli->prepare("
+                SELECT
+                    player1_id,
+                    player2_id,
+                    TIMEDIFF(NOW(), start_time),
+                    player1_score,
+                    player2_score,
+                    player_turn,
+                    grid
+                FROM
+                    games
+                WHERE
+                    game_id = ?
+                LIMIT 1
+            ")) {
                 $stmt->bind_param('i', $gameId);            // bind game id
                 if ($stmt->execute()) {                     // execute
                     $stmt->bind_result($player1_id, $player2_id, $duration, $player1_score, $player2_score, $player_turn, $grid);
@@ -266,15 +281,27 @@ class Game {
         }
     }
 
-    public function update_game_data(array $newData, $index): bool {
+    public function update_game_data($newData, $index) {
         if ($this->Login->login_check() && ($_SESSION['player_id'] == $newData['player_turn'])) {
+            $newData['grid'][$index] = ($newData['player_turn'] == $newData['player1_id']) ? GAME_TILE_PLAYER1 : GAME_TILE_PLAYER2;
+            $newData['grid'] = $this->flip_tiles($newData['grid'], $index, ($newData['player1_id'] == $newData['player_turn'] ? GAME_TILE_PLAYER1 : GAME_TILE_PLAYER2));
             $count = array_count_values($newData['grid']);
-            $newData['grid'] = $this->flip_tiles($newData['grid'], $index, $newData['player_turn']);
+
             $d = $newData;
             $d['player_turn'] = ($d['player_turn'] == $d['player1_id'] ? $d['player2_id'] : $d['player1_id']);
-            if (!empty($this->moves_array($d))) {
+            $moves1 = $this->moves_array($d);
+            $moves2 = $this->moves_array($newData);
+            if ((empty($moves1) && empty($moves2)) || empty($count[0])) {
+                $newData['player_turn'] = 0;
+                $newData['finished'] = true;
+                $newData['winner'] = (array_keys($count, max($count))[0] == GAME_TILE_PLAYER1) ? $newData['player1_id'] : $newData['player2_id'];
+            } else if (!empty($moves1)) {
                 $newData = $d;
+            } else {
+                $moves1 = $moves2;
             }
+
+            $ngrid = json_encode($newData['grid']);
             if ($stmt = $this->Mysqli->prepare("
                 UPDATE
                     games
@@ -286,12 +313,12 @@ class Game {
                 WHERE
                     game_id = ?
             ")) {
-                $stmt->bind_param('iisii', $count[GAME_TILE_PLAYER1], $count[GAME_TILE_PLAYER2], $newData['grid'], $newData['player_turn'], $newData['game_id']);
-                if (!$stmt->execute()) {
-                    $this->error .= "Failed to send data to server!\n";
-                    return false;
-                }
-                return true;
+                $stmt->bind_param('iisii', $count[GAME_TILE_PLAYER1], $count[GAME_TILE_PLAYER2], $ngrid, $newData['player_turn'], $newData['game_id']);
+                // if (!$stmt->execute()) {
+                //     $this->error .= "Failed to send data to server!\n";
+                //     return false;
+                // }
+                return ['data' => $newData, 'moves' => $moves1];
                 $stmt->close();
             } else {
                 $this->error .= "Failed to communicate with the server!\n";
@@ -431,6 +458,27 @@ class Game {
         } else {
             $this->error .= "You are not logged in!\n";                                     // user is not logged in
         }
+    }
+
+    public function join_game(int $gameId): bool {
+        // if logged in
+        // query
+        // bind_param player2_id = $_SESSION['player_id'], and where gameid = $gameId
+        // if !execute, error
+        // return true if success
+
+        if ($this->Login->login_check()) {
+            if ($stmt = $this->Mysqli->prepare("
+            UPDATE
+                games
+            SET
+                player1_score = ?,
+                player2_score = ?,
+                grid = ?,
+                player_turn = ?
+            WHERE
+                game_id = ?
+            ")) 
     }
 
     public function __deconstruct() {

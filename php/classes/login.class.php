@@ -119,16 +119,16 @@ class Login{
 	 * @return bool: wether the user is logged in or not
 	 */
 	public function login_check(): bool {
-		// if(isset($_SESSION['player_id'], $_SESSION['login_string']) && session_status() == PHP_SESSION_ACTIVE){				// if sessions are active
-		// 	$login_stringH = hash('sha512', $_SESSION['player_id'] . $_SESSION['username'] . $_SERVER['HTTP_USER_AGENT']);	// generate what login string should look like
-		// 	if($_SESSION['login_string'] == $login_stringH)	// compare
-		// 		return TRUE; 								// user is correctly logged in
-		// 	else
-		// 		return FALSE;								// login strings do not match fail check
-		// } else {
-		// 	return false;									// user not logged in, sessions not active
-		// }
-		return true;
+		if(isset($_SESSION['player_id'], $_SESSION['login_string']) && session_status() == PHP_SESSION_ACTIVE){				// if sessions are active
+			$login_stringH = hash('sha512', $_SESSION['player_id'] . $_SESSION['username'] . $_SERVER['HTTP_USER_AGENT']);	// generate what login string should look like
+			if($_SESSION['login_string'] == $login_stringH)	// compare
+				return TRUE; 								// user is correctly logged in
+			else
+				return FALSE;								// login strings do not match fail check
+		} else {
+			return false;									// user not logged in, sessions not active
+		}
+		// return true;
 	}
 	
 	public function __destruct(){

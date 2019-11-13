@@ -49,7 +49,8 @@ function viewGame(){
 function joinGame($playerid){
     console.log("join the game: ", sessionData.player_id);
     getLobbies.open('POST', "./join.post.php", true);
-    getLobbies.send($playerid);}
+    getLobbies.send("game_id=" +gameid+ "&player1_id=" + $playerid);
+}
 
 function DisplayData(r) {
     lobbies.innerHTML +="<li>" +
