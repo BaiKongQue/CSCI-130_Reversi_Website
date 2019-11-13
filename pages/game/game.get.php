@@ -14,7 +14,8 @@ if (isset($_GET['id']) && $_GET['id'] == 0) {
     $res['result'] = json_decode(file_get_contents("dummy.json"));
 } else if (isset($_GET['id']) && !empty($_GET['id'])) {
     $Game = new Game();                                     // new Game object
-    $res['result'] = $Game->get_game_data($_GET['id']);     // get game data
+    $res['result']['data'] = $Game->get_game_data($_GET['id']);     // get game data
+    $res['result']['moves'] = $Game->moves_array($res['result']['data']);
     if (!empty($Game->error))                               // if error
         $res['error'] = $Game->error;                       // record error
 } else {

@@ -11,18 +11,25 @@ var frameRate = 60;
 var available_move = {};
 var ai_heuristic_board = [];
 
+/***************************
+ * Http ready state set up *
+ ***************************/
 var dataHttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 dataHttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-        data = JSON.parse(this.responseText)['result'];
-
+        res = JSON.parse(this.responseText)['result'];
+        data = res.data;
+        available_move = res.moves;
         //Find the grid size and bit_size
         let length = data.grid.length;
         grid_size = Math.sqrt(length);
         bit_size = 600 / grid_size;
 
-        _GetMoveAvialable();
-        _GetAiHeuristic();
+        // if (data.player_turn == sessionData.player_id || (data.player2_id < 0 && data.player_turn == data.player2_id))
+        //     _GetMoveAvialable();
+        // else 
+        //     available_move = {}
+        // if (data.player2_id < 0) _GetAiHeuristic();
     }
 }
 
@@ -36,13 +43,24 @@ getMoveHttp.onreadystatechange = function () {
 var sendMoveHttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 sendMoveHttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
-
+        res = JSON.parse(this.responseText)['result'];
+        data = res.data;
+        available_move = res.moves;
+        // _GetMoveAvialable();
+        if (!!data.finished && data.player2_id < 0 && data.player_turn == data.player2_id) {
+            _MoveAi();
+        }
     }
 }
 
+/*******************
+ * Event listeners *
+ *******************/
 canvas.addEventListener('mousedown', _ClickOn, false);
 
-// PRIVATE
+/*********************
+ * PRIVATE functions *
+ *********************/
 function _GetGameData() {
     const game_id = _GetRouteParams()["id"];
     if (game_id != undefined) {
@@ -57,10 +75,10 @@ function _GetMoveAvialable() {
     getMoveHttp.send("data=" + JSON.stringify(data));
 }
 
-function _SendMove() {
+function _SendMove(index) {
     sendMoveHttp.open("POST", "game.post.php", true);
     sendMoveHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    sendMoveHttp.send("data=" + JSON.stringify(data));
+    sendMoveHttp.send("data=" + JSON.stringify(data) + "&index=" + index);
 }
 
 function _GetRouteParams() {
@@ -100,21 +118,6 @@ function _GetAiHeuristic() {
     }
 }
 
-function _ClickOn(event) {
-    var x = Math.floor((event.x-canvas.getBoundingClientRect().left) / bit_size);
-    var y = Math.floor((event.y-canvas.getBoundingClientRect().top) / bit_size);
-     console.log(sessionData);
-    // console.log("This is right");
-    var i = (y * grid_size) + x;
-    if (sessionData && sessionData.player_id == data.player_turn && i in available_move) {
-        console.log("This is right");
-        data.grid[i] = 1;
-        // _GetMoveAvialable();
-        _SendMove();
-        
-    }
-}
-
 function _GetAiMove() {
     var ai_index = 0;
     var ai_hueristic = 0;
@@ -128,11 +131,30 @@ function _GetAiMove() {
             }
         }
     }
-    var ai = {'Index': ai_index, 'Hueristic': ai_hueristic};
-    return ai; 
+    return {'Index': ai_index, 'Hueristic': ai_hueristic}; 
 }
 
+function _MoveAi() {
+    switch (data.player2_id) {
+        case -1: // easy ai
+            let keys = Object.keys(available_move);
+            _SendMove(Math.floor(Math.random() * keys.length), true);
+            break;
+        case -2: // hard ai
+            break;
+    }
+}
 
+function _ClickOn(event) {
+    var x = Math.floor((event.x-canvas.getBoundingClientRect().left) / bit_size);
+    var y = Math.floor((event.y-canvas.getBoundingClientRect().top) / bit_size);
+    var i = (y * grid_size) + x;
+    if (sessionData && sessionData.player_id == data.player_turn && i in available_move) {
+        // _GetMoveAvialable();
+        _SendMove(i);
+        // _MoveAi();
+    }
+}
 
 function _DrawCircle(color, i, j) {
     var radius = bit_size / 2;
@@ -181,7 +203,21 @@ function _OnRender() {
     }
 }
 
-// PUBLIC
+function _InitLoop() {
+    setInterval(() => {
+        _GetGameData();
+    }, 5 * 1000);
+}
+
+function _InitRender() {
+    setInterval(() => {
+        _OnRender();
+    }, 1000/frameRate);
+}
+
+/********************
+ * PUBLIC functions *
+ ********************/
 function OnInit() {
     canvas.width = 600;
     canvas.height = 600;
@@ -190,13 +226,7 @@ function OnInit() {
     context.textAlign = "center";
     context.fillText("Loading...", canvas.width/2, canvas.height/2);
 
-    _GetGameData();   
-
-    setInterval(() => {
-        _GetGameData();
-    }, 5 * 1000);
-    
-    setInterval(() => {
-        _OnRender();
-    }, 1000/frameRate);
+    login_pipe.push(_GetGameData);
+    login_pipe.push(_InitLoop);
+    login_pipe.push(_InitRender);
 }
