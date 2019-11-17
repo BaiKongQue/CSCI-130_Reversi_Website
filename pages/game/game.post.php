@@ -9,9 +9,9 @@ error_reporting(E_ALL);
  * @param array data: package of data
  */
 $data = [];
-if (isset($_POST['data'], $_POST['index']) && !empty($_POST['data']) && !empty($_POST['index'])) {
+if (isset($_POST['data'], $_POST['index']) && !empty($_POST['data'])) {
     $Game = new Game();
-    $data['result'] = $Game->update_game_data(json_decode($_POST['data'], true), $_POST['index']);
+    $data['result'] = $Game->update_game_data(json_decode($_POST['data'], true), $_POST['index'], (isset($_POST['ai']) ? TRUE : FALSE));
     if ($Game->error != "") $data['error'] = $Game->error;
 } else {
     $data['error'] = "one or more parameter is missing!";
