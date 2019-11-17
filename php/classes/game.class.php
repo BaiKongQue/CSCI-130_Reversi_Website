@@ -3,7 +3,9 @@ include_once $_SERVER['DOCUMENT_ROOT'] . "/config/definitions.php";
 include_once 'SecureSession.class.php';
 include_once 'login.class.php';
 sec_session_start();
-
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 /**
  * Game Data structure:
  *  game_id: int
@@ -31,60 +33,77 @@ class Game {
     }
 
 // PRIVATE
-    private function count_tiles() {
-        while ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE) {
-            $spot += $direction + $v;
-            if ($grid[$spot] == $player) {
-                if (!key_exists($index, $res)) {
-                    $res[$index] = $count;
-                } else {
-                    $res[$index] += $count;
-                }
-            }
-            $count++;
-        }
-    }
+    // private function count_tiles() {
+    //     while ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE) {
+    //         $spot += $direction + $v;
+    //         if ($grid[$spot] == $player) {
+    //             if (!key_exists($index, $res)) {
+    //                 $res[$index] = $count;
+    //             } else {
+    //                 $res[$index] += $count;
+    //             }
+    //         }
+    //         $count++;
+    //     }
+    // }
 
     private function is_horizontal_wall(int $index, int $size): bool {
-        return (intdiv($index, $size) == 0)
-        || (intdiv($index, $size) == $size-1);
+        return (intdiv($index, $size) == 0) || (intdiv($index, $size) == $size-1);
     }
 
     private function is_vertical_wall(int $index, int $size): bool {
-        return ($index % $size == 0)
-        || ($index % $size == $size - 1);
+        return ($index % $size == 0) || ($index % $size == $size - 1);
     }
 
-    private function is_wall(int $index, int $isze): bool {
-        return $this->is_horizontal_wall($index, $size) || $this->is_vertical_wall($index, $size);
-    }
-
-    private function in_bounds(array $grid, int $x, int $y, int $spot): bool {
+    private function in_bounds(array $grid, $x, $y, int $spot, $player): bool {
         $size = sqrt(count($grid));
-        return (($spot > 0 && $spot < count($grid))                         // make sure spot is in bounds
-        && (!(($y != 0 && $this->is_horizontal_wall($spot, $size)))         // moving in y direction and is not wall
-            || !(($x != 0 && $this->is_vertical_wall($spot, $size)))));     // moving in x direction and is not wall
+        return (
+            ($spot > 0 && $spot < count($grid))
+            && (($this->is_vertical_wall($spot + $x + $y, $size) && $this->is_horizontal_wall($spot + $x + $y, $size)) ||
+            (($x == 0 || ($x != 0 && !$this->is_vertical_wall($spot + $x + $y, $size)))
+            && ($y == 0 || ($y != 0 && !$this->is_horizontal_wall($spot + $x + $y, $size)))))
+            && $grid[$spot] != GAME_TILE_NONE
+            && $grid[$spot] != $player
+        );
+    }
+
+    private function clean_xs(array &$xs, int $index, int $size): void {
+
     }
 
     private function flip_tiles(array $grid, int $start, int $player): array {
-        $aux = $grid;
         $size = sqrt(count($grid));
-        foreach([-$size, 0, $size] as $y) {
-            foreach([-1, 0, 1] as $x) {
+
+        $ys = [-$size, 0, $size];
+        $xs = [-1, 0, 1];
+
+        if (($start % $size) == 0) {
+            unset($xs[0]);
+        } else if (($start % $size == ($size - 1))) {
+            unset($xs[2]);
+        }
+        if (intdiv($start, $size) == 0) {
+            unset($ys[0]);
+        } else if (intdiv($start, $size) == ($size - 1)) {
+            unset($ys[2]);
+        }
+
+        foreach($ys as $y) {
+            foreach($xs as $x) {
                 if ($x == 0 && $y == 0)
                     continue;
                 
                 $spot = $start + $x + $y;
-                while($this->in_bounds($aux, $x, $y, $spot)
-                    && $aux[$spot] != GAME_TILE_NONE
-                    && $aux[$spot] != $player
-                ) {
-                    $aux[$spot] = $player;
+                $is = [];
+                while($this->in_bounds($grid, $x, $y, $spot, $player)) {
+                    array_push($is, $spot);
                     $spot += $x + $y;
                 }
 
-                if ($aux[$spot] == $player) {
-                    $grid = $aux;
+                if (($spot > 0 && $spot < count($grid)) && $grid[$spot] == $player) {
+                    foreach($is as $i) {
+                        $grid[$i] = $player;
+                    }
                 }
             }
         }
@@ -113,7 +132,7 @@ class Game {
      * @param int $i: index to convert to 2D Y
      * @return int: converted i to Y coordinate
      */
-    public function convert_to_y_2D(int $size, int $i): int { return $y % $size; }
+    public function convert_to_y_2D(int $size, int $i): int { return $i % $size; }
 
     /**
      * Retrieves what the current score is.
@@ -142,23 +161,38 @@ class Game {
         $size = sqrt(count($grid));                                                     // hold size
         $player = ($data['player_turn'] == $data['player1_id']) ? GAME_TILE_PLAYER1 : GAME_TILE_PLAYER2; // get if player is 1 or 2 tile
         $res = [];                                                                      // init result array
+        
         for ($index = 0; $index < count($grid); $index++) {                             // iterate through each spot
             if ($grid[$index] != GAME_TILE_NONE)                                        // if none
                 continue;                                                               // skip
-            foreach ([-$size, 0, $size] as $y) {                                        // for each y around the index
-                foreach ([-1, 0 , 1] as $x) {                                           // for each x around the index
+            
+            $ys = [-$size, 0, $size];
+            $xs = [-1, 0, 1];
+    
+            if (($index % $size) == 0) {
+                unset($xs[0]);
+            } else if (($index % $size == ($size - 1))) {
+                unset($xs[2]);
+            }
+
+            if (intdiv($index, $size) == 0) {
+                unset($ys[0]);
+            } else if (intdiv($index, $size) == ($size - 1)) {
+                unset($ys[2]);
+            }
+
+            foreach ($ys as $y) {                                        // for each y around the index
+                foreach ($xs as $x) {                                           // for each x around the index
                     if (($x == 0 && $y == 0))                                           // if x and y are 0
                         continue;                                                       // skip
                     $spot = $index + $x + $y;                                           // calculate spot
                     $count = 0;                                                         // hold count
-                    while ($this->in_bounds($grid, $x, $y, $spot)
-                        && ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE)  // while spot is not player
-                    ) {
+                    while ($this->in_bounds($grid, $x, $y, $spot, $player)) {
                         $spot += $x + $y;                                               // step to next spot
                         $count++;                                                       // increment count
                     }
 
-                    if ($spot!=$index && $count != 0 && $grid[$spot] == $player) {      // if not start and end spot is this player
+                    if (($spot > 0 && $spot < count($grid)) && $spot!=$index && $count != 0 && $grid[$spot] == $player) {// if not start and end spot is this player
                         if (!key_exists($index, $res)) {                                // if index not already in res
                             $res[$index] = $count;                                      // add it to res
                         } else {
@@ -281,8 +315,8 @@ class Game {
         }
     }
 
-    public function update_game_data($newData, $index) {
-        if ($this->Login->login_check() && ($_SESSION['player_id'] == $newData['player_turn'])) {
+    public function update_game_data($newData, $index, $isAi = false) {
+        if ($this->Login->login_check() && ($isAi || ($_SESSION['player_id'] == $newData['player_turn']))) {
             $newData['grid'][$index] = ($newData['player_turn'] == $newData['player1_id']) ? GAME_TILE_PLAYER1 : GAME_TILE_PLAYER2;
             $newData['grid'] = $this->flip_tiles($newData['grid'], $index, ($newData['player1_id'] == $newData['player_turn'] ? GAME_TILE_PLAYER1 : GAME_TILE_PLAYER2));
             $count = array_count_values($newData['grid']);
@@ -467,18 +501,18 @@ class Game {
         // if !execute, error
         // return true if success
 
-        if ($this->Login->login_check()) {
-            if ($stmt = $this->Mysqli->prepare("
-            UPDATE
-                games
-            SET
-                player1_score = ?,
-                player2_score = ?,
-                grid = ?,
-                player_turn = ?
-            WHERE
-                game_id = ?
-            ")) 
+        // if ($this->Login->login_check()) {
+        //     if ($stmt = $this->Mysqli->prepare("
+        //     UPDATE
+        //         games
+        //     SET
+        //         player1_score = ?,
+        //         player2_score = ?,
+        //         grid = ?,
+        //         player_turn = ?
+        //     WHERE
+        //         game_id = ?
+        //     ")) 
     }
 
     public function __deconstruct() {

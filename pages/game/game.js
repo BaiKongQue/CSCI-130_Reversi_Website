@@ -9,7 +9,6 @@ var grid_size = 0;
 var bit_size = 0;
 var frameRate = 60;
 var available_move = {};
-var ai_heuristic_board = [];
 
 /***************************
  * Http ready state set up *
@@ -25,18 +24,9 @@ dataHttp.onreadystatechange = function () {
         grid_size = Math.sqrt(length);
         bit_size = 600 / grid_size;
 
-        // if (data.player_turn == sessionData.player_id || (data.player2_id < 0 && data.player_turn == data.player2_id))
-        //     _GetMoveAvialable();
-        // else 
-        //     available_move = {}
-        // if (data.player2_id < 0) _GetAiHeuristic();
-    }
-}
-
-var getMoveHttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-getMoveHttp.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-        available_move = JSON.parse(this.responseText)['result'];
+        if (data.player2_id < 0 && data.player_turn == data.player2_id) {
+            _MoveAi();
+        }
     }
 }
 
@@ -47,7 +37,7 @@ sendMoveHttp.onreadystatechange = function () {
         data = res.data;
         available_move = res.moves;
         // _GetMoveAvialable();
-        if (!!data.finished && data.player2_id < 0 && data.player_turn == data.player2_id) {
+        if (data.player2_id < 0 && data.player_turn == data.player2_id) {
             _MoveAi();
         }
     }
@@ -69,16 +59,10 @@ function _GetGameData() {
     }
 }
 
-function _GetMoveAvialable() {
-    getMoveHttp.open("POST", "moves.get.php", true);
-    getMoveHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    getMoveHttp.send("data=" + JSON.stringify(data));
-}
-
-function _SendMove(index) {
+function _SendMove(index, ai = false) {
     sendMoveHttp.open("POST", "game.post.php", true);
     sendMoveHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    sendMoveHttp.send("data=" + JSON.stringify(data) + "&index=" + index);
+    sendMoveHttp.send("data=" + JSON.stringify(data) + "&index=" + index + "&ai=" + ai);
 }
 
 function _GetRouteParams() {
@@ -92,57 +76,55 @@ function _GetRouteParams() {
 function _GetAiHeuristic() {
     switch (data.grid.length) {
         case 16:
-            ai_heuristic_board = [10, 3, 3, 10,
-                                   3, 0, 0, 3,
-                                   3, 0, 0, 3,
-                                  10, 3, 3, 10];
+            return [10, 3, 3, 10,
+                     3, 0, 0, 3,
+                     3, 0, 0, 3,
+                    10, 3, 3, 10];
             break;
         case 36: 
-            ai_heuristic_board = [10, -8, 5, 5, -8, 10,
-                                  -8, -5, 3, 3, -5, -8,
-                                   5,  3, 0, 0,  3,  5,
-                                   5,  3, 0, 0,  3,  5,
-                                  -8, -5, 3, 3, -5, -8,
-                                  10, -8, 5, 5, -8, 10];
+            return [10, -8, 5, 5, -8, 10,
+                    -8, -5, 3, 3, -5, -8,
+                     5,  3, 0, 0,  3,  5,
+                     5,  3, 0, 0,  3,  5,
+                    -8, -5, 3, 3, -5, -8,
+                    10, -8, 5, 5, -8, 10];
             break;
         case 64:
-            ai_heuristic_board = [10, -8,  5,  5,  5,  5, -8, 10,
-                                  -8, -5, -2, -2, -2, -2, -5, -8,
-                                   5, -2,  1,  1,  1,  1, -2,  5,
-                                   5, -2,  1,  0,  0,  1, -2,  5,
-                                   5, -2,  1,  0,  0,  1, -2,  5,
-                                   5, -2,  1,  1,  1,  1, -2,  5,
-                                  -8, -5, -2, -2, -2, -2, -5, -8,
-                                  10, -8,  5,  5,  5,  5, -8, 10];
+            return [10, -8,  5,  5,  5,  5, -8, 10,
+                    -8, -5, -2, -2, -2, -2, -5, -8,
+                     5, -2,  1,  1,  1,  1, -2,  5,
+                     5, -2,  1,  0,  0,  1, -2,  5,
+                     5, -2,  1,  0,  0,  1, -2,  5,
+                     5, -2,  1,  1,  1,  1, -2,  5,
+                    -8, -5, -2, -2, -2, -2, -5, -8,
+                    10, -8,  5,  5,  5,  5, -8, 10];
             break;
     }
 }
 
 function _GetAiMove() {
-    var ai_index = 0;
-    var ai_hueristic = 0;
-    // Loop through the tile
-    for (var i = 0; i < ai_heuristic_board.length; ++i) {
-        if (i in available_move) { //Check if the current tile is in the available tile
-            var current_heuristic = ai_available_move[i] + ai_heuristic_board[i]; //Finding the heuristic value
-            if (current_heuristic > ai_hueristic) { //Check if the current heuristic value is greater than the max value
-                ai_hueristic = current_heuristic; //Reassigned
-                ai_index = i;
-            }
-        }
+    let max = null;
+    let hueristic_board = _GetAiHeuristic();
+    for(let i in available_move) {
+        if (max == null || available_move[i] + hueristic_board[i] > available_move[max] + hueristic_board[max])
+            max = i;
     }
-    return {'Index': ai_index, 'Hueristic': ai_hueristic}; 
+    return max;
 }
 
 function _MoveAi() {
-    switch (data.player2_id) {
-        case -1: // easy ai
-            let keys = Object.keys(available_move);
-            _SendMove(Math.floor(Math.random() * keys.length), true);
-            break;
-        case -2: // hard ai
-            break;
-    }
+    setTimeout(() => {
+        switch (data.player2_id) {
+            case -1: // easy ai
+                let keys = Object.keys(available_move);
+                _SendMove(keys[Math.floor(Math.random() * keys.length)], true);
+                break;
+            case -2: // hard ai
+                console.log('a');
+                _SendMove(_GetAiMove(), true);
+                break;
+        }
+    }, 1 * 1000);
 }
 
 function _ClickOn(event) {
@@ -187,7 +169,7 @@ function _OnRender() {
                 _DrawCircle(p2PieceColor.value, i, j);
             }
 
-            if (current_index in available_move) {
+            if (data.player_turn == sessionData.player_id && current_index in available_move) {
                 context.beginPath()
                 context.fillStyle = 'pink';
                 context.fillRect((i * bit_size) + 1, (j * bit_size) + 1, bit_size - 2, bit_size - 2);
@@ -203,9 +185,14 @@ function _OnRender() {
     }
 }
 
+function _InitStart() {
+    _GetGameData();
+}
+
 function _InitLoop() {
     setInterval(() => {
-        _GetGameData();
+        // if (document.hasFocus())
+        //     _GetGameData();
     }, 5 * 1000);
 }
 
@@ -226,7 +213,11 @@ function OnInit() {
     context.textAlign = "center";
     context.fillText("Loading...", canvas.width/2, canvas.height/2);
 
-    login_pipe.push(_GetGameData);
+    login_pipe.push(_InitStart);
     login_pipe.push(_InitLoop);
     login_pipe.push(_InitRender);
+}
+
+function reset() {
+
 }
