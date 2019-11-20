@@ -3,3 +3,5 @@
 /xampp
 /._xampp
 /config/._cred.php
+/.vscode
+/node_modules
