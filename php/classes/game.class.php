@@ -58,10 +58,11 @@ class Game {
     private function in_bounds(array $grid, $x, $y, int $spot, $player): bool {
         $size = sqrt(count($grid));
         return (
-            ($spot > 0 && $spot < count($grid))
-            && (($this->is_vertical_wall($spot + $x + $y, $size) && $this->is_horizontal_wall($spot + $x + $y, $size)) ||
-            (($x == 0 || ($x != 0 && !$this->is_vertical_wall($spot + $x + $y, $size)))
-            && ($y == 0 || ($y != 0 && !$this->is_horizontal_wall($spot + $x + $y, $size)))))
+            ($spot >= 0 && $spot < count($grid))
+            && (($this->is_vertical_wall($spot , $size) && $this->is_horizontal_wall($spot, $size)) ||
+            (($x == 0 || ($x != 0 && !$this->is_vertical_wall($spot , $size)))
+            // && ($y == 0 || ($y != 0 && !$this->is_horizontal_wall($spot + $x + $y, $size)))
+            ))
             && $grid[$spot] != GAME_TILE_NONE
             && $grid[$spot] != $player
         );
@@ -95,11 +96,29 @@ class Game {
                 
                 $spot = $start + $x + $y;
                 $is = [];
+                // echo $x . ',' . $y;
+                // if ($x == 0 && $y == $size) {
+
+                // }
+                // echo ' | ';
+
                 while($this->in_bounds($grid, $x, $y, $spot, $player)) {
                     array_push($is, $spot);
                     $spot += $x + $y;
                 }
+                // if ($x == 1 && $y == 0) {
+                //     print_r($is);
+                    
+                //     echo ($spot > 0 && $spot < count($grid) ? 'T' : 'F') .
+                //     (($this->is_vertical_wall($spot + $x + $y, $size) && $this->is_horizontal_wall($spot + $x + $y, $size)) || ($x == 0 || ($x != 0 && !$this->is_vertical_wall($spot, $size))) ? 'T' : 'F') .
+                //     // (($y == 0 || ($y != 0 && !$this->is_horizontal_wall($spot + $x + $y, $size))) ? 'T' : 'F') .
+                //     ($grid[$spot] != GAME_TILE_NONE ? 'T' : 'F') .
+                //     ($grid[$spot] != $player ? 'T' : 'F');
 
+                //     echo ',' . $spot . ',';
+                //     echo ($spot > 0 && $spot < count($grid) ? 'T' : 'F') .
+                //     (($grid[$spot] == $player) ? 'T' : 'F');
+                // }
                 if (($spot > 0 && $spot < count($grid)) && $grid[$spot] == $player) {
                     foreach($is as $i) {
                         $grid[$i] = $player;
