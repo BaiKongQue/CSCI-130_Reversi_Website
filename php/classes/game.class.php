@@ -520,18 +520,30 @@ class Game {
         // if !execute, error
         // return true if success
 
-        // if ($this->Login->login_check()) {
-        //     if ($stmt = $this->Mysqli->prepare("
-        //     UPDATE
-        //         games
-        //     SET
-        //         player1_score = ?,
-        //         player2_score = ?,
-        //         grid = ?,
-        //         player_turn = ?
-        //     WHERE
-        //         game_id = ?
-        //     ")) 
+        if ($this->Login->login_check()) {
+            if ($stmt = $this->Mysqli->prepare("
+            UPDATE
+                games
+            SET
+                player2_id = ?,
+            WHERE
+                game_id = ? 
+                and ((? != player1_id) or (? != player2_id))
+                and (player2_id is null )
+            ")) {
+                $stmt->bind_param('iiii', $_SESSION['player_id'], $game_id, $_SESSION['player_id'], $_SESSION['player_id']);    // bind the params
+                $stmt->execute();                                                           // execute query
+                return true;
+                // $stmt->close();
+            } else {
+                $this->error .= "Failed to communicate with the server!\n";
+                return false;
+            }
+        } else {
+            $this->error .= "You are not logged in!\n";
+            return false;
+        }
+        }
     }
 
     public function __deconstruct() {
