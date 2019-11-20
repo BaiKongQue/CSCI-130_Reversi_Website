@@ -1,10 +1,19 @@
 <?php
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/classes/game.class.php";
 
-if(isset($_POST['game_id'], $_POST['player1_id']) && !empty($_POST['player_id'])){
-    if($_POST['player1_id'] != $_SESSION['player_id']){
-        join_game($_POST['game_id'], $_POST['playerid']);
-    }
+$data = [];
+if(isset($_POST['game_id'], $_POST['player_id'])){
+    $Game = new Game();
+    $data['result'] = $Game->join_game($_POST['game_id']);
+    if ($data['result'])
+        $data['game_id'] = $_POST['game_id'];
+    if ($Game->error != "")
+        $data['error'] = $Game->error;
+} else {
+    $data['error'] = "One or more parameter is missing!";
+    $data['result'] = false;
 }
+
+echo json_encode($data);
   
 ?>

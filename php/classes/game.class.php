@@ -488,7 +488,7 @@ class Game {
         }
     }
 
-    public function join_game(int $gameId, int $playerid): bool {
+    public function join_game(int $gameId): bool {
         // if logged in
         // query
         // bind_param player2_id = $_SESSION['player_id'], and where gameid = $gameId
@@ -500,18 +500,22 @@ class Game {
             UPDATE
                 games
             SET
-                player2_id = ?,
+                player2_id = ?
             WHERE
                 game_id = ? 
-                and ((? != player1_id) or (? != player2_id))
-                and (player2_id is null )
+                and (player1_id != ?)
+                and (player2_id is null)
             ")) {
-                $stmt->bind_param('iiii', $_SESSION['player_id'], $game_id, $_SESSION['player_id'], $_SESSION['player_id']);    // bind the params
-                $stmt->execute();                                                           // execute query
+                $stmt->bind_param('iii', $_SESSION['player_id'], $game_id, $_SESSION['player_id']);    // bind the params
+                if (!$stmt->execute()) {                                                           // execute query
+                    $this->error .= "Failed to send data to server!\n";
+                    return false;
+                }
                 return true;
-                // $stmt->close();
+                $stmt->close();
             } else {
                 $this->error .= "Failed to communicate with the server!\n";
+                $this->error = $this->Mysqli->error;
                 return false;
             }
         } else {
