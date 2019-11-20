@@ -56,7 +56,7 @@ function player_block(player, gameId, samePlayer = false) {
 function joinGame($gameId) {
     joinHttp.open('POST', "./join.post.php", true);
     joinHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    joinHttp.send("game_id=" + $gameId + "&player_id=" + sessionData.player_id);
+    joinHttp.send("game_id=" + $gameId);
 }
 
 function DisplayData(r) {
