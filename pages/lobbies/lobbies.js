@@ -3,11 +3,11 @@ let lobbies = document.getElementById('lobbies-list-ul');
 let getLobbies = new XMLHttpRequest();
 let data = [];
 
-form.oninput =function() {
+form.oninput = function () {
     LoadData();
 };
 
-getLobbies.onreadystatechange = function() {
+getLobbies.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
         let res = JSON.parse(this.responseText);
         if (res.result) {
@@ -30,45 +30,45 @@ function GetLobbies() {
 
 function player_block(player) {
     return (player.first_name != null) ? "<div class=\"player-block\">" +
-				"<div><h2>"+ player.first_name + " "+ player.last_name +"</h2></div>" +
-				"<div><img src=\"../../images/upload/users/" + player.icon + "\" alt=\"player icon\" /></div>" +
-                "<div><strong>Score: "+ player.score +"</strong></div>" +
-                "<button id=\"viewGame\">View</button>" + viewGame()+
-            "</div>"
+        "<div><h2>" + player.first_name + " " + player.last_name + "</h2></div>" +
+        "<div><img src=\"../../images/upload/users/" + player.icon + "\" alt=\"player icon\" /></div>" +
+        "<div><strong>Score: " + player.score + "</strong></div>" +
+        "<button id=\"viewGame\">View</button>" + viewGame() +
+        "</div>"
         :
-            "<div>" +
-                "<div class=\"player-block\">Waiting for opponent</div>" +
-                "<button id=\"joinGame\">Join</button>" + joinGame(player.player_id)+
-            "</div>";
+        "<div>" +
+        "<div class=\"player-block\">Waiting for opponent</div>" +
+        "<button id=\"joinGame\">Join</button>" + joinGame(player.player_id) +
+        "</div>";
 }
 
-function viewGame(){
+function viewGame() {
     console.log("hello world");
 }
 
-function joinGame($playerid){
+function joinGame($playerid) {
     console.log("join the game: ", sessionData.player_id);
     getLobbies.open('POST', "./join.post.php", true);
-    getLobbies.send("game_id=" +gameid+ "&player1_id=" + $playerid);
+    getLobbies.send("game_id=" + $gameId + "&player1_id=" + $playerid);
 }
 
 function DisplayData(r) {
-    lobbies.innerHTML +="<li>" +
-                            "<a href=\"../game/game.html?id="+r.game_id+"\">" +
-                                "<div id=\"player-blocks\">" +
-                                    player_block(r.player1) +
-                                    "<div><h1>VS</h1></div>" +
-                                    player_block(r.player2) +
-                                "</div>" +
-                                "<div id=\"game-duration\">Duration: " + r.duration + "</div>" +
-                                "<div id=\"game-id\">Game id: " + r.game_id + "</div>" +
-                            "</a>" +
-                        "</li>";
+    lobbies.innerHTML += "<li>" +
+        "<a href=\"../game/game.html?id=" + r.game_id + "\">" +
+        "<div id=\"player-blocks\">" +
+        player_block(r.player1) +
+        "<div><h1>VS</h1></div>" +
+        player_block(r.player2) +
+        "</div>" +
+        "<div id=\"game-duration\">Duration: " + r.duration + "</div>" +
+        "<div id=\"game-id\">Game id: " + r.game_id + "</div>" +
+        "</a>" +
+        "</li>";
 }
 
 function LoadData() {
     let formData = new FormData(form);
-    let matches = (name, data) => formData.get(name) != "" && !data.toLowerCase().includes(formData.get(name).toLowerCase());    
+    let matches = (name, data) => formData.get(name) != "" && !data.toLowerCase().includes(formData.get(name).toLowerCase());
     lobbies.innerHTML = "";
 
     if (!formData.get('view-all') && data.length == 0) {
@@ -76,16 +76,16 @@ function LoadData() {
     }
 
     for (let r of data) {
-        let cont = false; 
+        let cont = false;
         if (formData.get('view-all') || (!formData.get('view-all') && (r.player1.id == sessionData.player_id || (r.player2.id && r.player2.id == sessionData.player_id)))) {
             for (let i of ['first_name', 'last_name']) {
-                if (matches(i, r.player1[i]) || (r.player2.id && matches(i, r.player2[i]))) { 
+                if (matches(i, r.player1[i]) || (r.player2.id && matches(i, r.player2[i]))) {
                     cont = true;
                     break;
                 }
             }
             if (cont) continue;
-            
+
             DisplayData(r);
         }
     }
