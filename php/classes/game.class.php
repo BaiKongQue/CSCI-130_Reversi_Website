@@ -68,10 +68,6 @@ class Game {
         );
     }
 
-    private function clean_xs(array &$xs, int $index, int $size): void {
-
-    }
-
     private function flip_tiles(array $grid, int $start, int $player): array {
         $size = sqrt(count($grid));
 
@@ -152,22 +148,6 @@ class Game {
      * @return int: converted i to Y coordinate
      */
     public function convert_to_y_2D(int $size, int $i): int { return $i % $size; }
-
-    /**
-     * Retrieves what the current score is.
-     * @param array $grid: array of the game grid data to process
-     * @param int $player: GAME_TILE of which player to get score for (GAME_TILE_PLAYER1, GAME_TIME_PLAYER2)
-     * @return int: how many of each tile the player has
-     */
-    public function get_score(array $grid, int $player): int {
-        $n = 0;
-        for ($i = 0; $i < count($grid); $i++) {
-            if ($grid[$i] == $player)
-                $n++;
-        }
-        return $n;
-    }
-
     
     /**
      * Calculates wether the specific move would be valid or not
@@ -448,11 +428,6 @@ class Game {
         }
     }
 
-    public function update_join_game (int $gameid, int $player2id) //add the user to player 2 id, and games table. 
-    {
-
-    }
-
     public function get_player_lobbies(): array {
         if ($this->Login->login_check()) {                                              // check if user is logged in
             if ($stmt = $this->Mysqli->prepare("
@@ -477,7 +452,7 @@ class Game {
                     games.end_time IS NULL
                 ORDER BY games.game_id
             ")) {
-                $stmt->bind_param('ii', $_SESSION['player_id'], $_SESSION['player_id']);    // bind the params
+                // $stmt->bind_param('ii', $_SESSION['player_id'], $_SESSION['player_id']);    // bind the params
                 $stmt->execute();                                                           // execute query
                 $stmt->bind_result(                                                         // bind the results
                     $game_id, 
@@ -542,7 +517,6 @@ class Game {
         } else {
             $this->error .= "You are not logged in!\n";
             return false;
-        }
         }
     }
 
