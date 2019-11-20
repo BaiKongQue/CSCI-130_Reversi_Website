@@ -488,7 +488,7 @@ class Game {
         }
     }
 
-    public function join_game(int $gameId): bool {
+    public function join_game(int $gameId, int $playerid): bool {
         // if logged in
         // query
         // bind_param player2_id = $_SESSION['player_id'], and where gameid = $gameId
