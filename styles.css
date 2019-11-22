@@ -1,7 +1,8 @@
 /*********************
  * Global Stylesheet *
  *********************/
-html, body {
+html,
+body {
     width: 100%;
     height: 100%;
     margin: 0;
@@ -52,20 +53,31 @@ input[type="submit"] {
 
 
 .no-select {
-    -webkit-touch-callout: none; /* iOS Safari */
-      -webkit-user-select: none; /* Safari */
-       -khtml-user-select: none; /* Konqueror HTML */
-         -moz-user-select: none; /* Firefox */
-          -ms-user-select: none; /* Internet Explorer/Edge */
-              user-select: none; /* Non-prefixed version, currently
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
                                     supported by Chrome and Opera */
 }
 
-.logged-in { display: none; }
-.logged-out { display: inherit; }
+.logged-in {
+    display: none;
+}
+
+.logged-out {
+    display: inherit;
+}
 
 .radio-select label {
-    display:initial;
+    display: initial;
 }
 
 .disable {
@@ -80,9 +92,9 @@ input[type="submit"] {
  * Navigation *
  **************/
 #nav-button-open {
-    font-size:50px;
-    cursor:pointer;
-    color:orange;
+    font-size: 50px;
+    cursor: pointer;
+    color: orange;
     position: absolute;
     top: 20px;
     left: 20px;
@@ -99,7 +111,7 @@ input[type="submit"] {
 }
 
 #nav-container #nav-button-close a {
-    cursor:pointer;
+    cursor: pointer;
     font-size: 60px;
 }
 
@@ -139,18 +151,26 @@ input[type="submit"] {
 /******************
  * Body Container *
  ******************/
- #body-container {
+#body-container {
     width: 100%;
     max-width: 1000px;
     min-height: 200px;
     margin: 0 auto 0 auto;
-    box-shadow: 0 2px 1px -1px rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 1px 3px 0 rgba(0,0,0,.12);
+    box-shadow: 0 2px 1px -1px rgba(0, 0, 0, .2), 0 1px 1px 0 rgba(0, 0, 0, .14), 0 1px 3px 0 rgba(0, 0, 0, .12);
     background-color: #ffffff75;
-    padding: 15px  5px;
+    padding: 15px 5px;
     box-sizing: border-box;
     display: flex;
     justify-content: space-around;
     align-items: center;
     position: relative;
     top: 100px;
- }
+}
+
+/***********************
+ * Paragraph Container *
+ ***********************/
+
+p {
+    font-family: Helvetica;
+}
