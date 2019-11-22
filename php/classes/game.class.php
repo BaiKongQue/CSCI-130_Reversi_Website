@@ -270,7 +270,7 @@ class Game {
                     LEFT OUTER JOIN players p2 ON p2.player_id = g.player2_id}
                 WHERE
                     g.game_id = ?
-                    AND (g.player2_id < 0 OR g.player2_id IS NULL)
+                    AND (g.player2_id < 0 OR g.player2_id IS NULL OR g.player2_id IS NOT NULL)
                 LIMIT 1
             ")) {
                 $stmt->bind_param('i', $gameId);            // bind game id
@@ -476,7 +476,6 @@ class Game {
                 WHERE
                     games.end_time IS NULL
                     AND p1.player_id = player1_id
-                    AND (player2_id < 0 OR p2.player_id = player2_id)
                 ORDER BY games.game_id
             ")) {
                 $stmt->execute();                                                           // execute query
@@ -508,9 +507,9 @@ class Game {
                     ];
                     array_push($res, $game);                                                // push game to result array
                 }
-                return $res;                                                                // return result
                 $stmt->free_result();                                                       // free results
                 $stmt->close();                                                             // close connection
+                return $res;                                                                // return result
             } else {
                 $this->error .= "Failed to connect to server, try again later.\n";          // error with query
             }
@@ -525,19 +524,21 @@ class Game {
             UPDATE
                 games
             SET
-                player2_id = ?
+                player2_id = ?,
+                player2_score = 0
             WHERE
                 game_id = ? 
                 and (player1_id != ?)
                 and (player2_id is null)
             ")) {
-                $stmt->bind_param('iii', $_SESSION['player_id'], $game_id, $_SESSION['player_id']);    // bind the params
+                $stmt->bind_param('iii', $_SESSION['player_id'], $gameId, $_SESSION['player_id']);    // bind the params
                 if (!$stmt->execute()) {                                                           // execute query
                     $this->error .= "Failed to send data to server!\n";
+                    $stmt->close();
                     return false;
                 }
-                return true;
                 $stmt->close();
+                return true;
             } else {
                 $this->error .= "Failed to communicate with the server!\n";
                 $this->error = $this->Mysqli->error;

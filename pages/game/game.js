@@ -265,9 +265,9 @@ function _InitStart() {
 
 function _InitLoop() {
     setInterval(() => {
-        if (document.hasFocus())
+        if (!data.finished && document.hasFocus() && data.player_turn != sessionData.player_id)
             _GetGameData();
-    }, 5 * 1000);
+    }, 1 * 1000);
 }
 
 function _InitRender() {
