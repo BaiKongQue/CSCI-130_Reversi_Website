@@ -16,7 +16,11 @@ getLobbies.onreadystatechange = function () {
                 lobbies.innerHTML += "<div style=\"text-align:center\">You have no current games! Go start one by <a href=\"../create-game/create-game.html\">Creating a game!</a></div>"
             } else {
                 data = res.result;
-                login_pipe.push(LoadData);
+                if (!sessionData.player_id) {
+                    login_pipe.push(LoadData);
+                } else {
+                    LoadData();
+                }
             }
         } else {
             document.getElementById("error-msg").innerText = res.error;
@@ -43,28 +47,30 @@ function GetLobbies() {
 function player_block(player, gameId, samePlayer = false) {
     let name;
     let icon;
-    if (player.id > 0) {
-        name = player.first_name + " " + player.last_name;
-        icon = player.icon;
-    } else {
-        if (player.id == -1) { 
-            name = "AI Dusty";
-            icon = "ai_dusty.jpg";
+    if (player.id != null) {
+        if (player.id > 0) {
+            name = player.first_name + " " + player.last_name;
+            icon = player.icon;
         } else {
-            name = "AI Vader";
-            icon = "ai_vader.png";
+            if (player.id == -1) { 
+                name = "AI Dusty";
+                icon = "ai_dusty.jpg";
+            } else {
+                name = "AI Vader";
+                icon = "ai_vader.png";
+            }
         }
+        return "<div class=\"player-block\">" +
+            "<div><h2>" + name + "</h2></div>" +
+            "<div><img src=\"../../images/upload/users/" + icon + "\" alt=\"player icon\" /></div>" +
+            "<div><strong>Score: " + player.score + "</strong></div>" +
+            "</div>";
+    } else {
+        return "<div>" +
+            "<div class=\"player-block\">Waiting for opponent</div>" +
+            (!samePlayer ? "<button id=\"joinGame\" onclick=\"joinGame("+gameId+")\" style=\"display:block; margin: 0 auto\">Join</button>" : "") +
+            "</div>";
     }
-    return (player.id != null) ? "<div class=\"player-block\">" +
-        "<div><h2>" + name + "</h2></div>" +
-        "<div><img src=\"../../images/upload/users/" + icon + "\" alt=\"player icon\" /></div>" +
-        "<div><strong>Score: " + player.score + "</strong></div>" +
-        "</div>"
-        :
-        "<div>" +
-        "<div class=\"player-block\">Waiting for opponent</div>" +
-        (!samePlayer ? "<button id=\"joinGame\" onclick=\"joinGame("+gameId+")\" style=\"display:block; margin: 0 auto\">Join</button>" : "") +
-        "</div>";
 }
 
 function joinGame($gameId) {
@@ -90,10 +96,6 @@ function LoadData() {
     let formData = new FormData(form);
     let matches = (name, data) => formData.get(name) != "" && !data.toLowerCase().includes(formData.get(name).toLowerCase());
     lobbies.innerHTML = "";
-
-    if (!formData.get('view-all') && data.length == 0) {
-        lobbies.innerHTML += "<li>You don't have any games yet! Go <a href=\"../create-game/create-game.html\">create one!</a></li>"
-    }
 
     for (let r of data) {
         let cont = false;
