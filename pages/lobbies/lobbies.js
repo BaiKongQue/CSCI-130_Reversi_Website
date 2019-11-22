@@ -41,9 +41,23 @@ function GetLobbies() {
 }
 
 function player_block(player, gameId, samePlayer = false) {
-    return (player.first_name != null) ? "<div class=\"player-block\">" +
-        "<div><h2>" + player.first_name + " " + player.last_name + "</h2></div>" +
-        "<div><img src=\"../../images/upload/users/" + player.icon + "\" alt=\"player icon\" /></div>" +
+    let name;
+    let icon;
+    if (player.id > 0) {
+        name = player.first_name + " " + player.last_name;
+        icon = player.icon;
+    } else {
+        if (player.id == -1) { 
+            name = "AI Dusty";
+            icon = "ai_dusty.jpg";
+        } else {
+            name = "AI Vader";
+            icon = "ai_vader.png";
+        }
+    }
+    return (player.id != null) ? "<div class=\"player-block\">" +
+        "<div><h2>" + name + "</h2></div>" +
+        "<div><img src=\"../../images/upload/users/" + icon + "\" alt=\"player icon\" /></div>" +
         "<div><strong>Score: " + player.score + "</strong></div>" +
         "</div>"
         :

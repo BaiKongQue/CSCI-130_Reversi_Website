@@ -33,20 +33,6 @@ class Game {
     }
 
 // PRIVATE
-    // private function count_tiles() {
-    //     while ($grid[$spot] != $player && $grid[$spot] != GAME_TILE_NONE) {
-    //         $spot += $direction + $v;
-    //         if ($grid[$spot] == $player) {
-    //             if (!key_exists($index, $res)) {
-    //                 $res[$index] = $count;
-    //             } else {
-    //                 $res[$index] += $count;
-    //             }
-    //         }
-    //         $count++;
-    //     }
-    // }
-
     private function is_horizontal_wall(int $index, int $size): bool {
         return (intdiv($index, $size) == 0) || (intdiv($index, $size) == $size-1);
     }
@@ -60,9 +46,8 @@ class Game {
         return (
             ($spot >= 0 && $spot < count($grid))
             && (($this->is_vertical_wall($spot , $size) && $this->is_horizontal_wall($spot, $size)) ||
-            (($x == 0 || ($x != 0 && !$this->is_vertical_wall($spot , $size)))
-            // && ($y == 0 || ($y != 0 && !$this->is_horizontal_wall($spot + $x + $y, $size)))
-            ))
+                (($x == 0 || ($x != 0 && !$this->is_vertical_wall($spot , $size))))
+            )
             && $grid[$spot] != GAME_TILE_NONE
             && $grid[$spot] != $player
         );
@@ -92,29 +77,10 @@ class Game {
                 
                 $spot = $start + $x + $y;
                 $is = [];
-                // echo $x . ',' . $y;
-                // if ($x == 0 && $y == $size) {
-
-                // }
-                // echo ' | ';
-
                 while($this->in_bounds($grid, $x, $y, $spot, $player)) {
                     array_push($is, $spot);
                     $spot += $x + $y;
                 }
-                // if ($x == 1 && $y == 0) {
-                //     print_r($is);
-                    
-                //     echo ($spot > 0 && $spot < count($grid) ? 'T' : 'F') .
-                //     (($this->is_vertical_wall($spot + $x + $y, $size) && $this->is_horizontal_wall($spot + $x + $y, $size)) || ($x == 0 || ($x != 0 && !$this->is_vertical_wall($spot, $size))) ? 'T' : 'F') .
-                //     // (($y == 0 || ($y != 0 && !$this->is_horizontal_wall($spot + $x + $y, $size))) ? 'T' : 'F') .
-                //     ($grid[$spot] != GAME_TILE_NONE ? 'T' : 'F') .
-                //     ($grid[$spot] != $player ? 'T' : 'F');
-
-                //     echo ',' . $spot . ',';
-                //     echo ($spot > 0 && $spot < count($grid) ? 'T' : 'F') .
-                //     (($grid[$spot] == $player) ? 'T' : 'F');
-                // }
                 if (($spot > 0 && $spot < count($grid)) && $grid[$spot] == $player) {
                     foreach($is as $i) {
                         $grid[$i] = $player;
@@ -123,6 +89,23 @@ class Game {
             }
         }
         return $grid;
+    }
+
+    private function update_end_game(int $gameId): bool {
+        if ($stmt = $this->Mysqli->prepare("UPDATE games SET end_time = NOW() WHERE game_id = ? AND end_time IS NULL")) {
+            $stmt->bind_param('i', $gameId);
+            if (!$stmt->execute()) {
+                $this->error .= "Failed to update data with server!\n";
+                $stmt->close();
+                return false;
+            }
+            $stmt->close();
+            return true;
+        } else {
+            $this->error .= "Failed to connect with the server!\n";
+            $this->error = $this->Mysqli->error;
+            return false;
+        }
     }
 
 // PUBLIC
@@ -220,9 +203,7 @@ class Game {
      */
     public function create_game(int $size, string $difficulty = NULL): array {
         if ($this->Login->login_check()) {                          // check if user is logged in
-            // sanitize inputs
             $size = filter_var($size, FILTER_SANITIZE_NUMBER_INT);  // sanitize the input
-            // $vs = filter_var($vs, FILTER_SANITIZE_STRING);
             if ($difficulty != NULL)  $difficulty = filter_var($difficulty, FILTER_SANITIZE_STRING);
 
             // create initial grid
@@ -235,7 +216,7 @@ class Game {
             $grid[$half + $size] = GAME_TILE_PLAYER2;               // player 2 tile
             $grid = json_encode($grid);                             // turn array into json string
             $sizeSqr = NULL;                                        // clear var
-            if ($stmt = $this->Mysqli->prepare("INSERT INTO games(player1_id, player1_score, grid, player_turn".($difficulty != NULL ? ", player2_id, player2_score" : "") .", start_time) VALUES('".$_SESSION['player_id']."',0,'$grid','".$_SESSION['player_id']."'".($difficulty != NULL ? ", ".AI_DIFFICULTY_ID[$difficulty].", 0" : "") .",NOW())")) {
+            if ($stmt = $this->Mysqli->prepare("INSERT INTO games(player1_id, player1_score, grid, player_turn".($difficulty != NULL ? ", player2_id, player2_score" : "") .", start_time) VALUES('".$_SESSION['player_id']."',2,'$grid','".$_SESSION['player_id']."'".($difficulty != NULL ? ", ".AI_DIFFICULTY_ID[$difficulty].", 2" : "") .",NOW())")) {
                 if ($stmt->execute()) {                             // execute query
                     return ['result' => true, "id" => $stmt->insert_id];                                    // successfully created game
                 } else {
@@ -270,39 +251,79 @@ class Game {
         if ($this->Login->login_check()) {                  // check if user is logged in
             if ($stmt = $this->Mysqli->prepare("
                 SELECT
-                    player1_id,
-                    player2_id,
-                    TIMEDIFF(NOW(), start_time),
-                    player1_score,
-                    player2_score,
-                    player_turn,
-                    grid
+                    g.player1_id,
+                    g.player2_id,
+                    TIMEDIFF(NOW(), g.start_time),
+                    g.player1_score,
+                    g.player2_score,
+                    g.player_turn,
+                    g.grid,
+                    p1.first_name,
+                    p1.last_name,
+                    p1.icon,
+                    p2.first_name,
+                    p2.last_name,
+                    p2.icon
                 FROM
-                    games
+                    {gs games g
+                    LEFT OUTER JOIN players p1 ON p1.player_id = g.player1_id
+                    LEFT OUTER JOIN players p2 ON p2.player_id = g.player2_id}
                 WHERE
-                    game_id = ?
+                    g.game_id = ?
+                    AND (g.player2_id < 0 OR g.player2_id IS NULL)
                 LIMIT 1
             ")) {
                 $stmt->bind_param('i', $gameId);            // bind game id
                 if ($stmt->execute()) {                     // execute
-                    $stmt->bind_result($player1_id, $player2_id, $duration, $player1_score, $player2_score, $player_turn, $grid);
+                    $stmt->bind_result(
+                        $player1_id, $player2_id, $duration, $player1_score, $player2_score, $player_turn, $grid,
+                        $p1_first_name, $p1_last_name, $p1_icon, $p2_first_name, $p2_last_name, $p2_icon
+                    );
                     $stmt->fetch();                         // fetch row
-                    return [                                // return array
+                    
+                    if ($grid == null) {
+                        $this->error .= "Game does not exist!\n";
+                        return [];
+                    }
+
+                    $grid = json_decode($grid);
+
+                    $data = [                                // return array
                         'game_id' => $gameId,               // game id
                         'player1_id' => $player1_id,        // player1 id
                         'player2_id' => $player2_id,        // player2 id
                         'duration' => $duration,            // duration
                         'player1_score' => $player1_score,  // player1 score
                         'player2_score' => $player2_score,  // player2 score
+                        'player1_name' => $p1_first_name . " " . $p1_last_name,
+                        'player1_icon' => $p1_icon,
+                        'player2_name' => $p2_first_name . " " . $p2_last_name,
+                        'player2_icon' => $p2_icon,
                         'player_turn' => $player_turn,      // player turn
-                        'grid' => json_decode($grid)        // game grid data
+                        'grid' =>  $grid                    // game grid data
                     ];
-                } else {
-                    $this->error .= "Error connecting to the server try again later.\n";    // error processing request
-                    return false;
-                }
+
+                    $data2 = $data;
+                    $data2['player_turn'] = ($player_turn == $player1_id) ? $player2_id : $player1_id;
+                    $count = array_count_values($grid);
+                    
+                    $stmt->free_result();
+                    $stmt->close();
+                    
+                    if ((empty($this->moves_array($data)) && empty($this->moves_array($data2))) || empty($count[0])) {
+                        $data['player_turn'] = 0;
+                        $data['finished'] = true;
+                        $data['winner'] = (array_keys($count, max($count))[0] == GAME_TILE_PLAYER1) ? $data['player1_id'] : $data['player2_id'];
+                        $this->update_end_game($data['game_id']);
+                    }
+
+                    return $data;
+                } 
+                
+                $this->error .= "Error connecting to the server try again later.\n";    // error processing request
                 $stmt->free_result();                       // free result
                 $stmt->close();                             // close connection
+                return false;
             } else {
                 $this->error .= "Failed to connect to server, try again later.\n";
                 $this->error = $this->Mysqli->error;
@@ -328,11 +349,15 @@ class Game {
                 $newData['player_turn'] = 0;
                 $newData['finished'] = true;
                 $newData['winner'] = (array_keys($count, max($count))[0] == GAME_TILE_PLAYER1) ? $newData['player1_id'] : $newData['player2_id'];
+                $this->update_end_game($newData['game_id']);
             } else if (!empty($moves1)) {
                 $newData = $d;
             } else {
                 $moves1 = $moves2;
             }
+
+            $newData['player1_score'] = $count[GAME_TILE_PLAYER1];
+            $newData['player2_score'] = $count[GAME_TILE_PLAYER2];
 
             $ngrid = json_encode($newData['grid']);
             if ($stmt = $this->Mysqli->prepare("
@@ -347,10 +372,10 @@ class Game {
                     game_id = ?
             ")) {
                 $stmt->bind_param('iisii', $count[GAME_TILE_PLAYER1], $count[GAME_TILE_PLAYER2], $ngrid, $newData['player_turn'], $newData['game_id']);
-                // if (!$stmt->execute()) {
-                //     $this->error .= "Failed to send data to server!\n";
-                //     return false;
-                // }
+                if (!$stmt->execute()) {
+                    $this->error .= "Failed to send data to server!\n";
+                    return false;
+                }
                 return ['data' => $newData, 'moves' => $moves1];
                 $stmt->close();
             } else {
@@ -433,12 +458,12 @@ class Game {
             if ($stmt = $this->Mysqli->prepare("
                 SELECT
                     games.game_id,
-                    p1.player_id p1_id,
+                    games.player1_id p1_id,
                     games.player1_score,
                     p1.first_name p1_first_name,
                     p1.last_name p1_last_name,
                     p1.icon p1_icon,
-                    p2.player_id p2_id,
+                    games.player2_id p2_id,
                     games.player2_score,
                     p2.first_name p2_first_name,
                     p2.last_name p2_last_name,
@@ -450,9 +475,10 @@ class Game {
                         left outer join players p2 on games.player2_id = p2.player_id}
                 WHERE
                     games.end_time IS NULL
+                    AND p1.player_id = player1_id
+                    AND (player2_id < 0 OR p2.player_id = player2_id)
                 ORDER BY games.game_id
             ")) {
-                // $stmt->bind_param('ii', $_SESSION['player_id'], $_SESSION['player_id']);    // bind the params
                 $stmt->execute();                                                           // execute query
                 $stmt->bind_result(                                                         // bind the results
                     $game_id, 
@@ -462,19 +488,24 @@ class Game {
                 );
                 $res = [];                                                                  // init result array
                 while($stmt->fetch()) {                                                     // fetch each row
-                    $game = [];                                                             // array for each game
-                    $game['game_id'] = $game_id;                                            // set game id
-                    $game['player1']['id'] = $p1_id;                                        // set p1 score
-                    $game['player1']['score'] = $p1_score;                                  // set p1 score
-                    $game['player1']['first_name'] = $p1_first_name;                        // set p1 first name
-                    $game['player1']['last_name'] = $p1_last_name;                          // set p1 last name
-                    $game['player1']['icon'] = $p1_icon;                                    // set p1 icon
-                    $game['player2']['id'] = $p2_id;                                        // set p2 score
-                    $game['player2']['score'] = $p2_score;                                  // set p2 score
-                    $game['player2']['first_name'] = $p2_first_name;                        // set p2 first name
-                    $game['player2']['last_name'] = $p2_last_name;                          // set p2 last name
-                    $game['player2']['icon'] = $p2_icon;                                    // set p2 icon
-                    $game['duration'] = $duration;                                          // set duration
+                    $game = [
+                        'game_id' => $game_id,                  // set game id
+                        'duration' => $duration,                // set duration
+                        'player1' => [
+                            'id' => $p1_id,
+                            'score' => $p1_score,
+                            'first_name' => $p1_first_name,
+                            'last_name' => $p1_last_name,
+                            'icon' => $p1_icon
+                        ],
+                        'player2' => [
+                            'id' => $p2_id,
+                            'score' => $p2_score,
+                            'first_name' => $p2_first_name,
+                            'last_name' => $p2_last_name,
+                            'icon' => $p2_icon
+                        ]
+                    ];
                     array_push($res, $game);                                                // push game to result array
                 }
                 return $res;                                                                // return result
@@ -489,12 +520,6 @@ class Game {
     }
 
     public function join_game(int $gameId): bool {
-        // if logged in
-        // query
-        // bind_param player2_id = $_SESSION['player_id'], and where gameid = $gameId
-        // if !execute, error
-        // return true if success
-
         if ($this->Login->login_check()) {
             if ($stmt = $this->Mysqli->prepare("
             UPDATE
