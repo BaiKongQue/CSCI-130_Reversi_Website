@@ -4,3 +4,27 @@
     margin: auto;
     /* width: 50%; */
 }
+
+#colors {
+    width: 200px;
+}
+
+/* Player */
+#players-container {
+    display: flex;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+.player {
+    width: 278px;
+}
+
+.player-icon img {
+    max-height: 200px;
+    max-width: 100%;
+}
+
+.turn {
+    background-color: yellow;
+}
