@@ -1,6 +1,7 @@
 var boardColor = document.getElementById("board-color");
 var p1PieceColor = document.getElementById("p1-color");
 var p2PieceColor = document.getElementById("p2-color");
+var errorMsg = document.getElementById('error-msg');
 
 var canvas = document.getElementById("board");
 var context = canvas.getContext("2d");
@@ -10,37 +11,71 @@ var bit_size = 0;
 var frameRate = 60;
 var available_move = {};
 
+var runAi = true;
 /***************************
  * Http ready state set up *
  ***************************/
 var dataHttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-dataHttp.onreadystatechange = function () {
-    if (this.readyState == 4 && this.status == 200) {
-        res = JSON.parse(this.responseText)['result'];
-        data = res.data;
-        available_move = res.moves;
-        //Find the grid size and bit_size
-        let length = data.grid.length;
-        grid_size = Math.sqrt(length);
-        bit_size = 600 / grid_size;
-
-        if (data.player2_id < 0 && data.player_turn == data.player2_id) {
-            _MoveAi();
-        }
-    }
-}
 
 var sendMoveHttp = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
 sendMoveHttp.onreadystatechange = function () {
     if (this.readyState == 4 && this.status == 200) {
         res = JSON.parse(this.responseText)['result'];
         data = res.data;
+
+        if (data.error && data.error != "") {
+            errorMsg.innerText = "";
+            errorMsg.innerText = data.error;
+        }
+
         available_move = res.moves;
-        // _GetMoveAvialable();
-        if (data.player2_id < 0 && data.player_turn == data.player2_id) {
+        
+        _DisplayPlayer(1);
+        _DisplayPlayer(2);
+
+        if (runAi && data.player2_id < 0 && data.player_turn == data.player2_id) {
+            runAi = false;
             _MoveAi();
+            runAi = true;
         }
     }
+}
+
+function _GetGameData(callback = (data) => {}) {
+    dataHttp.onreadystatechange = function () {
+    if (this.readyState == 4 && this.status == 200) {
+        res = JSON.parse(this.responseText)['result'];
+        data = res.data;
+        
+        if (JSON.parse(this.responseText).error) {
+            errorMsg.innerText = JSON.parse(this.responseText).error;
+            return;
+        }
+
+        available_move = res.moves;
+        //Find the grid size and bit_size
+        let length = data.grid.length;
+        grid_size = Math.sqrt(length);
+        bit_size = 600 / grid_size;
+
+        _DisplayPlayer(1);
+        _DisplayPlayer(2);
+
+        callback(data);
+    }
+    }
+    const game_id = _GetRouteParams()["id"];
+    if (game_id != undefined) {
+        dataHttp.open("GET", "game.get.php?id=" + game_id, true);
+        dataHttp.send();
+    }
+}
+
+function _SendMove(index, ai = false) {
+    console.log(data.player_turn, index, ai);
+    sendMoveHttp.open("POST", "game.post.php", true);
+    sendMoveHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    sendMoveHttp.send("data=" + JSON.stringify(data) + "&index=" + index + "&ai=" + ai);
 }
 
 /*******************
@@ -51,20 +86,6 @@ canvas.addEventListener('mousedown', _ClickOn, false);
 /*********************
  * PRIVATE functions *
  *********************/
-function _GetGameData() {
-    const game_id = _GetRouteParams()["id"];
-    if (game_id != undefined) {
-        dataHttp.open("GET", "game.get.php?id=" + game_id, true);
-        dataHttp.send();
-    }
-}
-
-function _SendMove(index, ai = false) {
-    sendMoveHttp.open("POST", "game.post.php", true);
-    sendMoveHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    sendMoveHttp.send("data=" + JSON.stringify(data) + "&index=" + index + "&ai=" + ai);
-}
-
 function _GetRouteParams() {
     var vars = {};
     var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function (m, key, value) {
@@ -120,7 +141,6 @@ function _MoveAi() {
                 _SendMove(keys[Math.floor(Math.random() * keys.length)], true);
                 break;
             case -2: // hard ai
-                console.log('a');
                 _SendMove(_GetAiMove(), true);
                 break;
         }
@@ -132,9 +152,43 @@ function _ClickOn(event) {
     var y = Math.floor((event.y-canvas.getBoundingClientRect().top) / bit_size);
     var i = (y * grid_size) + x;
     if (sessionData && sessionData.player_id == data.player_turn && i in available_move) {
-        // _GetMoveAvialable();
         _SendMove(i);
-        // _MoveAi();
+    }
+}
+
+function _DisplayPlayer(playerNumber) {
+    let player = 'player' + playerNumber;
+    let playerDom = document.getElementById(player + "-container");
+    if (data[player+'_id'] != null) {
+        let img;
+        let name;
+        if (data[player + "_id"] > 0) {
+            img = data[player + "_icon"];
+            name = data[player + "_name"];
+        } else {
+            if (data[player + "_id"] == -1) {
+                img = 'ai_dusty.jpg';
+                name = 'AI Dusty';
+            } else {
+                img = 'ai_vader.png';
+                name = 'AI Vader';
+            }
+        }
+        if (data.player_turn == data[player+'_id']) {
+            playerDom.classList.add("turn");
+        } else {
+            playerDom.classList.remove("turn");
+        }
+        // playerDom.innerHTML = "";
+        playerDom.innerHTML = "<h1>Player "+playerNumber+"</h1>" +
+                                // (data.player_turn == data[player + '_id'] ? "Turn" : "") + 
+                                "<div class=\"player-icon\">" +
+                                  "<img src=\"../../images/upload/users/"+img+"\" alt=\""+player+" icon\" />" +
+                               "</div>" +
+                               "<div class=\"player-name\">" + name + "</div>" +
+                               "<div class=\"player-score\">Score: " + data[player + "_score"] + "</div>";
+    } else {
+        playerDom.innerHTML = "<h1>Waiting for Opponent</h1>";
     }
 }
 
@@ -149,6 +203,16 @@ function _DrawCircle(color, i, j) {
     context.fill();
     context.lineWidth = 5;
     context.closePath();
+}
+
+function _DisplayWinner() {
+    context.fillStyle = "#383838";
+    context.globalAlpha = 0.8;
+    context.fillRect(0, (canvas.height/2) - 50, canvas.width, 65);
+    context.globalAlpha = 1.0;
+    context.font = "60px Arial";
+    context.fillStyle = "white"
+    context.fillText("Winner: Player " + (data.winner == data.player1_id ? 1 : 2) + "!", canvas.width/2, canvas.height/2);
 }
 
 function _OnRender() {
@@ -183,16 +247,26 @@ function _OnRender() {
             }
         }
     }
+
+    if (data.finished) {
+        _DisplayWinner();
+    }
 }
 
 function _InitStart() {
-    _GetGameData();
+    _GetGameData((data) => {
+        if (data.player2_id < 0 && data.player_turn == data.player2_id) {
+            runAi = false;
+            _MoveAi();
+            runAi = true;
+        }
+    });
 }
 
 function _InitLoop() {
     setInterval(() => {
-        // if (document.hasFocus())
-        //     _GetGameData();
+        if (document.hasFocus())
+            _GetGameData();
     }, 5 * 1000);
 }
 
@@ -216,8 +290,4 @@ function OnInit() {
     login_pipe.push(_InitStart);
     login_pipe.push(_InitLoop);
     login_pipe.push(_InitRender);
-}
-
-function reset() {
-
 }
