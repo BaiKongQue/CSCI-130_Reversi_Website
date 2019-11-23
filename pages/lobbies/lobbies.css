@@ -15,13 +15,33 @@
     width: 100%;
 }
 
+#filters {
+    top: 10px;
+    position: sticky;
+    display: block;
+}
+
+#filters-form {
+    display: flex;
+    justify-content: space-evenly;
+    background-color: #80808094;
+    padding: 5px;
+}
+
+#filters-form div {
+    margin: 0;
+}
+
+#filters-form div label{
+    display:initial;
+}
+
 #lobbies-list-ul {
     margin: 0;
     padding: 0;
     list-style: none;
     margin-top: 10px;
 }
-
 
 #lobbies-list-ul li {
     background-color: white;
