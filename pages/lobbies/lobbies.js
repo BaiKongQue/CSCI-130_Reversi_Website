@@ -89,20 +89,19 @@ function DisplayData(r) {
 }
 
 function exists() {
-    return data.some(function(i) {
-        return i.id == sessionData.player_id;
-    });
+    for (let r of data) {
+        if (r.player1.first_name == sessionData.player_name)
+            return true;
+    }
+    return false;
 }
 
 function LoadData() {
     let formData = new FormData(form);
-    let matches = (name, data) => {
-        console.log(name, data, formData.get(name));
-        return formData.get(name) != "" && !data.toLowerCase().includes(formData.get(name).toLowerCase())
-    };
+    let matches = (name, data) => formData.get(name) != "" && !data.toLowerCase().includes(formData.get(name).toLowerCase());
 
-    if (!exists()) {
-        lobbies.innerHTML += "<div style=\"text-align:center\">You have no current games! Go start one by <a href=\"../create-game/create-game.html\">Creating a game!</a></div>"
+    if (!formData.get('view-all') && !exists()) {
+        lobbies.innerHTML = "<div style=\"text-align:center\">You have no current games! Go start one by <a href=\"../create-game/create-game.html\">Creating a game!</a></div>"
         return;
     }
 
