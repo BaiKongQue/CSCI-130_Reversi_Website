@@ -15,9 +15,9 @@ if (isset($_GET['id']) && $_GET['id'] == 0) {
 } else if (isset($_GET['id']) && !empty($_GET['id'])) {
     $Game = new Game();                                     // new Game object
     $res['result']['data'] = $Game->get_game_data($_GET['id']);     // get game data
-    if ($Game->error == "")
+    // if ($Game->error == "")
         $res['result']['moves'] = $Game->moves_array($res['result']['data']);
-    else if ($Game->error != "")                               // if error
+    if ($Game->error != "")                               // if error
         $res['error'] = $Game->error;                       // record error
 } else {
     $res['result'] = false;                                 // result false

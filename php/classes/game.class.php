@@ -33,30 +33,32 @@ class Game {
     }
 
 // PRIVATE
-    private function is_horizontal_wall(int $index, int $size): bool {
-        return (intdiv($index, $size) == 0) || (intdiv($index, $size) == $size-1);
-    }
+    // private function is_horizontal_wall(int $index, int $size): bool {
+    //     return (intdiv($index, $size) == 0) || (intdiv($index, $size) == $size-1);
+    // }
 
-    private function is_vertical_wall(int $index, int $size): bool {
-        return ($index % $size == 0) || ($index % $size == $size - 1);
-    }
+    // private function is_vertical_wall(int $index, int $size): bool {
+    //     return ($index % $size == 0) || ($index % $size == $size - 1);
+    // }
 
-    private function in_bounds(array $grid, $x, $y, int $spot, $player): bool {
-        $size = sqrt(count($grid));
+    private function in_bounds(int $size, $x, int $y): bool {
+        // $size = sqrt(count($grid));
+        // $spot = $this->convert_to_1D($size, $x, $y);
         return (
-            ($spot >= 0 && $spot < count($grid))
-            && (($this->is_vertical_wall($spot , $size) && $this->is_horizontal_wall($spot, $size)) ||
-                (($x == 0 || ($x != 0 && !$this->is_vertical_wall($spot , $size))))
-            )
-            && $grid[$spot] != GAME_TILE_NONE
-            && $grid[$spot] != $player
+            ($y >= 0 && $y < $size)
+            // && (($this->is_vertical_wall($spot , $size) && $this->is_horizontal_wall($spot, $size)) ||
+            //     (($x == 0 || ($x != 0 && !$this->is_vertical_wall($spot , $size))))
+            // )
+            && ($x >= 0 && $x < $size)
+            // && $grid[$spot] != GAME_TILE_NONE
+            // && $grid[$spot] != $player
         );
     }
 
     private function flip_tiles(array $grid, int $start, int $player): array {
         $size = sqrt(count($grid));
 
-        $ys = [-$size, 0, $size];
+        $ys = [-1, 0, 1];
         $xs = [-1, 0, 1];
 
         if (($start % $size) == 0) {
@@ -75,13 +77,21 @@ class Game {
                 if ($x == 0 && $y == 0)
                     continue;
                 
-                $spot = $start + $x + $y;
+                $spot = $start + $x + ($y * $size);
+                $xi = $this->convert_to_x_2D($size, $spot);
+                $yi = $this->convert_to_y_2D($size, $spot);
                 $is = [];
-                while($this->in_bounds($grid, $x, $y, $spot, $player)) {
+                while(
+                    $this->in_bounds($size, $xi, $yi)
+                    && $grid[$spot] != GAME_TILE_NONE
+                    && $grid[$spot] != $player
+                ) {
                     array_push($is, $spot);
-                    $spot += $x + $y;
+                    $spot += $x + ($y * $size);
+                    $xi += $x;
+                    $yi += $y;
                 }
-                if (($spot > 0 && $spot < count($grid)) && $grid[$spot] == $player) {
+                if ($this->in_bounds($size, $xi, $yi) && $grid[$spot] == $player) {
                     foreach($is as $i) {
                         $grid[$i] = $player;
                     }
@@ -94,11 +104,11 @@ class Game {
     private function update_end_game(int $gameId): bool {
         if ($stmt = $this->Mysqli->prepare("UPDATE games SET end_time = NOW() WHERE game_id = ? AND end_time IS NULL")) {
             $stmt->bind_param('i', $gameId);
-            if (!$stmt->execute()) {
-                $this->error .= "Failed to update data with server!\n";
-                $stmt->close();
-                return false;
-            }
+            // if (!$stmt->execute()) {
+            //     $this->error .= "Failed to update data with server!\n";
+            //     $stmt->close();
+            //     return false;
+            // }
             $stmt->close();
             return true;
         } else {
@@ -118,19 +128,19 @@ class Game {
      */
     public function convert_to_1D(int $size, int $x, int $y): int { return ($y * $size) + $x; }
     /**
-     * Convert 1D index to 2D coordinate X
-     * @param int $size: size of the game grid
-     * @param int $i: index to convert to 2D X
-     * @return int: converted i to X coordinate
-     */
-    public function convert_to_x_2D(int $size, int $i): int { return intdiv($i, $size); }
-    /**
      * Convert 1D index to 2D coordinate Y
      * @param int $size: size of the game grid
      * @param int $i: index to convert to 2D Y
      * @return int: converted i to Y coordinate
      */
-    public function convert_to_y_2D(int $size, int $i): int { return $i % $size; }
+    public function convert_to_y_2D(int $size, int $i): int { return intdiv($i, $size); }
+    /**
+     * Convert 1D index to 2D coordinate X
+     * @param int $size: size of the game grid
+     * @param int $i: index to convert to 2D X
+     * @return int: converted i to X coordinate
+    */
+    public function convert_to_x_2D(int $size, int $i): int { return $i % $size; }
     
     /**
      * Calculates wether the specific move would be valid or not
@@ -139,16 +149,16 @@ class Game {
      *  you will get in that spot
      */
     public function moves_array(array &$data): array {
-        $grid = &$data['grid'];                                                          // reference grid in data
-        $size = sqrt(count($grid));                                                     // hold size
+        $grid = &$data['grid'];                                          // reference grid in data
+        $size = sqrt(count($grid));                                      // hold size
         $player = ($data['player_turn'] == $data['player1_id']) ? GAME_TILE_PLAYER1 : GAME_TILE_PLAYER2; // get if player is 1 or 2 tile
-        $res = [];                                                                      // init result array
+        $res = [];                                                       // init result array
         
-        for ($index = 0; $index < count($grid); $index++) {                             // iterate through each spot
-            if ($grid[$index] != GAME_TILE_NONE)                                        // if none
-                continue;                                                               // skip
+        for ($index = 0; $index < count($grid); $index++) {              // iterate through each spot
+            if ($grid[$index] != GAME_TILE_NONE)                         // if none
+                continue;                                                // skip
             
-            $ys = [-$size, 0, $size];
+            $ys = [-1, 0, 1];
             $xs = [-1, 0, 1];
     
             if (($index % $size) == 0) {
@@ -164,17 +174,27 @@ class Game {
             }
 
             foreach ($ys as $y) {                                        // for each y around the index
-                foreach ($xs as $x) {                                           // for each x around the index
-                    if (($x == 0 && $y == 0))                                           // if x and y are 0
-                        continue;                                                       // skip
-                    $spot = $index + $x + $y;                                           // calculate spot
-                    $count = 0;                                                         // hold count
-                    while ($this->in_bounds($grid, $x, $y, $spot, $player)) {
-                        $spot += $x + $y;                                               // step to next spot
-                        $count++;                                                       // increment count
+                foreach ($xs as $x) {                                    // for each x around the index
+                    if (($x == 0 && $y == 0))                            // if x and y are 0
+                        continue;                                        // skip
+                    $spot = $index + $x + ($y * $size);                  // calculate spot
+                    $xi = $this->convert_to_x_2D($size, $spot);
+                    $yi = $this->convert_to_y_2D($size, $spot);
+                    $count = 0;                                          // hold count
+                    while (
+                        $this->in_bounds($size, $xi, $yi)
+                        && $grid[$spot] != GAME_TILE_NONE
+                        && $grid[$spot] != $player
+                    ) {
+                        $spot += $x + ($y * $size);                      // step to next spot
+                        $xi += $x;
+                        $yi += $y;
+                        $count++;                                        // increment count
                     }
 
-                    if (($spot > 0 && $spot < count($grid)) && $spot!=$index && $count != 0 && $grid[$spot] == $player) {// if not start and end spot is this player
+                    $spot = $this->convert_to_1D($size, $xi, $yi);
+                    // if ($index = )$this->error .= ($this->in_bounds($size, $xi, $yi) && $spot!=$index && $count != 0 && $grid[$spot] == $player) ? "t" : "f";
+                    if ($this->in_bounds($size, $xi, $yi) && $spot!=$index && $count != 0 && $grid[$spot] == $player) {// if not start and end spot is this player
                         if (!key_exists($index, $res)) {                                // if index not already in res
                             $res[$index] = $count;                                      // add it to res
                         } else {
@@ -184,6 +204,7 @@ class Game {
                 }
             }
         }
+        $this->error .= " > ";
         return $res;                                                                    // return result
     }
 
@@ -372,10 +393,10 @@ class Game {
                     game_id = ?
             ")) {
                 $stmt->bind_param('iisii', $count[GAME_TILE_PLAYER1], $count[GAME_TILE_PLAYER2], $ngrid, $newData['player_turn'], $newData['game_id']);
-                if (!$stmt->execute()) {
-                    $this->error .= "Failed to send data to server!\n";
-                    return false;
-                }
+                // if (!$stmt->execute()) {
+                //     $this->error .= "Failed to send data to server!\n";
+                //     return false;
+                // }
                 return ['data' => $newData, 'moves' => $moves1];
                 $stmt->close();
             } else {
