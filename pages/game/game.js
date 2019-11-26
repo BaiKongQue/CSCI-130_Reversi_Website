@@ -23,9 +23,9 @@ sendMoveHttp.onreadystatechange = function () {
         res = JSON.parse(this.responseText)['result'];
         data = res.data;
 
-        if (data.error && data.error != "") {
+        if (JSON.parse(this.responseText).error) {
             errorMsg.innerText = "";
-            errorMsg.innerText = data.error;
+            errorMsg.innerText = JSON.parse(this.responseText).error;
         }
 
         available_move = res.moves;
@@ -49,7 +49,6 @@ function _GetGameData(callback = (data) => {}) {
         
         if (JSON.parse(this.responseText).error) {
             errorMsg.innerText = JSON.parse(this.responseText).error;
-            return;
         }
 
         available_move = res.moves;
@@ -72,7 +71,6 @@ function _GetGameData(callback = (data) => {}) {
 }
 
 function _SendMove(index, ai = false) {
-    console.log(data.player_turn, index, ai);
     sendMoveHttp.open("POST", "game.post.php", true);
     sendMoveHttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     sendMoveHttp.send("data=" + JSON.stringify(data) + "&index=" + index + "&ai=" + ai);
@@ -265,8 +263,8 @@ function _InitStart() {
 
 function _InitLoop() {
     setInterval(() => {
-        if (!data.finished && document.hasFocus() && data.player_turn != sessionData.player_id)
-            _GetGameData();
+        // if (!data.finished && document.hasFocus() && data.player_turn != sessionData.player_id)
+        //     _GetGameData();
     }, 1 * 1000);
 }
 
