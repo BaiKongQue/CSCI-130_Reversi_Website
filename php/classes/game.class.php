@@ -33,25 +33,10 @@ class Game {
     }
 
 // PRIVATE
-    // private function is_horizontal_wall(int $index, int $size): bool {
-    //     return (intdiv($index, $size) == 0) || (intdiv($index, $size) == $size-1);
-    // }
-
-    // private function is_vertical_wall(int $index, int $size): bool {
-    //     return ($index % $size == 0) || ($index % $size == $size - 1);
-    // }
-
     private function in_bounds(int $size, $x, int $y): bool {
-        // $size = sqrt(count($grid));
-        // $spot = $this->convert_to_1D($size, $x, $y);
         return (
             ($y >= 0 && $y < $size)
-            // && (($this->is_vertical_wall($spot , $size) && $this->is_horizontal_wall($spot, $size)) ||
-            //     (($x == 0 || ($x != 0 && !$this->is_vertical_wall($spot , $size))))
-            // )
             && ($x >= 0 && $x < $size)
-            // && $grid[$spot] != GAME_TILE_NONE
-            // && $grid[$spot] != $player
         );
     }
 
@@ -104,11 +89,11 @@ class Game {
     private function update_end_game(int $gameId): bool {
         if ($stmt = $this->Mysqli->prepare("UPDATE games SET end_time = NOW() WHERE game_id = ? AND end_time IS NULL")) {
             $stmt->bind_param('i', $gameId);
-            // if (!$stmt->execute()) {
-            //     $this->error .= "Failed to update data with server!\n";
-            //     $stmt->close();
-            //     return false;
-            // }
+            if (!$stmt->execute()) {
+                $this->error .= "Failed to update data with server!\n";
+                $stmt->close();
+                return false;
+            }
             $stmt->close();
             return true;
         } else {
@@ -393,10 +378,10 @@ class Game {
                     game_id = ?
             ")) {
                 $stmt->bind_param('iisii', $count[GAME_TILE_PLAYER1], $count[GAME_TILE_PLAYER2], $ngrid, $newData['player_turn'], $newData['game_id']);
-                // if (!$stmt->execute()) {
-                //     $this->error .= "Failed to send data to server!\n";
-                //     return false;
-                // }
+                if (!$stmt->execute()) {
+                    $this->error .= "Failed to send data to server!\n";
+                    return false;
+                }
                 return ['data' => $newData, 'moves' => $moves1];
                 $stmt->close();
             } else {
