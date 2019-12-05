@@ -6,7 +6,11 @@ sec_session_start();
 class Registration {
 // PRIVATE
 	private $Mysqli;
-
+	private $dbHost;
+    private $dbUser;
+    private $dbPass;
+	private $dbName;
+	
 // PUBLIC
 	public $error;
 	
@@ -14,6 +18,17 @@ class Registration {
 		$this->Mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_SCHEME); // start mysqli connection
 		
 		$this->error = "";	// initialize error to empty string
+
+		$this->dbHost = "localhost";
+        $this->dbUser = "root";
+        $this->dbPass = "";
+        $this->dbName = "reversi";
+
+        $connection = mysql_connect($this->dbHost, $this->dbUser, $this->dbPass)
+            or die("Could not connect to the database:<br />" . mysql_error());
+        mysql_select_db($this->dbName, $connection) 
+			or die("Database error:<br />" . mysql_error());
+			
 	}
 
 // PRIVATE
