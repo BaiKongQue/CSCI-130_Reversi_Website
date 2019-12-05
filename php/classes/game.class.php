@@ -30,6 +30,7 @@ class Game {
         $this->Mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_SCHEME);
         $this->error = '';
         $this->Login = new Login();
+
     }
 
 // PRIVATE
