@@ -13,6 +13,67 @@ class Login{
 	public function __construct() {
 		$this->Mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_SCHEME);	// start new mysql connection
 		$this->error = '';	// initialize error
+
+		if ($this->Mysqli->connect_error) {
+			if ($stmt = $this->Mysqli->prepare("
+				CREATE DATABASE IF NOT EXISTS reversi;
+				CREATE TABLE `players` (
+					`player_id` int(11) NOT NULL AUTO_INCREMENT,
+					`username` varchar(45) NOT NULL,
+					`password` char(60) NOT NULL,
+					`first_name` varchar(45) NOT NULL,
+					`last_name` varchar(45) NOT NULL,
+					`age` int(11) NOT NULL DEFAULT '1',
+					`gender` enum('boy','girl','other') NOT NULL DEFAULT 'other',
+					`location` varchar(60) NOT NULL,
+					`icon` varchar(45) NOT NULL,
+					PRIMARY KEY (`player_id`),
+					UNIQUE KEY `player_id_UNIQUE` (`player_id`),
+					UNIQUE KEY `username_UNIQUE` (`username`)
+				) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+				CREATE TABLE `games` (
+					`game_id` int(11) NOT NULL AUTO_INCREMENT,
+					`player1_id` int(11) NOT NULL,
+					`player2_id` int(11) DEFAULT NULL,
+					`player1_score` int(11) NOT NULL DEFAULT '0',
+					`player2_score` int(11) DEFAULT NULL,
+					`start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+					`end_time` datetime DEFAULT NULL,
+					`grid` json NOT NULL,
+					`player_turn` int(11) NOT NULL,
+				PRIMARY KEY (`game_id`),
+				UNIQUE KEY `game_id_UNIQUE` (`game_id`);
+				INSERT IGNORE INTO `players`(username, password, first_name, last_name, age, gender, location, icon) VALUES 
+				(\"killer\", \"password\", \"Shawn\", \"Lankster\", 21, \"boy\", \"California\", \"NULL\"),
+				(\"TheBest\", \"password\", \"Franklin\", \"Foster\", 28, \"boy\", \"North Carolina\", \"NULL\"),
+				(\"Playa\", \"password\", \"Bert\", \"Macklin\", 47, \"boy\", \"Nevada\", \"NULL\"),
+				(\"TryMe\", \"password\", \"Aaron\", \"Smart\", 16, \"boy\", \"Florida\", \"NULL\"),
+				(\"Username1987230978213\", \"password\", \"Mark\", \"Li\", 21, \"boy\", \"Texas\", \"NULL\"),
+				(\"Claymore\", \"password\", \"Clay\", \"Banks\", 53, \"boy\", \"California\", \"NULL\"),
+				(\"Stinger\", \"password\", \"Lance\", \"Steam\", 41, \"boy\", \"California\", \"NULL\");
+				INSERT IGNORE INTO `games`(player1_id, player2_id, player1_score, player2_score, start_time, end_time, grid, player_turn) VALUES 
+				(1, 2,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
+				(1, 3,    3, 9, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
+				(1, 4,    6, 4, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 4),
+				(1, 5,    8, 8, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
+				(1, 6,    3, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
+				(1, 7,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 7),
+				(2, 3,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+				(2, 4,    7, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 4),
+				(2, 5,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+				(2, 6,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+				(2, 7,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+				(3, 1,    3, 1, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+				(3, 2,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+				(3, 4,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+				(3, NULL, 3, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+				(3, 5,    7, 8, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1);
+			")) {
+				$stmt->execute();
+				$stmt->close();
+			}
+		}
+		
 	}
 
 // PRIVATE
@@ -130,47 +191,6 @@ class Login{
 		}
 		// return true;
 	}
-	
-	public function dbSetup() {
-        if ($this->Login->login_check()) {
-            if ($stmt = $this->Mysqli->prepare("
-                SELECT
-                    players.*
-				FROM
-					players
-            ")) { if ($stmt->execute()) {
-                    if($stmt == NULL){
-						$stmt1 = $this->Mysqli->prepare("
-						CREATE TABLE `players` (
-							`player_id` int(11) NOT NULL AUTO_INCREMENT,
-							`username` varchar(45) NOT NULL,
-							`password` char(60) NOT NULL,
-							`first_name` varchar(45) NOT NULL,
-							`last_name` varchar(45) NOT NULL,
-							`age` int(11) NOT NULL DEFAULT '1',
-							`gender` enum('boy','girl','other') NOT NULL DEFAULT 'other',
-							`location` varchar(60) NOT NULL,
-							`icon` varchar(45) NOT NULL,
-							PRIMARY KEY (`player_id`),
-							UNIQUE KEY `player_id_UNIQUE` (`player_id`),
-							UNIQUE KEY `username_UNIQUE` (`username`)
-						  ) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8
-						")
-
-						// $stmt1->execute();
-					}
-                }
-                return;
-            } else {
-                $this->error .= "Failed to communicate with the server!\n";
-                return false;
-            }
-        } else {
-            $this->error .= "You are not logged in!\n";
-            return false;
-        }
-    }
-
 
 	public function __destruct(){
 		$this->Mysqli->close();	// close mysql connection
