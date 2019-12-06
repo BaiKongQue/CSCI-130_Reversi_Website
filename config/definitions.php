@@ -1,5 +1,5 @@
 <?php
-include_once "cred.php";
+//include_once "cred.php";
 
 /*******************
  * Database Config *
