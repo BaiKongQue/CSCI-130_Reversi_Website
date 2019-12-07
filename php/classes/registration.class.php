@@ -3,6 +3,9 @@ include_once "SecureSession.class.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/config/definitions.php";
 sec_session_start();
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 class Registration {
 // PRIVATE
 	private $Mysqli;
@@ -15,68 +18,70 @@ class Registration {
 	public $error;
 	
 	public function __construct(){
-		$this->Mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_SCHEME); // start mysqli connection
+		$this->Mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD); // start mysqli connection
 		$this->error = "";	// initialize error to empty string
-
-		if ($this->Mysqli->connect_error) {
-			if ($stmt = $this->Mysqli->prepare("
-				CREATE DATABASE IF NOT EXISTS reversi;
-				CREATE TABLE `players` (
-					`player_id` int(11) NOT NULL AUTO_INCREMENT,
-					`username` varchar(45) NOT NULL,
-					`password` char(60) NOT NULL,
-					`first_name` varchar(45) NOT NULL,
-					`last_name` varchar(45) NOT NULL,
-					`age` int(11) NOT NULL DEFAULT '1',
-					`gender` enum('boy','girl','other') NOT NULL DEFAULT 'other',
-					`location` varchar(60) NOT NULL,
-					`icon` varchar(45) NOT NULL,
-					PRIMARY KEY (`player_id`),
-					UNIQUE KEY `player_id_UNIQUE` (`player_id`),
-					UNIQUE KEY `username_UNIQUE` (`username`)
-				) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
-				CREATE TABLE `games` (
-					`game_id` int(11) NOT NULL AUTO_INCREMENT,
-					`player1_id` int(11) NOT NULL,
-					`player2_id` int(11) DEFAULT NULL,
-					`player1_score` int(11) NOT NULL DEFAULT '0',
-					`player2_score` int(11) DEFAULT NULL,
-					`start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-					`end_time` datetime DEFAULT NULL,
-					`grid` json NOT NULL,
-					`player_turn` int(11) NOT NULL,
+		if ($this->Mysqli->multi_query("
+			CREATE DATABASE IF NOT EXISTS reversi;
+			CREATE TABLE IF NOT EXISTS reversi.`players` (
+				`player_id` int(11) NOT NULL AUTO_INCREMENT,
+				`username` varchar(45) NOT NULL,
+				`password` char(60) NOT NULL,
+				`first_name` varchar(45) NOT NULL,
+				`last_name` varchar(45) NOT NULL,
+				`age` int(11) NOT NULL DEFAULT '1',
+				`gender` enum('boy','girl','other') NOT NULL DEFAULT 'other',
+				`location` varchar(60) NOT NULL,
+				`icon` varchar(45) NOT NULL,
+				PRIMARY KEY (`player_id`),
+				UNIQUE KEY `player_id_UNIQUE` (`player_id`),
+				UNIQUE KEY `username_UNIQUE` (`username`)
+			) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
+			CREATE TABLE reversi.`games` (
+				`game_id` int(11) NOT NULL AUTO_INCREMENT,
+				`player1_id` int(11) NOT NULL,
+				`player2_id` int(11) DEFAULT NULL,
+				`player1_score` int(11) NOT NULL DEFAULT '0',
+				`player2_score` int(11) DEFAULT NULL,
+				`start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+				`end_time` datetime DEFAULT NULL,
+				`grid` json NOT NULL,
+				`player_turn` int(11) NOT NULL,
 				PRIMARY KEY (`game_id`),
-				UNIQUE KEY `game_id_UNIQUE` (`game_id`);
-				INSERT IGNORE INTO `players`(username, password, first_name, last_name, age, gender, location, icon) VALUES 
-				(\"killer\", \"password\", \"Shawn\", \"Lankster\", 21, \"boy\", \"California\", \"NULL\"),
-				(\"TheBest\", \"password\", \"Franklin\", \"Foster\", 28, \"boy\", \"North Carolina\", \"NULL\"),
-				(\"Playa\", \"password\", \"Bert\", \"Macklin\", 47, \"boy\", \"Nevada\", \"NULL\"),
-				(\"TryMe\", \"password\", \"Aaron\", \"Smart\", 16, \"boy\", \"Florida\", \"NULL\"),
-				(\"Username1987230978213\", \"password\", \"Mark\", \"Li\", 21, \"boy\", \"Texas\", \"NULL\"),
-				(\"Claymore\", \"password\", \"Clay\", \"Banks\", 53, \"boy\", \"California\", \"NULL\"),
-				(\"Stinger\", \"password\", \"Lance\", \"Steam\", 41, \"boy\", \"California\", \"NULL\");
-				INSERT IGNORE INTO `games`(player1_id, player2_id, player1_score, player2_score, start_time, end_time, grid, player_turn) VALUES 
-				(1, 2,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
-				(1, 3,    3, 9, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
-				(1, 4,    6, 4, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 4),
-				(1, 5,    8, 8, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
-				(1, 6,    3, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
-				(1, 7,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 7),
-				(2, 3,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-				(2, 4,    7, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 4),
-				(2, 5,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-				(2, 6,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-				(2, 7,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-				(3, 1,    3, 1, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-				(3, 2,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-				(3, 4,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-				(3, NULL, 3, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-				(3, 5,    7, 8, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1);
-			")) {
-				$stmt->execute();
-				$stmt->close();
+				UNIQUE KEY `game_id_UNIQUE` (`game_id`)
+			) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
+			INSERT IGNORE INTO reversi.`players`(username, password, first_name, last_name, age, gender, location, icon) VALUES 
+			(\"killer\", \"password\", \"Shawn\", \"Lankster\", 21, \"boy\", \"California\", \"NULL\"),
+			(\"TheBest\", \"password\", \"Franklin\", \"Foster\", 28, \"boy\", \"North Carolina\", \"NULL\"),
+			(\"Playa\", \"password\", \"Bert\", \"Macklin\", 47, \"boy\", \"Nevada\", \"NULL\"),
+			(\"TryMe\", \"password\", \"Aaron\", \"Smart\", 16, \"boy\", \"Florida\", \"NULL\"),
+			(\"Username1987230978213\", \"password\", \"Mark\", \"Li\", 21, \"boy\", \"Texas\", \"NULL\"),
+			(\"Claymore\", \"password\", \"Clay\", \"Banks\", 53, \"boy\", \"California\", \"NULL\"),
+			(\"Stinger\", \"password\", \"Lance\", \"Steam\", 41, \"boy\", \"California\", \"NULL\");
+			INSERT IGNORE INTO reversi.`games`(player1_id, player2_id, player1_score, player2_score, start_time, end_time, grid, player_turn) VALUES 
+			(1, 2,    0, 0, NOW(), NOW()+10, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
+			(1, 3,    3, 9, NOW(), NOW()+20, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
+			(1, 4,    6, 4, NOW(), NOW()+30, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 4),
+			(1, 5,    8, 8, NOW(), NOW()+40, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
+			(1, 6,    3, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
+			(1, 7,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 7),
+			(2, 3,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(2, 4,    7, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 4),
+			(2, 5,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(2, 6,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(2, 7,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(3, 1,    3, 1, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(3, 2,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(3, 4,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(3, NULL, 3, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(3, 5,    7, 8, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1)
+		")) {
+			while ( $this->Mysqli->more_results() and $this->Mysqli->next_result() ) {
+				$rs = $this->Mysqli->use_result();
+				if( $rs instanceof \mysqli_result )
+					$rs->free();
 			}
 		}
+		$this->Mysqli->select_db(DB_SCHEME);
 	}
 
 // PRIVATE
@@ -97,14 +102,15 @@ class Registration {
 			$stmt->execute();										// execute
 			$stmt->store_result();									// store the results
 
-			if($stmt->num_rows == 1){								// check if row exists
+			$updated = $stmt->num_rows == 1;
+
+			$stmt->free_result();									// free results
+			$stmt->close();											// close connection
+			if($updated){											// check if row exists
 				$this->error .= "This username already exist!\n"; 	// error username exists
 				return false;
 			} else
 				return true;										// username dne, return true
-			
-			$stmt->free_result();									// free results
-			$stmt->close();											// close connection
 		} else {
 			$this->error .= "Error reaching servers, please try again later.\n";
 			return false;
@@ -171,15 +177,15 @@ class Registration {
 					$password = $passwordConfirm = NULL;												// free password and passwordConfirm
 					if($stmt = $this->Mysqli->prepare("INSERT INTO players(username, password, first_name, last_name, age, gender, location, icon) VALUES(?, ?, ?, ?, ?, ?, ?, ?)")){ // prepare mysqli insert query
 						$stmt->bind_param('ssssisss', $username, $pass, $firstName, $lastName, $age, $gender, $location, $icon);	// bind params
-						if(!$stmt->execute()){															// if not execute
+						$res = !$stmt->execute();
+						$stmt->close();
+						if($res){																		// if not execute
 							$this->error .= "Failed to connect to server. Try again.\n";				// error
-							$this->error = $this->Mysqli->error;										// error damn
 							return false;
 						} else
-						return true;																	// succesfully registered
+							return true;																// succesfully registered
 					} else {
 						$this->error .= "There was a error connecting to the server. Try again.\n";		// error preparing query
-						echo 1;
 						return false;
 					}
 				}
