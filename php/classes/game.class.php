@@ -3,9 +3,7 @@ include_once $_SERVER['DOCUMENT_ROOT'] . "/config/definitions.php";
 include_once 'SecureSession.class.php';
 include_once 'login.class.php';
 sec_session_start();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+
 /**
  * Game Data structure:
  *  game_id: int
@@ -189,7 +187,6 @@ class Game {
                 }
             }
         }
-        $this->error .= " > ";
         return $res;                                                                    // return result
     }
 

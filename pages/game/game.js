@@ -263,8 +263,10 @@ function _InitStart() {
 
 function _InitLoop() {
     setInterval(() => {
-        // if (!data.finished && document.hasFocus() && data.player_turn != sessionData.player_id)
-        //     _GetGameData();
+        // if you want updates when the window is active add:
+        // !data.finished && document.hasFocus()
+        if (data.player_turn != sessionData.player_id)
+             _GetGameData();
     }, 1 * 1000);
 }
 
