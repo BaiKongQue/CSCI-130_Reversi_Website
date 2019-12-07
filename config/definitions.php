@@ -1,13 +1,12 @@
 <?php
-//include_once "cred.php";
 
 /*******************
  * Database Config *
  *******************/
-// define("DB_HOST", "HOST");
-// define("DB_USERNAME", "USERNAME");
-// define("DB_PASSWORD", "PASSWORD");
-// define("DB_SCHEME", "SCHEME");
+define("DB_HOST", "localhost:3306");          // Database Host name
+define("DB_USERNAME", "root");  // Database username
+define("DB_PASSWORD", "0Bdragon8712`");  // Database password
+define("DB_SCHEME", "reversi");     // Database scheme
 
 /*****************
  * Login Options *
