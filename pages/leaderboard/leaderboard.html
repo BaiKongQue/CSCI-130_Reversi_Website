@@ -5,7 +5,7 @@
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title>Leaderboard</title>
+	<title role="webpage title: Leaderboard">Leaderboard</title>
 
 	<link rel="stylesheet" href="../../styles.css" />
 	<link rel="stylesheet" href="./leaderboard.css" />
@@ -14,22 +14,22 @@
 </head>
 
 <body>
-	<nav>
+	<nav role="navigation">
 		<a id="nav-button-open" class="no-select" onclick="popNav()">&#9776;</a>
 		<div id="nav-container">
 			<div id="nav-button-close">
-				<a class="no-select" onclick="popNav()">&times;</a>
+				<a role="navigation" class="no-select" onclick="popNav()">&times;</a>
 			</div>
 			<div id="nav-content">
-				<a href="../../index.html">Home</a>
-				<a href="../about-us/about-us.html">About</a>
-				<a href="../howTo/howTo.html">How-To</a>
-				<a href="../leaderboard/leaderboard.html">Leaderboard</a>
-				<a class="logged-out" href="../login/login.html">Login</a>
-				<a class="logged-out" href="../registration/registration.html">Register</a>
-				<a class="logged-in" href="../create-game/create-game.html">Create Game</a>
-				<a class="logged-in" href="../lobbies/lobbies.html">Play</a>
-				<a class="logged-in" href="../../php/logout.php">Logout</a>
+				<a role="Home Link" href="../../index.html">Home</a>
+				<a role="About Link" href="../about-us/about-us.html">About</a>
+				<a role="How-To Link" href="../howTo/howTo.html">How-To</a>
+				<a role="Leaderboard Link" href="../leaderboard/leaderboard.html">Leaderboard</a>
+				<a role="Login Link" class="logged-out" href="../login/login.html">Login</a>
+				<a role="Register Link" class="logged-out" href="../registration/registration.html">Register</a>
+				<a role="Create Game Link" class="logged-in" href="../create-game/create-game.html">Create Game</a>
+				<a role="Play Link" class="logged-in" href="../lobbies/lobbies.html">Play</a>
+				<a role="Logout Link" class="logged-in" href="../../php/logout.php">Logout</a>
 			</div>
 		</div>
 	</nav>
@@ -47,28 +47,28 @@
 								placeholder="Last Name" /></label></div>
 					<div>
 						<label>
-							<span>Sort By:</span>
+							<span role="Sort By button">Sort By:</span>
 							<select name="sort-by">
-								<option value="game_id">Game ID</option>
-								<option value="first_name">First Names</option>
-								<option value="last_name">Last Names</option>
-								<option value="score">Score</option>
-								<option value="duration">Duration</option>
+								<option role="option: game id" value="game_id">Game ID</option>
+								<option role="option: first name" value="first_name">First Names</option>
+								<option role="option: last name" value="last_name">Last Names</option>
+								<option role="option: score" value="score">Score</option>
+								<option role="option: duration" value="duration">Duration</option>
 							</select>
 						</label>
 					</div>
 					<div>
 						<label>
-							<span>Order By:</span>
+							<span role="order by button">Order By:</span>
 							<select name="order-by">
-								<option value="1">Dessending</option>
-								<option value="-1">Assending</option>
+								<option role="option: descending" value="1">Descending</option>
+								<option role="option: descending" value="-1">Ascending</option>
 							</select>
 						</label>
 					</div>
 				</form>
 			</div>
-			<div id="scores-container">
+			<div role="scores" id="scores-container">
 				<table id="scores-table">
 					<thead>
 						<tr>
