@@ -3,10 +3,10 @@
 /*******************
  * Database Config *
  *******************/
-define("DB_HOST", "localhost:3306");          // Database Host name
-define("DB_USERNAME", "root");  // Database username
-define("DB_PASSWORD", "0Bdragon8712`");  // Database password
-define("DB_SCHEME", "csci-130_project1");     // Database scheme
+define("DB_HOST", "HOST");          // Database Host name
+define("DB_USERNAME", "USERNAME");  // Database username
+define("DB_PASSWORD", "PASSWORD");  // Database password
+define("DB_SCHEME", "DATABSE");     // Database scheme
 
 /*****************
  * Login Options *
