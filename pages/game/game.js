@@ -265,7 +265,7 @@ function _InitLoop() {
     setInterval(() => {
         // if you want updates when the window is active add:
         // !data.finished && document.hasFocus()
-        if (data.player_turn != sessionData.player_id)
+        if (data.player_turn != sessionData.player_id || data.player2_id == null)
              _GetGameData();
     }, 1 * 1000);
 }

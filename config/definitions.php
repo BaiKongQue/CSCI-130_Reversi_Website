@@ -6,7 +6,7 @@
 define("DB_HOST", "localhost:3306");          // Database Host name
 define("DB_USERNAME", "root");  // Database username
 define("DB_PASSWORD", "0Bdragon8712`");  // Database password
-define("DB_SCHEME", "reversi");     // Database scheme
+define("DB_SCHEME", "csci-130_project1");     // Database scheme
 
 /*****************
  * Login Options *
