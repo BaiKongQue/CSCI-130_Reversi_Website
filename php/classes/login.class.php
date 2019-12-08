@@ -38,35 +38,41 @@ class Login{
 				`start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				`end_time` datetime DEFAULT NULL,
 				`grid` json NOT NULL,
-				`player_turn` int(11) NOT NULL,
+				`player_turn` int(11),
 				PRIMARY KEY (`game_id`),
 				UNIQUE KEY `game_id_UNIQUE` (`game_id`)
 			) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
-			INSERT IGNORE INTO reversi.`players`(username, password, first_name, last_name, age, gender, location, icon) VALUES 
-			(\"killer\", \"password\", \"Shawn\", \"Lankster\", 21, \"boy\", \"California\", \"NULL\"),
-			(\"TheBest\", \"password\", \"Franklin\", \"Foster\", 28, \"boy\", \"North Carolina\", \"NULL\"),
-			(\"Playa\", \"password\", \"Bert\", \"Macklin\", 47, \"boy\", \"Nevada\", \"NULL\"),
-			(\"TryMe\", \"password\", \"Aaron\", \"Smart\", 16, \"boy\", \"Florida\", \"NULL\"),
-			(\"Username1987230978213\", \"password\", \"Mark\", \"Li\", 21, \"boy\", \"Texas\", \"NULL\"),
-			(\"Claymore\", \"password\", \"Clay\", \"Banks\", 53, \"boy\", \"California\", \"NULL\"),
-			(\"Stinger\", \"password\", \"Lance\", \"Steam\", 41, \"boy\", \"California\", \"NULL\");
-			INSERT IGNORE INTO reversi.`games`(player1_id, player2_id, player1_score, player2_score, start_time, end_time, grid, player_turn) VALUES 
-			(1, 2,    0, 0, NOW(), NOW()+10, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
-			(1, 3,    3, 9, NOW(), NOW()+20, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
-			(1, 4,    6, 4, NOW(), NOW()+30, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 4),
-			(1, 5,    8, 8, NOW(), NOW()+40, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
-			(1, 6,    3, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
-			(1, 7,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 7),
-			(2, 3,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(2, 4,    7, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 4),
-			(2, 5,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(2, 6,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(2, 7,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(3, 1,    3, 1, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(3, 2,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(3, 4,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(3, NULL, 3, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(3, 5,    7, 8, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1)
+			INSERT IGNORE INTO reversi.`players`(player_id, username, password, first_name, last_name, age, gender, location, icon) VALUES 
+			(1, \"killer\", \"password\", \"Shawn\", \"Lankster\", 21, \"boy\", \"California\", \"NULL\"),
+			(2, \"TheBest\", \"password\", \"Franklin\", \"Foster\", 28, \"boy\", \"North Carolina\", \"NULL\"),
+			(3, \"Playa\", \"password\", \"Bert\", \"Macklin\", 47, \"boy\", \"Nevada\", \"NULL\"),
+			(4, \"TryMe\", \"password\", \"Aaron\", \"Smart\", 16, \"boy\", \"Florida\", \"NULL\"),
+			(5, \"Username1987230978213\", \"password\", \"Mark\", \"Li\", 21, \"boy\", \"Texas\", \"NULL\"),
+			(6, \"Claymore\", \"password\", \"Clay\", \"Banks\", 53, \"boy\", \"California\", \"NULL\"),
+			(7, \"Stinger\", \"password\", \"Lance\", \"Steam\", 41, \"boy\", \"California\", \"NULL\");
+			INSERT IGNORE INTO reversi.`games`(game_id, player1_id, player2_id, player1_score, player2_score, start_time, end_time, grid, player_turn) VALUES 
+			(1, 1, 2,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
+			(2, 1, 3,    3, 9, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
+			(3, 1, 4,    6, 4, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 4),
+			(4, 1, 5,    8, 8, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
+			(5, 1, 6,    3, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
+			(6, 1, 7,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 7),
+			(7, 2, 3,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(8, 2, 4,    7, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 4),
+			(9, 2, 5,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(10, 2, 6,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(11, 2, 7,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(12, 3, 1,    3, 1, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(13, 3, 2,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(14, 3, 4,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(15, 3, NULL, 3, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
+			(16, 3, 5,    7, 8, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1);
+			UPDATE reversi.`games` SET `end_time` = NOW() WHERE `game_id` = 1;
+			UPDATE reversi.`games` SET `end_time` = NOW() WHERE `game_id` = 2;
+			UPDATE reversi.`games` SET `end_time` = NOW() WHERE `game_id` = 3;
+			UPDATE reversi.`games` SET `end_time` = NOW() WHERE `game_id` = 4;
+			UPDATE reversi.`games` SET `end_time` = NOW() WHERE `game_id` = 5;
+			UPDATE reversi.`games` SET `end_time` = NOW() WHERE `game_id` = 6;
 		")) {
 			while ( $this->Mysqli->more_results() and $this->Mysqli->next_result() ) {
 				$rs = $this->Mysqli->use_result();

@@ -45,7 +45,7 @@ class Registration {
 				`start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				`end_time` datetime DEFAULT NULL,
 				`grid` json NOT NULL,
-				`player_turn` int(11) NOT NULL,
+				`player_turn` int(11),
 				PRIMARY KEY (`game_id`),
 				UNIQUE KEY `game_id_UNIQUE` (`game_id`)
 			) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;

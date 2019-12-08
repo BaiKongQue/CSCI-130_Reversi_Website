@@ -90,7 +90,7 @@ function DisplayData(r) {
 
 function exists() {
     for (let r of data) {
-        if (r.player1.first_name == sessionData.first_name)
+        if (r.player1.first_name == sessionData.first_name || (r.player2.first_name != null && r.player2.first_name == sessionData.first_name))
             return true;
     }
     return false;
