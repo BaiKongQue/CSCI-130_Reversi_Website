@@ -13,7 +13,7 @@ class Login{
 	public function __construct() {
 		$this->Mysqli = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD);	// start new mysql connection
 		$this->error = '';	// initialize error
-		if ($this->Mysqli->multi_query("
+		if ($this->Mysqli->multi_query('
 			CREATE DATABASE IF NOT EXISTS reversi;
 			CREATE TABLE IF NOT EXISTS reversi.`players` (
 				`player_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -21,8 +21,8 @@ class Login{
 				`password` char(60) NOT NULL,
 				`first_name` varchar(45) NOT NULL,
 				`last_name` varchar(45) NOT NULL,
-				`age` int(11) NOT NULL DEFAULT '1',
-				`gender` enum('boy','girl','other') NOT NULL DEFAULT 'other',
+				`age` int(11) NOT NULL DEFAULT "1",
+				`gender` enum("boy","girl","other") NOT NULL DEFAULT "other",
 				`location` varchar(60) NOT NULL,
 				`icon` varchar(45) NOT NULL,
 				PRIMARY KEY (`player_id`),
@@ -33,7 +33,7 @@ class Login{
 				`game_id` int(11) NOT NULL AUTO_INCREMENT,
 				`player1_id` int(11) NOT NULL,
 				`player2_id` int(11) DEFAULT NULL,
-				`player1_score` int(11) NOT NULL DEFAULT '0',
+				`player1_score` int(11) NOT NULL DEFAULT "0",
 				`player2_score` int(11) DEFAULT NULL,
 				`start_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
 				`end_time` datetime DEFAULT NULL,
@@ -42,38 +42,9 @@ class Login{
 				PRIMARY KEY (`game_id`),
 				UNIQUE KEY `game_id_UNIQUE` (`game_id`)
 			) ENGINE=InnoDB AUTO_INCREMENT=54 DEFAULT CHARSET=utf8;
-			INSERT IGNORE INTO reversi.`players`(player_id, username, password, first_name, last_name, age, gender, location, icon) VALUES 
-			(1, \"killer\", \"password\", \"Shawn\", \"Lankster\", 21, \"boy\", \"California\", \"NULL\"),
-			(2, \"TheBest\", \"password\", \"Franklin\", \"Foster\", 28, \"boy\", \"North Carolina\", \"NULL\"),
-			(3, \"Playa\", \"password\", \"Bert\", \"Macklin\", 47, \"boy\", \"Nevada\", \"NULL\"),
-			(4, \"TryMe\", \"password\", \"Aaron\", \"Smart\", 16, \"boy\", \"Florida\", \"NULL\"),
-			(5, \"Username1987230978213\", \"password\", \"Mark\", \"Li\", 21, \"boy\", \"Texas\", \"NULL\"),
-			(6, \"Claymore\", \"password\", \"Clay\", \"Banks\", 53, \"boy\", \"California\", \"NULL\"),
-			(7, \"Stinger\", \"password\", \"Lance\", \"Steam\", 41, \"boy\", \"California\", \"NULL\");
-			INSERT IGNORE INTO reversi.`games`(game_id, player1_id, player2_id, player1_score, player2_score, start_time, end_time, grid, player_turn) VALUES 
-			(1, 1, 2,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
-			(2, 1, 3,    3, 9, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
-			(3, 1, 4,    6, 4, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 4),
-			(4, 1, 5,    8, 8, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
-			(5, 1, 6,    3, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1),
-			(6, 1, 7,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 7),
-			(7, 2, 3,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(8, 2, 4,    7, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 4),
-			(9, 2, 5,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(10, 2, 6,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(11, 2, 7,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(12, 3, 1,    3, 1, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(13, 3, 2,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(14, 3, 4,    0, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(15, 3, NULL, 3, 0, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 2),
-			(16, 3, 5,    7, 8, NOW(), NULL, \"[0,0,0,0,0,1,2,0,0,2,1,0,0,0,0,0]\", 1);
-			UPDATE reversi.`games` SET `end_time` = NOW() WHERE `game_id` = 1;
-			UPDATE reversi.`games` SET `end_time` = NOW() WHERE `game_id` = 2;
-			UPDATE reversi.`games` SET `end_time` = NOW() WHERE `game_id` = 3;
-			UPDATE reversi.`games` SET `end_time` = NOW() WHERE `game_id` = 4;
-			UPDATE reversi.`games` SET `end_time` = NOW() WHERE `game_id` = 5;
-			UPDATE reversi.`games` SET `end_time` = NOW() WHERE `game_id` = 6;
-		")) {
+			INSERT IGNORE INTO reversi.`players` VALUES (8,"paradox","$2y$10$xd2uKP0fk3/1Yr5WsIdPsOk7oKYziYWpuZmklLcTsrWwaaEP0M1X2","Alice","Doe",23,"girl","Internet","first avatar.jpg"),(9,"tgillette","$2y$10$e5BDQVKovL0WCsjjw/jfU.XS/qxo/iGp8XtOZ1sYVE/tJ7OlF0RUS","Tyler","Gillette",26,"boy","California","PKfav.jpg"),(10,"Zekhai","$2y$10$tM5HXoFKSIoKqD6Q.TTR9ujwI.TSwhVEZojv.B0vQ3TIo8REwEJUe","Khai","Pham",69,"boy","Freshoe","Profile.jpeg"),(11,"llp909","$2y$10$/S6RUSxTB.w6aSkhdnMm7ei641iuMCr7C429/y/DQFYTHwulUv1mW","Lee","Perkins",22,"boy","Fresno","hea_icon.jpg"),(12,"Test","$2y$10$6n9zyG/rZfFb42HzD/9Kluvc/WszonQhP132woJj5CimbrD7IX/S6","Bob","Joe",13,"boy","Fresno","side-peacock.jpg");
+			INSERT IGNORE INTO reversi.`games` VALUES (32,9,12,0,0,"2019-11-08 15:56:07",NULL,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]",9),(34,10,8,28,36,"2019-11-08 16:04:14","2019-11-22 14:41:26","[1, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 2, 2, 2, 1, 1, 2, 2, 1, 2, 1, 2, 1, 1, 1, 1, 2, 2, 2, 2, 1, 2, 1, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2]",0),(35,10,-2,0,0,"2019-11-08 16:07:30",NULL,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]",10),(39,8,-1,46,18,"2019-11-15 09:35:45","2019-11-24 00:49:07","[2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 2, 2, 2, 1, 2, 1, 1, 2, 2, 1, 2, 2, 1, 1, 1, 2, 1, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]",0),(40,8,-1,22,14,"2019-11-15 16:21:29","2019-11-21 14:51:07","[2, 2, 1, 1, 1, 1, 1, 2, 2, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 2, 2, 1, 2, 1, 1, 1, 1, 1, 1, 2]",0),(41,8,-2,13,23,"2019-11-16 23:43:10","2019-11-21 15:09:46","[1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 1, 2, 2, 1, 1, 1, 1, 2]",0),(42,8,-2,30,34,"2019-11-21 12:53:16","2019-11-21 15:09:54","[2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 2, 1, 1, 2, 2, 1, 2, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 2]",0),(43,8,-2,29,35,"2019-11-21 12:56:13","2019-11-21 15:10:00","[2, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 2, 1, 2, 2, 1, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 1, 1, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 1]",0),(44,8,-2,34,30,"2019-11-21 13:02:51","2019-11-21 15:10:06","[2, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2, 2, 1, 1, 2, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2]",0),(45,8,-2,18,46,"2019-11-21 13:38:11","2019-11-24 00:49:34","[2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 1, 2, 2, 2, 1, 1, 1, 2, 2, 2, 1, 2, 1, 1, 2, 2, 2, 1, 1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2]",0),(46,10,8,39,25,"2019-11-21 15:54:14","2019-11-22 10:41:58","[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 1, 1, 1, 1, 2, 1, 2, 2, 1, 2, 1, 1, 1, 2, 1, 2, 1, 2, 2, 1, 2, 1, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 2]",0),(47,8,11,18,46,"2019-11-23 17:54:08","2019-11-23 18:12:26","[2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 1, 2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 2, 2, 2, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2]",0),(48,8,-2,10,26,"2019-11-24 00:52:16","2019-11-24 00:53:08","[2, 2, 2, 2, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 2]",0),(49,11,-1,20,16,"2019-11-24 01:24:21","2019-11-24 01:27:47","[2, 2, 2, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 2, 2, 2, 2, 2]",0),(50,11,-1,9,7,"2019-11-24 01:28:07","2019-11-24 01:28:43","[2, 2, 1, 1, 1, 2, 2, 2, 1, 1, 2, 2, 1, 1, 1, 1]",0),(51,11,-1,2,2,"2019-11-24 01:29:00",NULL,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]",11),(52,12,-2,4,9,"2019-12-06 15:52:39",NULL,"[2, 0, 2, 0, 0, 0, 2, 1, 2, 1, 0, 0, 2, 0, 2, 1, 0, 0, 0, 2, 2, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0]",12),(53,12,8,15,21,"2019-12-06 15:54:58","2019-12-06 16:07:32","[2, 1, 1, 1, 1, 1, 2, 2, 1, 2, 1, 2, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 1, 1]",0),(54,8,11,4,0,"2019-12-06 18:51:59",NULL,"[0, 0, 1, 0, 0, 1, 1, 0, 0, 2, 1, 0, 0, 0, 0, 0]",11),(57,11,8,2,0,"2019-12-08 12:09:25",NULL,"[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0, 0, 0, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]",11);
+		')) {
 			while ( $this->Mysqli->more_results() and $this->Mysqli->next_result() ) {
 				$rs = $this->Mysqli->use_result();
 				if( $rs instanceof \mysqli_result )
