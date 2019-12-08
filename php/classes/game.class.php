@@ -528,13 +528,14 @@ class Game {
                 games
             SET
                 player2_id = ?,
-                player2_score = 0
+                player2_score = 0,
+                player_turn = COALESCE(player_turn, ?)
             WHERE
                 game_id = ? 
                 and (player1_id != ?)
                 and (player2_id is null)
             ")) {
-                $stmt->bind_param('iii', $_SESSION['player_id'], $gameId, $_SESSION['player_id']);    // bind the params
+                $stmt->bind_param('iiii', $_SESSION['player_id'], $_SESSION['player_id'], $gameId, $_SESSION['player_id']);    // bind the params
                 if (!$stmt->execute()) {                                                           // execute query
                     $this->error .= "Failed to send data to server!\n";
                     $stmt->close();
